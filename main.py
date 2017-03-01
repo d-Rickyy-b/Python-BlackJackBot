@@ -22,6 +22,7 @@ CHANGE_LANG_ES = "ch_lang_es"
 CHANGE_LANG_RU = "ch_lang_ru"
 CHANGE_LANG_FA = "ch_lang_fa"
 
+BOT_TOKEN = "<your_bot_token>"
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 updater = Updater(token=BOT_TOKEN)
