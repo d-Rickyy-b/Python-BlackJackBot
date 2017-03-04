@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import sqlite3
 import os
+import sqlite3
 
 __author__ = 'Rico'
 
@@ -13,16 +13,6 @@ class DBwrapper(object):
             self.connection = sqlite3.connect(self.dir_path + "\\users.db")
             self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
             self.cursor = self.connection.cursor()
-
-        def connect(self):
-            self.cursor.execute("SELECT rowid, * FROM users")
-            temp_list = []
-
-            result = self.cursor.fetchall()
-            for r in result:
-                temp_list.append(list(r))
-
-            return temp_list
 
         def get_user(self, user_id):
             self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
@@ -42,8 +32,9 @@ class DBwrapper(object):
             self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), "male", "0", "0"))
             self.connection.commit()
 
-        def insert(self, string_value, value, user_id):
-            self.cursor.execute("UPDATE users SET " + str(string_value) + "= ? WHERE userID = ?;", [str(value), str(user_id)])
+        def insert(self, column_name, value, user_id):
+            self.cursor.execute("UPDATE users SET " + str(column_name) + "= ? WHERE userID = ?;",
+                                [str(value), str(user_id)])
             self.connection.commit()
 
         def check_if_user_saved(self, user_id):
