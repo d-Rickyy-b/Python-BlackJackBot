@@ -27,6 +27,14 @@ class DBwrapper(object):
             self.cursor.execute("SELECT rowid, * FROM users;")
             return self.cursor.fetchall()
 
+        def get_lang_id(self, user_id):
+            self.cursor.execute("SELECT languageID FROM users WHERE userID=?;", [str(user_id)])
+            result = self.cursor.fetchall()
+            if len(result) > 0:
+                return result[0]
+            else:
+                return "en"
+
         def write(self, user_id, lang_id, first_name, last_name):
             self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), "male", "0", "0"))
             self.connection.commit()
