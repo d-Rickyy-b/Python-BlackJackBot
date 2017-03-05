@@ -25,8 +25,7 @@ class DBwrapper(object):
 
         def get_all_users(self):
             self.cursor.execute("SELECT rowid, * FROM users;")
-            all_users = self.cursor.fetchall()
-            return all_users
+            return self.cursor.fetchall()
 
         def write(self, user_id, lang_id, first_name, last_name):
             self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), "male", "0", "0"))
