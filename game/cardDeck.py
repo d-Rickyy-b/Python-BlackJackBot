@@ -1,6 +1,8 @@
-__author__ = 'Rico'
+# -*- coding: utf-8 -*-
 
 from lang.language import translation
+
+__author__ = 'Rico'
 
 
 class CardDeck:
