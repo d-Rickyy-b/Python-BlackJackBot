@@ -55,12 +55,8 @@ class BlackJack(object):
             add_game_played(player.user_id)
         self.players_first_turn()
 
-        # ---------------------------------- Auswertung -----------------------------------------#
-
     def evaluation(self):
         pass
-
-    # ---------------------------------- Get Player overview -----------------------------------------#
 
     def get_player_overview(self, show_points=False, text="", i=0, dealer=False):
         for user in self.players:
