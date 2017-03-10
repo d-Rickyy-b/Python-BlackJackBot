@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from database.statistics import add_game_played, set_game_won
+from database.statistics import add_game_played
 from game.player import Player
 
 __author__ = 'Rico'
@@ -30,7 +30,9 @@ class BlackJack(object):
         return None
 
     def next_player(self):
-        pass
+        self.current_player += 1
+        if self.current_player >= len(self.players):
+            self.evaluation()
 
     # gives player one card
     def give_player_one(self):
