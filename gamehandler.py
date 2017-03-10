@@ -26,6 +26,12 @@ class GameHandler(object):
     def add_game(self, blackjackgame):
         self.GameList.append(blackjackgame)
 
+    def get_game_by_chatid(self, chat_id):
+        index = self.get_index_by_chatid(chat_id)
+        return self.GameList[index]
+
+    def get_game_by_index(self, index):
+        return self.GameList[index]
 
     def __init__(self):
         self.GameList = []*0
