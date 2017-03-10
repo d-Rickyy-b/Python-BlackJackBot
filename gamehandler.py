@@ -7,11 +7,12 @@ class GameHandler(object):
 
     GameList = []*0         # List, where the running Games are stored in
 
-    def get_index_by_chatid(self, chat_id, i=0):
-        for x in self.GameList:
-            if x.chat_id == chat_id:
-                return i
-            i += 1
+    def get_index_by_chatid(self, chat_id):
+        index = 0
+        for game in self.GameList:
+            if game.chat_id == chat_id:
+                return index
+            index += 1
         return -1
 
     def gl_create(self):
@@ -24,12 +25,6 @@ class GameHandler(object):
     def add_game(self, blackjackgame):
         self.GameList.append(blackjackgame)
 
-    def get_index(self, chat_id, i=0):
-        for game in self.GameList:
-            if game.chat_id == chat_id:
-                return i
-            i += 1
-        return -1
 
     def __init__(self):
         self.GameList = []*0
