@@ -2,6 +2,7 @@
 
 from database.statistics import add_game_played, set_game_won
 from game.player import Player
+from game.dealer import Dealer
 from game.cardDeck import CardDeck
 
 __author__ = 'Rico'
@@ -80,6 +81,7 @@ class BlackJack(object):
     def __init__(self, chat_id, user_id, lang_id, game_type, first_name, gamehandler, message_id, bot):
         # declare variables and set initial values
         self.players = []
+        self.dealer = Dealer(self.translate("dealerName"), self.deck)
         self.game_running = False
         self.current_player = 0
         self.deck = CardDeck(lang_id)  # TODO language of the cards cannot be changed
