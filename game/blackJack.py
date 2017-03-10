@@ -2,6 +2,7 @@
 
 from database.statistics import add_game_played, set_game_won
 from game.player import Player
+from game.cardDeck import CardDeck
 
 __author__ = 'Rico'
 
@@ -81,6 +82,7 @@ class BlackJack(object):
         self.players = []
         self.game_running = False
         self.current_player = 0
+        self.deck = CardDeck(lang_id)  # TODO language of the cards cannot be changed
 
     # When game is being ended - single and multiplayer
     def __del__(self):
