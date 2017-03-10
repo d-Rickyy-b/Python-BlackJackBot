@@ -51,8 +51,8 @@ class BlackJack(object):
         self.game_running = True
 
         self.dealers_first_turn()
-        for p in self.players:
-            add_game_played(p.user_id)
+        for player in self.players:
+            add_game_played(player.user_id)
         self.players_first_turn()
 
         # ---------------------------------- Auswertung -----------------------------------------#
