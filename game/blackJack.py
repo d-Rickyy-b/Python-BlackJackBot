@@ -9,8 +9,6 @@ __author__ = 'Rico'
 class BlackJack(object):
     GROUP_CHAT = 1
     PRIVATE_CHAT = 0
-    game_running = False
-    current_player = 0
 
     # Adds Player to the Game
     def add_player(self, user_id, first_name, message_id, silent=None):
@@ -79,7 +77,10 @@ class BlackJack(object):
 
     # When game is being initialized
     def __init__(self, chat_id, user_id, lang_id, game_type, first_name, gamehandler, message_id, bot):
+        # declare variables and set initial values
         self.players = []
+        self.game_running = False
+        self.current_player = 0
 
     # When game is being ended - single and multiplayer
     def __del__(self):
