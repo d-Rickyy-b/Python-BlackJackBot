@@ -38,7 +38,10 @@ class BlackJack(object):
         return None
 
     def next_player(self):
-        pass
+        self.current_player += 1
+
+        if self.current_player >= len(self.players):
+            self.evaluation()
 
     # gives player one card
     def give_player_one(self):
@@ -55,7 +58,7 @@ class BlackJack(object):
         pass
 
     # Only in multiplayer
-    def start_game(self, message_id):
+    def start_game(self, message_id=None):
         self.game_running = True
 
         self.dealers_first_turn()
@@ -78,7 +81,7 @@ class BlackJack(object):
                 text += (user.first_name + "\n")
             i += 1
         if dealer is True:
-            text += ("🎩" + self.translate("dealerName") + " - [" + str(self.dealer.get_cardvalue()) + "]")
+            text += ("🎩" + translate("dealerName") + " - [" + str(self.dealer.get_cardvalue()) + "]")
         return text
 
     # Messages are analyzed here. Most function calls come from here
