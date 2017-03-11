@@ -8,7 +8,7 @@ from telegram.callbackquery import CallbackQuery
 import logging
 
 from gamehandler import GameHandler
-from lang.language import translation
+from lang.language import translate
 from database.db_wrapper import DBwrapper
 
 __author__ = 'Rico'
