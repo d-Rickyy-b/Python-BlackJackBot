@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from telegram.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.callbackquery import CallbackQuery
@@ -35,12 +35,26 @@ tg_bot = updater.bot
 
 
 def start(bot, update):
-    startbutton = InlineKeyboardButton(text="Start", callback_data="com_start")
-    stopbutton = InlineKeyboardButton(text="Stop", callback_data="com_stop")
-    langbutton = InlineKeyboardButton(text="Language", callback_data="com_ch_lang")
+    # startbutton = InlineKeyboardButton(text="Start", callback_data="com_start")
+    # stopbutton = InlineKeyboardButton(text="Stop", callback_data="com_stop")
+    # langbutton = InlineKeyboardButton(text="Language", callback_data="com_ch_lang")
+    # reply_keyboard = InlineKeyboardMarkup([[startbutton, stopbutton], [langbutton]])
+    # bot.sendMessage(chat_id=update.message.chat_id, text="Was möchtest du tun?", reply_markup=reply_keyboard)
 
-    reply_keyboard = InlineKeyboardMarkup([[startbutton, stopbutton], [langbutton]])
-    bot.sendMessage(chat_id=update.message.chat_id, text="Was möchtest du tun?", reply_markup=reply_keyboard)
+    chat_id = update.message.chat_id
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+    first_name = update.message.from_user.first_name
+    # check if user already has got a game (in the same chat):
+    game_index = game_handler.get_index_by_chatid(chat_id)
+    if game_index == -1:
+        logging.debug("Creating a game")
+        bj = BlackJack(chat_id, user_id, "en", first_name, game_handler, message_id, send_message)
+        game_handler.add_game(bj)
+    else:
+        logging.debug("Game already existing")
+        game = game_handler.get_game_by_index(game_index)
+        # exec. start command inside the game
 
 
 def stop(bot, update):
@@ -74,7 +88,8 @@ def language(bot, update):
 
 
 def comment(bot, update):
-    bot.sendMessage(chat_id=update.message.chat_id, text=get_user_stats(update.message.from_user.id))
+    pass
+
 
 def mentions(bot, update):
     # TODO mention users which helped (translations, etc.)
@@ -120,15 +135,22 @@ def callback_eval(bot, update):
 def send_message(chat_id, text):
     tg_bot.sendMessage(chat_id=chat_id, text=text)
 
+def testing(bot, update):
+    # TODO Catches all the rest
+    print(update)
+    pass
+
 start_handler = CommandHandler('start', start)
 stats_handler = CommandHandler('stats', stats)
 language_handler = CommandHandler('language', language)
 callback_handler = CallbackQueryHandler(callback_eval)
+handler = MessageHandler(Filters.all, testing)
 
 dispatcher.add_handler(callback_handler)
 dispatcher.add_handler(language_handler)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(stats_handler)
+dispatcher.add_handler(handler)
 
 
 updater.start_polling()
