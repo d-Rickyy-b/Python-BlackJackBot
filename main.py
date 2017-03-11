@@ -64,8 +64,11 @@ def language(bot, update):
     lang_fa_button = InlineKeyboardButton(text="فارسی \U0001F1EE\U0001F1F7", callback_data="ch_lang_fa")
 
     lang_keyboard = InlineKeyboardMarkup([[lang_de_button, lang_en_button], [lang_br_button, lang_ru_button, lang_nl_button], [lang_es_button, lang_eo_button, lang_fa_button]])
-    bot.editMessageText(chat_id=update.callback_query.message.chat_id, text="Wähle deine Sprache", reply_markup=lang_keyboard, message_id=update.callback_query.message.message_id)
-    pass
+    db = DBwrapper.get_instance()
+    if update.callback_query:
+        bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langSelect", db.get_lang_id(update.callback_query.message.from_user.id)), reply_markup=lang_keyboard, message_id=update.callback_query.message.message_id)
+    else:
+        bot.sendMessage(chat_id=update.message.chat_id, text=translate("langSelect", db.get_lang_id(update.message.from_user.id)), reply_markup=lang_keyboard, message_id=update.message.message_id)
 
 
 def comment(bot, update):
