@@ -29,7 +29,7 @@ updater = Updater(token=BOT_TOKEN)
 dispatcher = updater.dispatcher
 
 game_handler = GameHandler()
-game_list = game_handler.GameList
+tg_bot = updater.bot
 
 
 def start(bot, update):
@@ -110,6 +110,10 @@ def callback_eval(bot, update):
         language(bot, update)
 
     print(query_data)
+
+
+def send_message(chat_id, text):
+    tg_bot.sendMessage(chat_id=chat_id, text=text)
 
 start_handler = CommandHandler('start', start)
 stats_handler = CommandHandler('stats', stats)
