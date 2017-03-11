@@ -87,7 +87,7 @@ class BlackJack(object):
                 text += (user.first_name + "\n")
             i += 1
         if dealer is True:
-            text += ("🎩" + translate("dealerName") + " - [" + str(self.dealer.get_cardvalue()) + "]")
+            text += ("🎩" + translate("dealerName", self.lang_id) + " - [" + str(self.dealer.get_cardvalue()) + "]")
         return text
 
     # Messages are analyzed here. Most function calls come from here
