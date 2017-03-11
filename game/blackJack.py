@@ -3,25 +3,39 @@
 from database.statistics import add_game_played
 from game.cardDeck import CardDeck
 from game.player import Player
+from game.dealer import Dealer
+from game.cardDeck import CardDeck
+from lang.language import translate
+import logging
 
-__author__ = 'Rico'
+__author__ = 'Rico & Julian'
 
 
 class BlackJack(object):
     GROUP_CHAT = 1
     PRIVATE_CHAT = 0
-    game_running = False
-    current_player = 0
 
     # Adds Player to the Game
     def add_player(self, user_id, first_name, message_id, silent=None):
-        player = Player(user_id, first_name, self.deck)
-        self.players.append(player)
+        if not self.game_running:
+            if self.get_index_by_user_id(user_id) == -1:
+                self.logger.debug("User '" + first_name + "' already in player list.")
+            else:
+                self.logger.debug("Adding user '" + first_name + "' to players.")
+                player = Player(user_id, first_name, self.deck)
+                self.players.append(player)
 
-        # send a message with: self.translate("playerJoined").format(first_name)
+                if silent is None:
+                    self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name))
 
     def get_index_by_user_id(self, user_id):
-        pass
+        index = 0
+        for user in self.players:
+            if user.get_userid() == user_id:
+                return index
+            index += 1
+
+        return -1
 
     def get_user_by_user_id(self, user_id):
         for user in self.players:
@@ -31,6 +45,7 @@ class BlackJack(object):
 
     def next_player(self):
         self.current_player += 1
+
         if self.current_player >= len(self.players):
             self.evaluation()
 
@@ -65,20 +80,16 @@ class BlackJack(object):
         pass
 
     # Only in multiplayer
-    def start_game(self, message_id):
+    def start_game(self, message_id=None):
         self.game_running = True
 
         self.dealers_first_turn()
-        for p in self.players:
-            add_game_played(p.user_id)
+        for player in self.players:
+            add_game_played(player.user_id)
         self.players_first_turn()
-
-        # ---------------------------------- Auswertung -----------------------------------------#
 
     def evaluation(self):
         pass
-
-    # ---------------------------------- Get Player overview -----------------------------------------#
 
     def get_player_overview(self, show_points=False, text="", i=0, dealer=False):
         for user in self.players:
@@ -92,16 +103,54 @@ class BlackJack(object):
                 text += (user.first_name + "\n")
             i += 1
         if dealer is True:
-            text += ("🎩" + self.translate("dealerName") + " - [" + str(self.dealer.get_cardvalue()) + "]")
+            text += ("🎩" + translate("dealerName", self.lang_id) + " - [" + str(self.dealer.get_cardvalue()) + "]")
         return text
 
     # Messages are analyzed here. Most function calls come from here
-    def analyze_message(self, command, user_id, first_name, message_id):
-        pass
+    def analyze_message(self, update):
+        text = update.message.text
+        user_id = update.message.from_user.id
+        first_name = update.message.from_user.first_name
+        message_id = update.message.message_id
+
+        # Remove leading slash from command
+        if text.startswith("/"):
+            command = str(text[1:])
+        else:
+            command = text
+
+        if self.game_type == self.GROUP_CHAT and command == translate("join", self.lang_id):
+
+            self.add_player(user_id, first_name, message_id)
+        elif command.startswith(translate("oneMore", self.lang_id)):
+            pass
+        elif command.startswith(translate("noMore", self.lang_id)):
+            pass
+        elif command == translate("stopCmd", self.lang_id):
+            pass
+
 
     # When game is being initialized
-    def __init__(self, chat_id, user_id, lang_id, game_type, first_name, gamehandler, message_id, bot):
+    def __init__(self, chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message):
+        # declare variables and set initial values
         self.players = []
+        self.chat_id = chat_id
+        self.lang_id = lang_id
+        self.deck = CardDeck(lang_id)  # TODO language of the cards & dealer cannot be changed
+        self.dealer = Dealer(translate("dealerName", lang_id), self.deck)
+        self.game_running = False
+        self.current_player = 0
+        self.game_handler = game_handler
+        self.send_message = send_message
+        self.logger = logging.getLogger(__name__)
+
+        if chat_id >= 0:
+            self.game_type = self.PRIVATE_CHAT
+        else:
+            self.game_type = self.GROUP_CHAT
+
+        self.add_player(user_id, first_name, message_id, silent=True)
+        send_message(chat_id, translate("newRound", lang_id), message_id=message_id)  # keyboard=self.keyboard_not_running
 
     # When game is being ended - single and multiplayer
     def __del__(self):
