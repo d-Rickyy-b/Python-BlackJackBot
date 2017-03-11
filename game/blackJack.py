@@ -18,9 +18,9 @@ class BlackJack(object):
     def add_player(self, user_id, first_name, message_id, silent=None):
         if not self.game_running:
             if self.get_index_by_user_id(user_id) == -1:
-                logging.debug("User '" + first_name + "' already in player list.")
+                self.logger.debug("User '" + first_name + "' already in player list.")
             else:
-                logging.debug("Adding user '" + first_name + "' to players.")
+                self.logger.debug("Adding user '" + first_name + "' to players.")
                 player = Player(user_id, first_name, self.deck)
                 self.players.append(player)
 
@@ -106,6 +106,7 @@ class BlackJack(object):
         self.current_player = 0
         self.game_handler = game_handler
         self.send_message = send_message
+        self.logger = logging.getLogger(__name__)
 
         if chat_id >= 0:
             self.game_type = self.PRIVATE_CHAT
