@@ -90,6 +90,7 @@ class BlackJack(object):
         # declare variables and set initial values
         self.players = []
         self.chat_id = chat_id
+        self.lang_id = lang_id
         self.deck = CardDeck(lang_id)  # TODO language of the cards & dealer cannot be changed
         self.dealer = Dealer(translate("dealerName", lang_id), self.deck)
         self.game_running = False
