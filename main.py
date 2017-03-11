@@ -72,7 +72,7 @@ def language(bot, update):
 
 
 def comment(bot, update):
-    pass
+    bot.sendMessage(chat_id=update.message.chat_id, text=get_user_stats(update.message.from_user.id))
 
 
 def change_language(bot, update, lang_id):
@@ -112,6 +112,7 @@ def callback_eval(bot, update):
     print(query_data)
 
 start_handler = CommandHandler('start', start)
+stats_handler = CommandHandler('stats', stats)
 language_handler = CommandHandler('language', language)
 callback_handler = CallbackQueryHandler(callback_eval)
 
