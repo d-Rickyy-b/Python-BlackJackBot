@@ -42,16 +42,15 @@ class BlackJack(object):
             user.has_ace = False
             user.cardvalue -= 10
 
-        if Player.get_cardvalue >= 21:
+        if user.get_cardvalue >= 21:
             self.send_message("You are not able to pick another card.")
         else:
             card = CardDeck.pick_one_card()
-            cardvalue = CardDeck.get_card_value(card)
-            Player.give_card(card, cardvalue)
-
-            if self.GROUP_CHAT == 1:
+            cardvalue = self.deck.get_card_value(card)
+            user.give_card(card, cardvalue)
+            if self.game_type == self.GROUP_CHAT:
                 self.send_message(
-                    self.first_name + " got a " + CardDeck.get_card_name(card) + ". that's " + str(cardvalue))
+                    user.get_first_name + " got a " + CardDeck.get_card_name(card) + ". that's " + str(cardvalue))
             else:
                 self.send_message("You got a " + CardDeck.get_card_name(card) + ". that's " + str(cardvalue))
 
