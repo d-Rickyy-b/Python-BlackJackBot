@@ -4,6 +4,7 @@ from database.statistics import add_game_played, set_game_won
 from game.player import Player
 from game.dealer import Dealer
 from game.cardDeck import CardDeck
+from lang.language import translate
 
 __author__ = 'Rico'
 
@@ -78,13 +79,23 @@ class BlackJack(object):
         pass
 
     # When game is being initialized
-    def __init__(self, chat_id, user_id, lang_id, game_type, first_name, gamehandler, message_id, bot):
+    def __init__(self, chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message):
         # declare variables and set initial values
         self.players = []
-        self.dealer = Dealer(self.translate("dealerName"), self.deck)
+        self.chat_id = chat_id
+        self.deck = CardDeck(lang_id)  # TODO language of the cards & dealer cannot be changed
+        self.dealer = Dealer(translate("dealerName", lang_id), self.deck)
         self.game_running = False
         self.current_player = 0
-        self.deck = CardDeck(lang_id)  # TODO language of the cards cannot be changed
+        self.game_handler = game_handler
+        self.send_message = send_message
+
+        if chat_id >= 0:
+            self.game_type = self.PRIVATE_CHAT
+        else:
+            self.game_type = self.GROUP_CHAT
+
+        self.add_player(user_id, first_name, message_id)
 
     # When game is being ended - single and multiplayer
     def __del__(self):
