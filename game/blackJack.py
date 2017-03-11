@@ -18,10 +18,17 @@ class BlackJack(object):
         player = Player(user_id, first_name, self.deck)
         self.players.append(player)
 
-        # send a message with: self.translate("playerJoined").format(first_name)
+        if silent is None:
+            self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name))
 
     def get_index_by_user_id(self, user_id):
-        pass
+        index = 0
+        for user in self.players:
+            if user.get_userid() == user_id:
+                return index
+            index += 1
+
+        return -1
 
     def get_user_by_user_id(self, user_id):
         for user in self.players:
