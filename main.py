@@ -10,6 +10,8 @@ import logging
 from gamehandler import GameHandler
 from lang.language import translate
 from database.db_wrapper import DBwrapper
+from database.statistics import get_user_stats
+from game.blackJack import BlackJack
 
 __author__ = 'Rico'
 
@@ -50,7 +52,7 @@ def help(bot, update):
 
 
 def stats(bot, update):
-    pass
+    bot.sendMessage(chat_id=update.message.chat_id, text=get_user_stats(update.message.from_user.id))
 
 
 def language(bot, update):
@@ -74,9 +76,12 @@ def language(bot, update):
 def comment(bot, update):
     bot.sendMessage(chat_id=update.message.chat_id, text=get_user_stats(update.message.from_user.id))
 
+def mentions(bot, update):
+    # TODO mention users which helped (translations, etc.)
+    pass
+
 
 def change_language(bot, update, lang_id):
-    # TODO inline answer, no new message
     bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id), message_id=update.callback_query.message.message_id, reply_markup=None)
     db = DBwrapper.get_instance()
     db.insert("languageID", lang_id, update.callback_query.message.from_user.id)
@@ -123,6 +128,7 @@ callback_handler = CallbackQueryHandler(callback_eval)
 dispatcher.add_handler(callback_handler)
 dispatcher.add_handler(language_handler)
 dispatcher.add_handler(start_handler)
+dispatcher.add_handler(stats_handler)
 
 
 updater.start_polling()
