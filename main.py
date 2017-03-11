@@ -54,6 +54,7 @@ def start(bot, update):
     else:
         logging.debug("Game already existing")
         game = game_handler.get_game_by_index(game_index)
+        game.start_game()
         # exec. start command inside the game
 
 
@@ -132,8 +133,8 @@ def callback_eval(bot, update):
     print(query_data)
 
 
-def send_message(chat_id, text):
-    tg_bot.sendMessage(chat_id=chat_id, text=text)
+def send_message(chat_id, text, message_id=None):
+    tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id)
 
 def testing(bot, update):
     # TODO Catches all the rest
