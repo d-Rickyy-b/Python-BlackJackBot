@@ -5,6 +5,7 @@ from game.player import Player
 from game.dealer import Dealer
 from game.cardDeck import CardDeck
 from lang.language import translate
+import logging
 
 __author__ = 'Rico'
 
@@ -15,11 +16,16 @@ class BlackJack(object):
 
     # Adds Player to the Game
     def add_player(self, user_id, first_name, message_id, silent=None):
-        player = Player(user_id, first_name, self.deck)
-        self.players.append(player)
+        if not self.game_running:
+            if self.get_index_by_user_id(user_id) == -1:
+                logging.debug("User '" + first_name + "' already in player list.")
+            else:
+                logging.debug("Adding user '" + first_name + "' to players.")
+                player = Player(user_id, first_name, self.deck)
+                self.players.append(player)
 
-        if silent is None:
-            self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name))
+                if silent is None:
+                    self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name))
 
     def get_index_by_user_id(self, user_id):
         index = 0
@@ -106,7 +112,8 @@ class BlackJack(object):
         else:
             self.game_type = self.GROUP_CHAT
 
-        self.add_player(user_id, first_name, message_id)
+        self.add_player(user_id, first_name, message_id, silent=True)
+        send_message(chat_id, translate("newRound", lang_id), message_id=message_id)  # keyboard=self.keyboard_not_running
 
     # When game is being ended - single and multiplayer
     def __del__(self):
