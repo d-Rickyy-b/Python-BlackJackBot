@@ -17,9 +17,12 @@ __author__ = 'Rico'
 
 BOT_TOKEN = "<your_bot_token>"
 
+logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 updater = Updater(token=BOT_TOKEN)
 dispatcher = updater.dispatcher
+
+logger.debug("Das ist ein test")
 
 game_handler = GameHandler()
 tg_bot = updater.bot
@@ -39,15 +42,14 @@ def start(bot, update):
     # check if user already has got a game (in the same chat):
     game_index = game_handler.get_index_by_chatid(chat_id)
     if game_index == -1:
-        logging.debug("Creating a game")
+        logger.debug("Creating a game")
         # TODO get lang_id from database
         bj = BlackJack(chat_id, user_id, "en", first_name, game_handler, message_id, send_message)
         game_handler.add_game(bj)
     else:
-        logging.debug("Game already existing")
+        logger.debug("Game already existing")
         game = game_handler.get_game_by_index(game_index)
         game.start_game()
-        # exec. start command inside the game
 
 
 def stop(bot, update):
@@ -130,22 +132,29 @@ def callback_eval(bot, update):
 def send_message(chat_id, text, message_id=None):
     tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id)
 
-def testing(bot, update):
-    # TODO Catches all the rest
-    print(update)
-    pass
+
+def game_commands(bot, update):
+    text = update.message.text
+    chat_id = update.message.chat_id
+
+    # check if user already has got a game (in the same chat):
+    game_index = game_handler.get_index_by_chatid(chat_id)
+    if game_index != -1:
+        logger.debug("Game already existing. Forwarding text '" + text + "' to game")
+        game = game_handler.get_game_by_index(game_index)
+        game.analyze_message(update)
+
 
 start_handler = CommandHandler('start', start)
 stats_handler = CommandHandler('stats', stats)
 language_handler = CommandHandler('language', language)
 callback_handler = CallbackQueryHandler(callback_eval)
-handler = MessageHandler(Filters.all, testing)
+game_command_handler = MessageHandler(Filters.all, game_commands)
 
 dispatcher.add_handler(callback_handler)
 dispatcher.add_handler(language_handler)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(stats_handler)
-dispatcher.add_handler(handler)
-
+dispatcher.add_handler(game_command_handler)
 
 updater.start_polling()
