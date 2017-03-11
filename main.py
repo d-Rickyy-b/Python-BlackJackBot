@@ -15,15 +15,6 @@ from game.blackJack import BlackJack
 
 __author__ = 'Rico'
 
-CHANGE_LANG_DE = "ch_lang_de"
-CHANGE_LANG_EN = "ch_lang_en"
-CHANGE_LANG_NL = "ch_lang_nl"
-CHANGE_LANG_EO = "ch_lang_eo"
-CHANGE_LANG_BR = "ch_lang_br"
-CHANGE_LANG_ES = "ch_lang_es"
-CHANGE_LANG_RU = "ch_lang_ru"
-CHANGE_LANG_FA = "ch_lang_fa"
-
 BOT_TOKEN = "<your_bot_token>"
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
@@ -49,6 +40,7 @@ def start(bot, update):
     game_index = game_handler.get_index_by_chatid(chat_id)
     if game_index == -1:
         logging.debug("Creating a game")
+        # TODO get lang_id from database
         bj = BlackJack(chat_id, user_id, "en", first_name, game_handler, message_id, send_message)
         game_handler.add_game(bj)
     else:
@@ -108,22 +100,24 @@ def callback_eval(bot, update):
 
     # For changing the language:
     if query_data.startswith("ch_lang"):
-        if query_data == CHANGE_LANG_DE:
+        if query_data == "ch_lang_de":
             lang_id = "de"
-        elif query_data == CHANGE_LANG_EN:
+        elif query_data == "ch_lang_en":
             lang_id = "en"
-        elif query_data == CHANGE_LANG_NL:
+        elif query_data == "ch_lang_nl":
             lang_id = "nl"
-        elif query_data == CHANGE_LANG_EO:
+        elif query_data == "ch_lang_eo":
             lang_id = "eo"
-        elif query_data == CHANGE_LANG_BR:
+        elif query_data == "ch_lang_br":
             lang_id = "br"
-        elif query_data == CHANGE_LANG_ES:
+        elif query_data == "ch_lang_es":
             lang_id = "es"
-        elif query_data == CHANGE_LANG_RU:
+        elif query_data == "ch_lang_ru":
             lang_id = "ru"
-        elif query_data == CHANGE_LANG_FA:
+        elif query_data == "ch_lang_fa":
             lang_id = "fa"
+        else:
+            lang_id = "en"
 
         change_language(bot=bot, update=update, lang_id=lang_id)
 
