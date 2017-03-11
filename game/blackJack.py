@@ -7,7 +7,7 @@ from game.cardDeck import CardDeck
 from lang.language import translate
 import logging
 
-__author__ = 'Rico'
+__author__ = 'Rico & Julian'
 
 
 class BlackJack(object):
@@ -91,8 +91,28 @@ class BlackJack(object):
         return text
 
     # Messages are analyzed here. Most function calls come from here
-    def analyze_message(self, command, user_id, first_name, message_id):
-        pass
+    def analyze_message(self, update):
+        text = update.message.text
+        user_id = update.message.from_user.id
+        first_name = update.message.from_user.first_name
+        message_id = update.message.message_id
+
+        # Remove leading slash from command
+        if text.startswith("/"):
+            command = str(text[1:])
+        else:
+            command = text
+
+        if self.game_type == self.GROUP_CHAT and command == translate("join", self.lang_id):
+
+            self.add_player(user_id, first_name, message_id)
+        elif command.startswith(translate("oneMore", self.lang_id)):
+            pass
+        elif command.startswith(translate("noMore", self.lang_id)):
+            pass
+        elif command == translate("stopCmd", self.lang_id):
+            pass
+
 
     # When game is being initialized
     def __init__(self, chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message):
