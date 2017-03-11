@@ -18,14 +18,15 @@ class BlackJack(object):
     def add_player(self, user_id, first_name, message_id, silent=None):
         if not self.game_running:
             if self.get_index_by_user_id(user_id) == -1:
-                self.logger.debug("User '" + first_name + "' already in player list.")
-            else:
                 self.logger.debug("Adding user '" + first_name + "' to players.")
                 player = Player(user_id, first_name, self.deck)
                 self.players.append(player)
 
                 if silent is None:
                     self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name))
+            else:
+                self.logger.debug("User '" + first_name + "' already in player list.")
+
 
     def get_index_by_user_id(self, user_id):
         index = 0
@@ -103,8 +104,8 @@ class BlackJack(object):
         else:
             command = text
 
-        if self.game_type == self.GROUP_CHAT and command == translate("join", self.lang_id):
-
+        if self.game_type == self.GROUP_CHAT and command.startswith(translate("join", self.lang_id)):
+            self.logger.debug("User joining game: " + first_name)
             self.add_player(user_id, first_name, message_id)
         elif command.startswith(translate("oneMore", self.lang_id)):
             pass
