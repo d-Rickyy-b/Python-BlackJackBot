@@ -76,12 +76,10 @@ def comment(bot, update):
 
 
 def change_language(bot, update, lang_id):
-    # TODO pass lang_id and translate string
     # TODO inline answer, no new message
-    # bot.sendMessage(chat_id=update.callback_query.message.chat_id, text=translation("langChanged", lang_id))
-    bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translation("langChanged", lang_id), message_id=update.callback_query.message.message_id, reply_markup=None)
-    # sql insert
-    # sql_insert("languageID", lang_id, user_id)  # TODO language setting for whole groups (low prio)
+    bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id), message_id=update.callback_query.message.message_id, reply_markup=None)
+    db = DBwrapper.get_instance()
+    db.insert("languageID", lang_id, update.callback_query.message.from_user.id)
 
 
 def callback_eval(bot, update):
