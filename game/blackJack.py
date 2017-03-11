@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from database.statistics import add_game_played
+from game.cardDeck import CardDeck
 from game.player import Player
 
 __author__ = 'Rico'
@@ -26,7 +27,6 @@ class BlackJack(object):
         for user in self.players:
             if user.get_userid() == user_id:
                 return user
-
         return None
 
     def next_player(self):
@@ -36,7 +36,24 @@ class BlackJack(object):
 
     # gives player one card
     def give_player_one(self):
-        pass
+        player_index = self.current_player
+        user = self.players[player_index]
+        if user.get_cardvalue > 21 and user.has_ace:
+            user.has_ace = False
+            user.cardvalue -= 10
+
+        if Player.get_cardvalue >= 21:
+            self.send_message("You are not able to pick another card.")
+        else:
+            card = CardDeck.pick_one_card()
+            cardvalue = CardDeck.get_card_value(card)
+            Player.give_card(card, cardvalue)
+
+            if self.GROUP_CHAT == 1:
+                self.send_message(
+                    self.first_name + " got a " + CardDeck.get_card_name(card) + ". that's " + str(cardvalue))
+            else:
+                self.send_message("You got a " + CardDeck.get_card_name(card) + ". that's " + str(cardvalue))
 
     def players_first_turn(self):
         pass
