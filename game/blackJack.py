@@ -23,7 +23,7 @@ class BlackJack(object):
                 self.players.append(player)
 
                 if silent is None:
-                    self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name))
+                    self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id)
             else:
                 self.logger.debug("User '" + first_name + "' already in player list.")
 
