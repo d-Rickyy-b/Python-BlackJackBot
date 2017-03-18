@@ -25,6 +25,9 @@ class Player(object):
                 cards_string += ", "
         return cards_string
 
+    def get_number_of_cards(self):
+        return self.number_of_cards
+
     def get_first_name(self):
         return self.first_name
 
