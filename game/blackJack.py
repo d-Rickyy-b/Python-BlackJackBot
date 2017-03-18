@@ -45,12 +45,13 @@ class BlackJack(object):
                 return user
 
         return None
-            self.give_player_one()
+
     def next_player(self):
         if (self.current_player + 1) < len(self.players):
             #TODO send message next player
             self.logger.debug("Next Player!")
             self.current_player += 1
+            self.give_player_one()
         else:
             self.logger.debug("Dealer's turn")
             self.current_player = -1
