@@ -249,7 +249,6 @@ class BlackJack(object):
             self.start_game()
             # start game and send message to private chat
 
-
     # When game is being ended - single and multiplayer
     def __del__(self):
         # TODO Hide Keyboard
