@@ -141,6 +141,13 @@ class BlackJack(object):
         self.keyboard_running = ReplyKeyboardMarkup([[one_more_button, no_more_button], [stop_button]])
         self.add_player(user_id, first_name, message_id, silent=True)
         send_message(chat_id, translate("newRound", lang_id), message_id=message_id)  # keyboard=self.keyboard_not_running
+        # Only send a "Please join the game" message, when it's a group chat
+        if self.game_type == self.GROUP_CHAT:
+            send_message(chat_id, translate("newRound", lang_id), message_id=message_id)  # keyboard=self.keyboard_not_running
+        else:
+            self.start_game()
+            # start game and send message to private chat
+
 
     # When game is being ended - single and multiplayer
     def __del__(self):
