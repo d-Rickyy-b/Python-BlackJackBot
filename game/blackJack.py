@@ -49,7 +49,7 @@ class BlackJack(object):
 
     def next_player(self):
         if (self.current_player + 1) < len(self.players):
-            #TODO send message next player
+            # TODO send message next player
             self.logger.debug("Next Player!")
             self.current_player += 1
             self.give_player_one()
@@ -152,6 +152,7 @@ class BlackJack(object):
             self.give_player_one()
 
     def evaluation(self):
+        # TODO Evaluation
         pass
 
     def get_player_overview(self, show_points=False, text="", i=0, dealer=False):
