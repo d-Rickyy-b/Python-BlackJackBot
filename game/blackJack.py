@@ -134,6 +134,11 @@ class BlackJack(object):
         else:
             self.game_type = self.GROUP_CHAT
 
+        one_more_button = KeyboardButton(translate("keyboardItemOneMore", self.lang_id))
+        no_more_button = KeyboardButton(translate("keyboardItemNoMore", self.lang_id))
+        stop_button = KeyboardButton(translate("keyboardItemStop", self.lang_id))
+
+        self.keyboard_running = ReplyKeyboardMarkup([[one_more_button, no_more_button], [stop_button]])
         self.add_player(user_id, first_name, message_id, silent=True)
         send_message(chat_id, translate("newRound", lang_id), message_id=message_id)  # keyboard=self.keyboard_not_running
 
