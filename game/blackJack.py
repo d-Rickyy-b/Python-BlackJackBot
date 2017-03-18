@@ -116,6 +116,7 @@ class BlackJack(object):
             if self.game_type == self.PRIVATE_CHAT:
                 text += translate("gameBegins", self.lang_id) + "\n"
 
+            # TODO this displays only the second card, but not the first
             text += "\n*" + translate("dealersCards", self.lang_id) + "*\n\n" + self.deck.get_card_name(card) + ", | -- |"
             self.send_message(self.chat_id, text, parse_mode="Markdown", reply_markup=self.keyboard_running)
         else:
@@ -251,5 +252,5 @@ class BlackJack(object):
 
     # When game is being ended - single and multiplayer
     def __del__(self):
-        # TODO things to do, when game is ended
+        # TODO Hide Keyboard
         pass
