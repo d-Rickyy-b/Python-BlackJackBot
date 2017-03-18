@@ -107,20 +107,33 @@ class BlackJack(object):
 
         # Remove leading slash from command
         if text.startswith("/"):
-            command = str(text[1:])
+            command = str(text[1:]).lower()
         else:
-            command = text
+            command = text.lower()
 
-        if self.game_type == self.GROUP_CHAT and command.startswith(translate("join", self.lang_id)):
-            self.logger.debug("User joining game: " + first_name)
-            self.add_player(user_id, first_name, message_id)
-        elif command.startswith(translate("oneMore", self.lang_id)):
-            pass
-        elif command.startswith(translate("noMore", self.lang_id)):
-            pass
-        elif command == translate("stopCmd", self.lang_id):
-            pass
+        if self.game_type == self.GROUP_CHAT:
+            if command.startswith(translate("join", self.lang_id)):
+                self.add_player(user_id, first_name, message_id)
+            elif command.startswith(translate("startCmd", self.lang_id)):
+                # TODO start game
+                pass
+        if self.game_running:
+            if command.startswith(translate("oneMore", self.lang_id)):
+                current_player = self.players[self.current_player]
+                if self.current_player >= 0 and user_id == current_player.user_id:
+                    self.give_player_one()
+                else:
+                    # TODO send "not your turn"
+                    pass
 
+            elif command.startswith(translate("noMore", self.lang_id)):
+                current_player = self.players[self.current_player]
+                if self.current_player >= 0 and user_id == current_player.user_id:
+                    self.logger.debug("User doesn't want another card")
+                    self.next_player()
+            elif command.startswith(translate("stopCmd", self.lang_id)):
+                # TODO end game
+                pass
 
     # When game is being initialized
     def __init__(self, chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message):
