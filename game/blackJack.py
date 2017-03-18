@@ -209,7 +209,9 @@ class BlackJack(object):
                     self.logger.debug("User doesn't want another card")
                     self.next_player()
             elif command.startswith(translate("stopCmd", self.lang_id)):
-                # TODO end game
+                if user_id == self.players[0].user_id:
+                    self.game_handler.gl_remove(self.chat_id)
+                    # TODO Send message after removing game
                 pass
 
     # When game is being initialized
