@@ -5,6 +5,8 @@ from game.player import Player
 from game.dealer import Dealer
 from game.cardDeck import CardDeck
 from lang.language import translate
+from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
+from telegram.keyboardbutton import KeyboardButton
 import logging
 
 __author__ = 'Rico & Julian'
