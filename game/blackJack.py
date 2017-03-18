@@ -187,8 +187,12 @@ class BlackJack(object):
             if command.startswith(translate("join", self.lang_id)):
                 self.add_player(user_id, first_name, message_id)
             elif command.startswith(translate("startCmd", self.lang_id)):
-                # TODO start game
-                pass
+                # Check if there are at least 2 players joined
+                if len(self.players) >= 2:
+                    self.start_game()
+                else:
+                    # TODO send "not enough players"
+                    pass
         if self.game_running:
             if command.startswith(translate("oneMore", self.lang_id)):
                 current_player = self.players[self.current_player]
