@@ -129,8 +129,8 @@ def callback_eval(bot, update):
     print(query_data)
 
 
-def send_message(chat_id, text, message_id=None):
-    tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id)
+def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None):
+    tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode, reply_markup=reply_markup)
 
 
 def game_commands(bot, update):
