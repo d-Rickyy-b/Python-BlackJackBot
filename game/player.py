@@ -7,6 +7,8 @@ class Player(object):
         self.cards.append(card)
         self.cardvalue += value
         self.number_of_cards += 1
+        if value == 11:
+            self.has_ace = True
 
     def give_ace(self):
         self.has_ace = True
