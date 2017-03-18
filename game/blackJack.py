@@ -45,7 +45,7 @@ class BlackJack(object):
                 return user
 
         return None
-
+            self.give_player_one()
     def next_player(self):
         if (self.current_player + 1) < len(self.players):
             #TODO send message next player
@@ -226,7 +226,9 @@ class BlackJack(object):
         stop_button = KeyboardButton(translate("keyboardItemStop", self.lang_id))
 
         self.keyboard_running = ReplyKeyboardMarkup([[one_more_button, no_more_button], [stop_button]])
+
         self.add_player(user_id, first_name, message_id, silent=True)
+
         # Only send a "Please join the game" message, when it's a group chat
         if self.game_type == self.GROUP_CHAT:
             send_message(chat_id, translate("newRound", lang_id), message_id=message_id)  # keyboard=self.keyboard_not_running
@@ -237,4 +239,5 @@ class BlackJack(object):
 
     # When game is being ended - single and multiplayer
     def __del__(self):
+        # TODO things to do, when game is ended
         pass
