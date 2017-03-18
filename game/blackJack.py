@@ -145,8 +145,13 @@ class BlackJack(object):
             for player in self.players:
                 add_game_played(player.user_id)
 
+            if self.game_type == self.GROUP_CHAT:
+                self.send_message(self.chat_id, translate("gameBegins", self.lang_id) + "\n" + translate("gameBegins2", self.lang_id) + "\n\n" + self.get_player_overview())
+            else:
+                # Anything here
+                pass
+
             self.dealers_turn()
-            # TODO Player overview
             self.give_player_one()
 
     def evaluation(self):
