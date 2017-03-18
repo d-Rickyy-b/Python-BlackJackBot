@@ -105,11 +105,38 @@ class BlackJack(object):
                 self.send_message(self.chat_id, text=player_drew, reply_markup=self.keyboard_running)
 
     # Gives the dealer cards
-    def dealers_turn(self, i=0):
-        pass
+    def dealers_turn(self):
+        if self.dealer.get_number_of_cards() < 2:
+            for i in range(2):
+                card = self.deck.pick_one_card()
+                cardvalue = self.deck.get_card_value(card)
+                self.dealer.give_card(card, cardvalue)
 
-    def dealers_first_turn(self):
-        pass
+            text = ""
+            if self.game_type == self.PRIVATE_CHAT:
+                text += translate("gameBegins", self.lang_id) + "\n"
+
+            text += "\n*" + translate("dealersCards", self.lang_id) + "*\n\n" + self.deck.get_card_name(card) + ", | -- |"
+            self.send_message(self.chat_id, text, parse_mode="Markdown", reply_markup=self.keyboard_running)
+        else:
+            output_text = translate("croupierDrew", self.lang_id) + "\n\n"
+
+            while self.dealer.get_cardvalue() <= 16:
+                card = self.deck.pick_one_card()
+                cardvalue = self.deck.get_card_value(card)
+                self.dealer.give_card(card, cardvalue)
+
+            i = 0
+            for card in self.dealer.cards:
+                if i == 0:
+                    output_text += self.deck.get_card_name(card)
+                else:
+                    output_text += " , " + self.deck.get_card_name(card)
+                i += 1
+
+            output_text += "\n\n" + translate("cardvalueDealer", self.lang_id) + " " + str(self.dealer.get_cardvalue())
+            self.send_message(self.chat_id, output_text, parse_mode="Markdown", reply_markup=self.keyboard_running)
+            # TODO end game / evaluation
 
     # Only in multiplayer
     def start_game(self, message_id=None):
