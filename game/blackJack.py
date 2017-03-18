@@ -30,7 +30,6 @@ class BlackJack(object):
             else:
                 self.logger.debug("User '" + first_name + "' already in player list.")
 
-
     def get_index_by_user_id(self, user_id):
         index = 0
         for user in self.players:
@@ -57,7 +56,6 @@ class BlackJack(object):
             self.logger.debug("Dealer's turn")
             self.current_player = -1
             self.dealers_turn()
-
 
     # gives player one card
     def give_player_one(self):
