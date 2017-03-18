@@ -139,14 +139,16 @@ class BlackJack(object):
             self.send_message(self.chat_id, output_text, parse_mode="Markdown", reply_markup=self.keyboard_running)
             # TODO end game / evaluation
 
-    # Only in multiplayer
     def start_game(self, message_id=None):
-        self.game_running = True
+        if not self.game_running:
+            self.game_running = True
 
-        self.dealers_first_turn()
-        for player in self.players:
-            add_game_played(player.user_id)
-        self.players_first_turn()
+            for player in self.players:
+                add_game_played(player.user_id)
+
+            self.dealers_turn()
+            # TODO Player overview
+            self.give_player_one()
 
     def evaluation(self):
         pass
