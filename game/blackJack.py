@@ -189,16 +189,14 @@ class BlackJack(object):
                 if len(self.players) >= 2:
                     self.start_game()
                 else:
-                    # TODO send "not enough players"
-                    pass
+                    self.send_message(self.chat_id, translate("notEnoughPlayers", self.lang_id, message_id=message_id))
         if self.game_running:
             if command.startswith(translate("oneMore", self.lang_id)):
                 current_player = self.players[self.current_player]
                 if self.current_player >= 0 and user_id == current_player.user_id:
                     self.give_player_one()
                 else:
-                    # TODO send "not your turn"
-                    pass
+                    self.send_message(self.chat_id, translate("notYourTurn", self.lang_id).format(first_name))
 
             elif command.startswith(translate("noMore", self.lang_id)):
                 current_player = self.players[self.current_player]
