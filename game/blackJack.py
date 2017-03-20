@@ -214,8 +214,8 @@ class BlackJack(object):
             elif command.startswith(translate("stopCmd", self.lang_id)):
                 if user_id == self.players[0].user_id:
                     self.game_handler.gl_remove(self.chat_id)
-                    # TODO Send message after removing game
-                pass
+                    self.send_message(self.chat_id, translate("gameEnded", self.lang_id))
+                    # TODO remove keyboard when sending a message
 
     # When game is being initialized
     def __init__(self, chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message):
