@@ -5,10 +5,13 @@ from time import time
 class Player(object):
     def give_card(self, card, value):
         self.cards.append(card)
+
+        if value == 1 and self.cardvalue <= 10:
+            value = 11
+            self.give_ace()
+
         self.cardvalue += value
         self.number_of_cards += 1
-        if value == 11:
-            self.has_ace = True
 
     def give_ace(self):
         self.has_ace = True
