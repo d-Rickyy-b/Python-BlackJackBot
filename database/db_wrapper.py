@@ -49,14 +49,14 @@ class DBwrapper(object):
                                 [str(value), str(user_id)])
             self.connection.commit()
 
-        def check_if_user_saved(self, user_id):
+        def is_user_saved(self, user_id):
             self.cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
 
             result = self.cursor.fetchall()
             if len(result) > 0:
-                return result[0]
+                return True
             else:
-                return -1
+                return False
 
         def user_data_changed(self, user_id, first_name, last_name, username):
             self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
