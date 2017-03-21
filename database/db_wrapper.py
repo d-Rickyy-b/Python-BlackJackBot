@@ -43,7 +43,6 @@ class DBwrapper(object):
                 # print("User already exists")
                 pass
 
-
         def insert(self, column_name, value, user_id):
             self.cursor.execute("UPDATE users SET " + str(column_name) + "= ? WHERE userID = ?;",
                                 [str(value), str(user_id)])
