@@ -63,9 +63,11 @@ class DBwrapper(object):
 
             result = self.cursor.fetchone()
 
-            if result[2] == first_name and result[3] == last_name and result[4] == username:
-                return False
-            return True
+            # check if user is saved
+            if result:
+                if result[2] == first_name and result[3] == last_name and result[4] == username:
+                    return False
+                return True
 
         def update_user_data(self, user_id, first_name, last_name, username):
             self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", (str(first_name), str(last_name), str(username), str(user_id)))
