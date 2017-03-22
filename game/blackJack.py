@@ -50,7 +50,6 @@ class BlackJack(object):
 
     def next_player(self):
         if (self.current_player + 1) < len(self.players):
-            # TODO send message next player
             self.logger.debug("Next Player!")
             self.current_player += 1
             self.send_message(self.chat_id, translate("overview", self.lang_id) + "\n\n" + self.get_player_overview(show_points=True) + "\n" +
@@ -108,8 +107,7 @@ class BlackJack(object):
                     elif user.cardvalue == 21:
                         player_drew += "\n\n" + user.first_name + " " + translate("got21", self.lang_id)
 
-                    # TODO remove keyboard from user
-                    self.send_message(self.chat_id, text=player_drew, reply_markup=None)
+                    self.send_message(self.chat_id, text=player_drew)
                     self.next_player()
                 else:
                     self.send_message(self.chat_id, text=player_drew, reply_markup=self.keyboard_running)
@@ -150,6 +148,7 @@ class BlackJack(object):
             self.evaluation()
 
     def start_game(self, message_id=None):
+        # TODO statistics
         if not self.game_running:
             self.game_running = True
 
