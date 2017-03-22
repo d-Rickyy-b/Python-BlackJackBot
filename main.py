@@ -22,19 +22,11 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 updater = Updater(token=BOT_TOKEN)
 dispatcher = updater.dispatcher
 
-logger.debug("Das ist ein test")
-
 game_handler = GameHandler()
 tg_bot = updater.bot
 
 
 def start(bot, update):
-    # startbutton = InlineKeyboardButton(text="Start", callback_data="com_start")
-    # stopbutton = InlineKeyboardButton(text="Stop", callback_data="com_stop")
-    # langbutton = InlineKeyboardButton(text="Language", callback_data="com_ch_lang")
-    # reply_keyboard = InlineKeyboardMarkup([[startbutton, stopbutton], [langbutton]])
-    # bot.sendMessage(chat_id=update.message.chat_id, text="Was möchtest du tun?", reply_markup=reply_keyboard)
-
     chat_id = update.message.chat_id
     user_id = update.message.from_user.id
     message_id = update.message.message_id
