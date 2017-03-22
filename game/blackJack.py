@@ -24,6 +24,7 @@ class BlackJack(object):
                 self.logger.debug("Adding user '" + first_name + "' to players.")
                 player = Player(user_id, first_name, self.deck)
                 self.players.append(player)
+                self.join_message_ids.append(message_id)
 
                 if silent is None:
                     self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id)
@@ -51,6 +52,10 @@ class BlackJack(object):
             # TODO send message next player
             self.logger.debug("Next Player!")
             self.current_player += 1
+            self.send_message(self.chat_id, translate("overview", self.lang_id) + "\n\n" + self.get_player_overview(show_points=True) + "\n" +
+                                            translate("nextPlayer", self.lang_id).format(self.players[self.current_player].first_name),
+                                            message_id=self.join_message_ids[self.current_player], reply_markup=self.keyboard_running)
+
             self.give_player_one()
         else:
             self.logger.debug("Dealer's turn")
@@ -72,8 +77,10 @@ class BlackJack(object):
 
                     user.give_card(card, cardvalue)
 
-                cards_string = user.get_cards_string()
-                self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(user.first_name, "\n" + cards_string + "\n", str(user.cardvalue))))
+                cards_string = "\n" +  user.get_cards_string() + "\n"
+                self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(
+                    user.first_name, cards_string, str(user.cardvalue))), reply_markup=self.keyboard_running,
+                    message_id=self.join_message_ids[self.current_player])
             else:
                 card = self.deck.pick_one_card()
                 cardvalue = self.deck.get_card_value(card)
@@ -219,6 +226,7 @@ class BlackJack(object):
     def __init__(self, chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message):
         # declare variables and set initial values
         self.players = []
+        self.join_message_ids = []
         self.chat_id = chat_id
         self.lang_id = lang_id
         self.deck = CardDeck(lang_id)  # TODO language of the cards & dealer cannot be changed
