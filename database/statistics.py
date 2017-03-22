@@ -10,9 +10,9 @@ logger = logging.getLogger(__name__)
 def set_game_won(user_id):
     if user_id > 0:
         db = DBwrapper.get_instance()
-        games_won = int(db.sql_get_user(user_id)[7]) + 1
+        games_won = int(db.get_user(user_id)[7]) + 1
         logger.debug("Add game won for userID: " + str(user_id))
-        db.sql_insert("gamesWon", str(games_won), user_id)
+        db.insert("gamesWon", str(games_won), user_id)
 
 
 def add_game_played(user_id):
