@@ -149,7 +149,6 @@ class BlackJack(object):
             self.evaluation()
 
     def start_game(self, message_id=None):
-        # TODO statistics
         if not self.game_running:
             self.game_running = True
 
