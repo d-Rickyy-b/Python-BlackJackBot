@@ -29,8 +29,8 @@ class DBwrapper(object):
 
         def get_lang_id(self, user_id):
             self.cursor.execute("SELECT languageID FROM users WHERE userID=?;", [str(user_id)])
-            result = self.cursor.fetchall()
-            if len(result) > 0:
+            result = self.cursor.fetchone()
+            if result:
                 return result[0]
             else:
                 return "en"
