@@ -39,6 +39,17 @@ def start(bot, update):
     user_id = update.message.from_user.id
     message_id = update.message.message_id
     first_name = update.message.from_user.first_name
+    last_name = update.message.from_user.last_name
+    username = update.message.from_user.username
+    db = DBwrapper.get_instance()
+
+    if not (db.is_user_saved(user_id)):
+        # ask user for language:
+        logger.info("New user")
+        db.write(user_id, "en", first_name, last_name, username)
+        language(bot, update)
+        return
+
     # check if user already has got a game (in the same chat):
     game_index = game_handler.get_index_by_chatid(chat_id)
     if game_index == -1:
@@ -136,6 +147,18 @@ def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=N
 def game_commands(bot, update):
     text = update.message.text
     chat_id = update.message.chat_id
+    user_id = update.message.from_user.id
+    first_name = update.message.from_user.first_name
+    last_name = update.message.from_user.last_name
+    username = update.message.from_user.username
+    db = DBwrapper.get_instance()
+
+    if not (db.is_user_saved(user_id)):
+        # ask user for language:
+        logger.info("New user")
+        db.write(user_id, "en", first_name, last_name, username)
+        language(bot, update)
+        return
 
     # check if user already has got a game (in the same chat):
     game_index = game_handler.get_index_by_chatid(chat_id)
