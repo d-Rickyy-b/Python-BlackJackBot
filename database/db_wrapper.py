@@ -23,6 +23,15 @@ class DBwrapper(object):
             else:
                 return []
 
+        def get_played_games(self, user_id):
+            self.cursor.execute("SELECT gamesPlayed FROM users WHERE userID=?;", [str(user_id)])
+
+            result = self.cursor.fetchone()
+            if len(result) > 0:
+                return result[0]
+            else:
+                return 0
+
         def get_all_users(self):
             self.cursor.execute("SELECT rowid, * FROM users;")
             return self.cursor.fetchall()
