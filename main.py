@@ -79,10 +79,14 @@ def language(bot, update):
 
     lang_keyboard = InlineKeyboardMarkup([[lang_de_button, lang_en_button], [lang_br_button, lang_ru_button, lang_nl_button], [lang_es_button, lang_eo_button, lang_fa_button]])
     db = DBwrapper.get_instance()
+
     if update.callback_query:
-        bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langSelect", db.get_lang_id(update.callback_query.message.from_user.id)), reply_markup=lang_keyboard, message_id=update.callback_query.message.message_id)
+        # TODO maybe text user in private instead of group!
+        lang_id = db.get_lang_id(update.callback_query.from_user.id)
+        bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langSelect", lang_id), reply_markup=lang_keyboard, message_id=update.callback_query.message.message_id)
     else:
-        bot.sendMessage(chat_id=update.message.chat_id, text=translate("langSelect", db.get_lang_id(update.message.from_user.id)), reply_markup=lang_keyboard, message_id=update.message.message_id)
+        lang_id = db.get_lang_id(update.message.from_user.id)
+        bot.sendMessage(chat_id=update.message.chat_id, text=translate("langSelect", lang_id), reply_markup=lang_keyboard, message_id=update.message.message_id)
 
 
 def comment(bot, update):
