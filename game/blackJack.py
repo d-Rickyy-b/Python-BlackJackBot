@@ -77,6 +77,7 @@ class BlackJack(object):
 
                     user.give_card(card, cardvalue)
 
+                # TODO check if cardvalue = 21. If yes, mention it in the message
                 cards_string = "\n" +  user.get_cards_string() + "\n"
                 self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(
                     user.first_name, cards_string, str(user.cardvalue))), reply_markup=self.keyboard_running,
@@ -125,7 +126,6 @@ class BlackJack(object):
             if self.game_type == self.PRIVATE_CHAT:
                 text += translate("gameBegins", self.lang_id) + "\n"
 
-            # TODO this displays only the second card, but not the first
             text += "\n*" + translate("dealersCards", self.lang_id) + "*\n\n" + self.deck.get_card_name(card) + ", | -- |"
             self.send_message(self.chat_id, text, parse_mode="Markdown", reply_markup=self.keyboard_running)
         else:
