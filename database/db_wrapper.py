@@ -17,9 +17,9 @@ class DBwrapper(object):
         def get_user(self, user_id):
             self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
-            result = self.cursor.fetchall()
+            result = self.cursor.fetchone()
             if len(result) > 0:
-                return result[0]
+                return result
             else:
                 return []
 
