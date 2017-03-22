@@ -85,7 +85,7 @@ class BlackJack(object):
                 card = self.deck.pick_one_card()
                 cardvalue = self.deck.get_card_value(card)
 
-                if user.has_ace and user.cardvalue + cardvalue > 21:
+                if user.has_ace and (user.cardvalue + cardvalue > 21):
                     # user got an ace
                     cardvalue = 1
                     # TODO send message, that he got a soft hand now.
