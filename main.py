@@ -94,7 +94,7 @@ def mentions(bot, update):
 def change_language(bot, update, lang_id):
     bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id), message_id=update.callback_query.message.message_id, reply_markup=None)
     db = DBwrapper.get_instance()
-    db.insert("languageID", lang_id, update.callback_query.message.from_user.id)
+    db.insert("languageID", lang_id, update.callback_query.from_user.id)
 
 
 def callback_eval(bot, update):
