@@ -198,12 +198,12 @@ class BlackJack(object):
                 # Alle mit 21 > Punkte >= 0 haben Einsatz x 1,5 gewonnen.
                 # Alle mit 21 haben Einsatz mal 2 gewonnen
                 # Alle mit 21 und Kartenanzahl = 2 haben Einsatz mal 3 gewonnen
-        elif self.dealer.get_cardvalue() == 21:  # todo unterscheidung zwischen blackjack und 21
+        elif self.dealer.get_cardvalue() == 21:  # todo differentiate between blackjack and 21
             for user in list_21:
                 if user.get_first_name() != translate("dealerName", self.lang_id):
                     set_game_won(user.get_userid())
                     # Alle mit 21 > Punkte >= 0 haben verloren . || Alle mit 21 haben Einsatz gewonnen || Alle mit 21 und Kartenanzahl = 2 haben Einsatz mal 2 gewonnen
-                    # todo wenn Dealer Blackjack hat: || Alle mit BlackJack haben Einsatz gewonnen. || Alle anderen haben verloren
+                    # todo if dealer got Blackjack: || Everyone with BlackJack won their bet back. || Everone else lost
         elif self.dealer.get_cardvalue() < 21:
             for user in list_21:
                 set_game_won(user.get_userid())
