@@ -7,6 +7,7 @@ from game.cardDeck import CardDeck
 from lang.language import translate
 from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 from telegram.keyboardbutton import KeyboardButton
+from telegram.replykeyboardhide import ReplyKeyboardHide
 import logging
 
 __author__ = 'Rico & Julian'
@@ -311,7 +312,7 @@ class BlackJack(object):
         no_more_button = KeyboardButton(translate("keyboardItemNoMore", lang_id))
         stop_button = KeyboardButton(translate("keyboardItemStop", lang_id))
 
-        self.keyboard_running = ReplyKeyboardMarkup([[one_more_button, no_more_button], [stop_button]])
+        self.keyboard_running = ReplyKeyboardMarkup(keyboard=[[one_more_button, no_more_button], [stop_button]], selective=True)
 
         self.add_player(user_id, first_name, message_id, silent=True)
 
