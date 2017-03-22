@@ -146,7 +146,7 @@ class BlackJack(object):
 
             output_text += "\n\n" + translate("cardvalueDealer", self.lang_id) + " " + str(self.dealer.get_cardvalue())
             self.send_message(self.chat_id, output_text, parse_mode="Markdown", reply_markup=self.keyboard_running)
-            # TODO end game / evaluation
+            self.evaluation()
 
     def start_game(self, message_id=None):
         if not self.game_running:
@@ -165,8 +165,73 @@ class BlackJack(object):
             self.give_player_one()
 
     def evaluation(self):
-        # TODO Evaluation
-        pass
+        list_21 = []
+        list_busted = []
+        list_lower_21 = []
+
+        for user in self.players:
+            cv = user.get_cardvalue()
+
+            if cv > 21:
+                list_busted.append(user)
+            elif cv == 21:
+                list_21.append(user)
+            elif cv < 21:
+                list_lower_21.append(user)
+
+        if self.dealer.get_cardvalue() > 21:
+            list_busted.append(self.dealer)
+        elif self.dealer.get_cardvalue() == 21:
+            list_21.append(self.dealer)
+        elif self.dealer.get_cardvalue() < 21:
+            list_lower_21.append(self.dealer)
+
+        list_21 = sorted(list_21, key=lambda x: x.get_cardvalue(), reverse=True)
+        list_lower_21 = sorted(list_lower_21, key=lambda x: x.get_cardvalue(), reverse=True)
+        list_busted = sorted(list_busted, key=lambda x: x.get_cardvalue(), reverse=True)
+
+        if self.dealer.get_cardvalue() > 21:
+            for user in list_21:
+                set_game_won(user.get_userid())
+            for user in list_lower_21:
+                set_game_won(user.get_userid())
+                # Alle mit 21 > Punkte >= 0 haben Einsatz x 1,5 gewonnen.
+                # Alle mit 21 haben Einsatz mal 2 gewonnen
+                # Alle mit 21 und Kartenanzahl = 2 haben Einsatz mal 3 gewonnen
+        elif self.dealer.get_cardvalue() == 21:  # todo unterscheidung zwischen blackjack und 21
+            for user in list_21:
+                if user.get_first_name() != translate("dealerName", self.lang_id):
+                    set_game_won(user.get_userid())
+                    # Alle mit 21 > Punkte >= 0 haben verloren . || Alle mit 21 haben Einsatz gewonnen || Alle mit 21 und Kartenanzahl = 2 haben Einsatz mal 2 gewonnen
+                    # todo wenn Dealer Blackjack hat: || Alle mit BlackJack haben Einsatz gewonnen. || Alle anderen haben verloren
+        elif self.dealer.get_cardvalue() < 21:
+            for user in list_21:
+                set_game_won(user.get_userid())
+            for user in list_lower_21:
+                if user.get_cardvalue() > self.dealer.get_cardvalue():
+                    set_game_won(user.get_userid())
+                    # print(str(user.get_userid()) + " you've got " + )
+                    # Alle mit Dealer > Punkte haben verloren.
+                    # Alle mit Dealer = Punkte erhalten Einsatz
+                    # Alle mit 21 > Punkte > Dealer haben Einsatz x 1,5 gewonnen.
+                    # Alle mit 21 haben Einsatz mal 2 gewonnen
+                    # Alle mit 21 und Kartenanzahl = 2 haben Einsatz mal 3 gewonnen
+                    # 7er Drilling 3/2 Gewinn (Einsatz x 1,5)
+
+        final_message = translate("playerWith21", self.lang_id) + "\n"
+        for user in list_21:
+            final_message += str(user.get_cardvalue()) + " - " + user.get_first_name() + "\n"
+
+        final_message += "\n" + translate("playerLess21", self.lang_id) + "\n"
+        for user in list_lower_21:
+            final_message += str(user.get_cardvalue()) + " - " + user.get_first_name() + "\n"
+
+        final_message += "\n" + translate("playerOver21", self.lang_id) + "\n"
+        for user in list_busted:
+            final_message += str(user.get_cardvalue()) + " - " + user.get_first_name() + "\n"
+
+        self.send_message(self.chat_id, final_message)
+        self.game_handler.gl_remove(self.chat_id)
 
     def get_player_overview(self, show_points=False, text="", i=0, dealer=False):
         for user in self.players:
