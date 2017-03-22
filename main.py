@@ -43,8 +43,8 @@ def start(bot, update):
     game_index = game_handler.get_index_by_chatid(chat_id)
     if game_index == -1:
         logger.debug("Creating a game")
-        # TODO get lang_id from database
-        bj = BlackJack(chat_id, user_id, "en", first_name, game_handler, message_id, send_message)
+        lang_id = db.get_lang_id(user_id)
+        bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message)
         game_handler.add_game(bj)
     else:
         logger.debug("Game already existing")
