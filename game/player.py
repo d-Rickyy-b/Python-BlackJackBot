@@ -16,6 +16,10 @@ class Player(object):
     def give_ace(self):
         self.has_ace = True
 
+    def remove_ace(self):
+        self.has_ace = False
+        self.cardvalue -= 10
+
     def has21(self):
         return self.cardvalue == 21
 
