@@ -1,5 +1,6 @@
 __author__ = 'Rico'
 
+
 class Player(object):
     def give_card(self, card, value):
         self.cards.append(card)
