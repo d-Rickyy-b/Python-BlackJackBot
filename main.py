@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
-from telegram.inlinekeyboardmarkup import InlineKeyboardMarkup
-from telegram.inlinekeyboardbutton import InlineKeyboardButton
-from telegram.callbackquery import CallbackQuery
-
 import logging
 
-from gamehandler import GameHandler
-from lang.language import translate
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
+from telegram.inlinekeyboardbutton import InlineKeyboardButton
+from telegram.inlinekeyboardmarkup import InlineKeyboardMarkup
+
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
 from game.blackJack import BlackJack
+from gamehandler import GameHandler
+from lang.language import translate
 
 __author__ = 'Rico'
 
@@ -22,29 +21,32 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 updater = Updater(token=BOT_TOKEN)
 dispatcher = updater.dispatcher
 
-logger.debug("Das ist ein test")
-
 game_handler = GameHandler()
 tg_bot = updater.bot
 
 
 def start(bot, update):
-    # startbutton = InlineKeyboardButton(text="Start", callback_data="com_start")
-    # stopbutton = InlineKeyboardButton(text="Stop", callback_data="com_stop")
-    # langbutton = InlineKeyboardButton(text="Language", callback_data="com_ch_lang")
-    # reply_keyboard = InlineKeyboardMarkup([[startbutton, stopbutton], [langbutton]])
-    # bot.sendMessage(chat_id=update.message.chat_id, text="Was möchtest du tun?", reply_markup=reply_keyboard)
-
     chat_id = update.message.chat_id
     user_id = update.message.from_user.id
     message_id = update.message.message_id
     first_name = update.message.from_user.first_name
+    last_name = update.message.from_user.last_name
+    username = update.message.from_user.username
+    db = DBwrapper.get_instance()
+
+    if not (db.is_user_saved(user_id)):
+        # ask user for language:
+        logger.info("New user")
+        db.write(user_id, "en", first_name, last_name, username)
+        language(bot, update)
+        return
+
     # check if user already has got a game (in the same chat):
     game_index = game_handler.get_index_by_chatid(chat_id)
     if game_index == -1:
         logger.debug("Creating a game")
-        # TODO get lang_id from database
-        bj = BlackJack(chat_id, user_id, "en", first_name, game_handler, message_id, send_message)
+        lang_id = db.get_lang_id(user_id)
+        bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message)
         game_handler.add_game(bj)
     else:
         logger.debug("Game already existing")
@@ -76,10 +78,14 @@ def language(bot, update):
 
     lang_keyboard = InlineKeyboardMarkup([[lang_de_button, lang_en_button], [lang_br_button, lang_ru_button, lang_nl_button], [lang_es_button, lang_eo_button, lang_fa_button]])
     db = DBwrapper.get_instance()
+
     if update.callback_query:
-        bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langSelect", db.get_lang_id(update.callback_query.message.from_user.id)), reply_markup=lang_keyboard, message_id=update.callback_query.message.message_id)
+        # TODO maybe text user in private instead of group!
+        lang_id = db.get_lang_id(update.callback_query.from_user.id)
+        bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langSelect", lang_id), reply_markup=lang_keyboard, message_id=update.callback_query.message.message_id)
     else:
-        bot.sendMessage(chat_id=update.message.chat_id, text=translate("langSelect", db.get_lang_id(update.message.from_user.id)), reply_markup=lang_keyboard, message_id=update.message.message_id)
+        lang_id = db.get_lang_id(update.message.from_user.id)
+        bot.sendMessage(chat_id=update.message.chat_id, text=translate("langSelect", lang_id), reply_markup=lang_keyboard, message_id=update.message.message_id)
 
 
 def comment(bot, update):
@@ -94,7 +100,7 @@ def mentions(bot, update):
 def change_language(bot, update, lang_id):
     bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id), message_id=update.callback_query.message.message_id, reply_markup=None)
     db = DBwrapper.get_instance()
-    db.insert("languageID", lang_id, update.callback_query.message.from_user.id)
+    db.insert("languageID", lang_id, update.callback_query.from_user.id)
 
 
 def callback_eval(bot, update):
@@ -136,6 +142,18 @@ def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=N
 def game_commands(bot, update):
     text = update.message.text
     chat_id = update.message.chat_id
+    user_id = update.message.from_user.id
+    first_name = update.message.from_user.first_name
+    last_name = update.message.from_user.last_name
+    username = update.message.from_user.username
+    db = DBwrapper.get_instance()
+
+    if not (db.is_user_saved(user_id)):
+        # ask user for language:
+        logger.info("New user")
+        db.write(user_id, "en", first_name, last_name, username)
+        language(bot, update)
+        return
 
     # check if user already has got a game (in the same chat):
     game_index = game_handler.get_index_by_chatid(chat_id)

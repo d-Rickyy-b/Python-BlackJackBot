@@ -12,7 +12,7 @@ class CardDeck:
     @staticmethod
     def create_deck():
         from random import shuffle
-        deck = list(range(1, 52)) #TODO currently only one deck ... maybe i should add another one.
+        deck = list(range(1, 52))
         shuffle(deck)
         return deck[:]
 
