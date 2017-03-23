@@ -149,20 +149,23 @@ class BlackJack(object):
             self.evaluation()
 
     def start_game(self, message_id=None):
-        if not self.game_running:
-            self.game_running = True
+        if len(self.players) >= 2:
+            if not self.game_running:
+                self.game_running = True
 
-            for player in self.players:
-                add_game_played(player.user_id)
+                for player in self.players:
+                    add_game_played(player.user_id)
 
-            if self.game_type == self.GROUP_CHAT:
-                self.send_message(self.chat_id, translate("gameBegins", self.lang_id) + "\n" + translate("gameBegins2", self.lang_id) + "\n\n" + self.get_player_overview())
-            else:
-                # Anything here
-                pass
+                if self.game_type == self.GROUP_CHAT:
+                    self.send_message(self.chat_id, translate("gameBegins", self.lang_id) + "\n" + translate("gameBegins2", self.lang_id) + "\n\n" + self.get_player_overview())
+                else:
+                    # Anything here
+                    pass
 
-            self.dealers_turn()
-            self.give_player_one()
+                self.dealers_turn()
+                self.give_player_one()
+        else:
+            self.send_message(self.chat_id, translate("notEnoughPlayers", self.lang_id), message_id=message_id)
 
     def evaluation(self):
         list_21 = []
@@ -265,11 +268,7 @@ class BlackJack(object):
             if command.startswith(translate("join", self.lang_id)):
                 self.add_player(user_id, first_name, message_id)
             elif command.startswith(translate("startCmd", self.lang_id)):
-                # Check if there are at least 2 players joined
-                if len(self.players) >= 2:
-                    self.start_game()
-                else:
-                    self.send_message(self.chat_id, translate("notEnoughPlayers", self.lang_id, message_id=message_id))
+                self.start_game()
         if self.game_running:
             if command.startswith(translate("oneMore", self.lang_id)):
                 current_player = self.players[self.current_player]
