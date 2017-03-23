@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from database.statistics import add_game_played, set_game_won
-from game.player import Player
-from game.dealer import Dealer
-from game.cardDeck import CardDeck
-from lang.language import translate
-from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
+import logging
+
 from telegram.keyboardbutton import KeyboardButton
 from telegram.replykeyboardhide import ReplyKeyboardHide
-import logging
+from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
+
+from database.statistics import add_game_played, set_game_won
+from game.cardDeck import CardDeck
+from game.dealer import Dealer
+from game.player import Player
+from lang.language import translate
 
 __author__ = 'Rico & Julian'
 
