@@ -1,6 +1,4 @@
 __author__ = 'Rico'
-from time import time
-
 
 class Player(object):
     def give_card(self, card, value):
@@ -47,7 +45,6 @@ class Player(object):
         return self.user_id
     
     def __init__(self, user_id, first_name, deck):
-        # sql_insert("lastPlayed", int(time()), user_id)
         self.number_of_cards = 0
         self.user_id = user_id
         self.first_name = first_name
