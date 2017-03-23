@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
-from telegram.inlinekeyboardmarkup import InlineKeyboardMarkup
-from telegram.inlinekeyboardbutton import InlineKeyboardButton
-from telegram.callbackquery import CallbackQuery
-
 import logging
 
-from gamehandler import GameHandler
-from lang.language import translate
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
+from telegram.inlinekeyboardbutton import InlineKeyboardButton
+from telegram.inlinekeyboardmarkup import InlineKeyboardMarkup
+
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
 from game.blackJack import BlackJack
+from gamehandler import GameHandler
+from lang.language import translate
 
 __author__ = 'Rico'
 
