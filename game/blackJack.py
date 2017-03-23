@@ -47,7 +47,6 @@ class BlackJack(object):
         for user in self.players:
             if user.get_userid() == user_id:
                 return user
-
         return None
 
     def next_player(self):
