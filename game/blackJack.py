@@ -238,19 +238,22 @@ class BlackJack(object):
         self.game_handler.gl_remove(self.chat_id)
 
     def get_player_overview(self, show_points=False, text="", i=0, dealer=False):
-        for user in self.players:
-            if i == self.current_player:
-                text += "▶️"
-            else:
-                text += "👤"
-            if show_points is True and (i < self.current_player or self.current_player == -1):
-                text += (user.first_name + " - [" + str(self.players[i].cardvalue) + "]\n")
-            else:
-                text += (user.first_name + "\n")
-            i += 1
-        if dealer is True:
-            text += ("🎩" + translate("dealerName", self.lang_id) + " - [" + str(self.dealer.get_cardvalue()) + "]")
-        return text
+        if self.game_running:
+            for user in self.players:
+                if i == self.current_player:
+                    text += "▶️"
+                else:
+                    text += "👤"
+                if show_points is True and (i < self.current_player or self.current_player == -1):
+                    text += (user.first_name + " - [" + str(self.players[i].cardvalue) + "]\n")
+                else:
+                    text += (user.first_name + "\n")
+                i += 1
+            if dealer is True:
+                text += ("🎩" + translate("dealerName", self.lang_id) + " - [" + str(self.dealer.get_cardvalue()) + "]")
+            return text
+        else:
+            return ""
 
     # Messages are analyzed here. Most function calls come from here
     def analyze_message(self, update):
@@ -310,7 +313,6 @@ class BlackJack(object):
         one_more_button = KeyboardButton(translate("keyboardItemOneMore", lang_id))
         no_more_button = KeyboardButton(translate("keyboardItemNoMore", lang_id))
         stop_button = KeyboardButton(translate("keyboardItemStop", lang_id))
-
         self.keyboard_running = ReplyKeyboardMarkup(keyboard=[[one_more_button, no_more_button], [stop_button]], selective=True)
 
         self.add_player(user_id, first_name, message_id, silent=True)
@@ -322,7 +324,7 @@ class BlackJack(object):
             self.start_game()
             # start game and send message to private chat
 
-    # When game is being ended - single and multiplayer
+    # When game is being ended / object is destructed
     def __del__(self):
         self.send_message(self.chat_id, translate("gameEnded", self.lang_id), reply_markup=ReplyKeyboardHide())
         pass
