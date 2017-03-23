@@ -17,43 +17,65 @@ class DBwrapper(object):
         def get_user(self, user_id):
             self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
-            result = self.cursor.fetchall()
+            result = self.cursor.fetchone()
             if len(result) > 0:
-                return result[0]
+                return result
             else:
                 return []
 
+        def get_played_games(self, user_id):
+            self.cursor.execute("SELECT gamesPlayed FROM users WHERE userID=?;", [str(user_id)])
+
+            result = self.cursor.fetchone()
+            if len(result) > 0:
+                return result[0]
+            else:
+                return 0
+
         def get_all_users(self):
             self.cursor.execute("SELECT rowid, * FROM users;")
-            all_users = self.cursor.fetchall()
-            return all_users
+            return self.cursor.fetchall()
 
-        def write(self, user_id, lang_id, first_name, last_name):
-            self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), "male", "0", "0"))
-            self.connection.commit()
+        def get_lang_id(self, user_id):
+            self.cursor.execute("SELECT languageID FROM users WHERE userID=?;", [str(user_id)])
+            result = self.cursor.fetchone()
+            if result:
+                return result[0]
+            else:
+                return "en"
+
+        def write(self, user_id, lang_id, first_name, last_name, username):
+            try:
+                self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username), "0", "0", "0", "0"))
+                self.connection.commit()
+            except sqlite3.IntegrityError:
+                # print("User already exists")
+                pass
 
         def insert(self, column_name, value, user_id):
             self.cursor.execute("UPDATE users SET " + str(column_name) + "= ? WHERE userID = ?;",
                                 [str(value), str(user_id)])
             self.connection.commit()
 
-        def check_if_user_saved(self, user_id):
+        def is_user_saved(self, user_id):
             self.cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
 
             result = self.cursor.fetchall()
             if len(result) > 0:
-                return result[0]
+                return True
             else:
-                return -1
+                return False
 
         def user_data_changed(self, user_id, first_name, last_name, username):
             self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
             result = self.cursor.fetchone()
 
-            if result[2] == first_name and result[3] == last_name and result[4] == username:
-                return False
-            return True
+            # check if user is saved
+            if result:
+                if result[2] == first_name and result[3] == last_name and result[4] == username:
+                    return False
+                return True
 
         def update_user_data(self, user_id, first_name, last_name, username):
             self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", (str(first_name), str(last_name), str(username), str(user_id)))

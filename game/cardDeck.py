@@ -1,6 +1,8 @@
-__author__ = 'Rico'
+# -*- coding: utf-8 -*-
 
-from lang.language import translation
+from lang.language import translate
+
+__author__ = 'Rico'
 
 
 class CardDeck:
@@ -10,7 +12,7 @@ class CardDeck:
     @staticmethod
     def create_deck():
         from random import shuffle
-        deck = list(range(1, 52)) #TODO currently only one deck ... maybe i should add another one.
+        deck = list(range(1, 52))
         shuffle(deck)
         return deck[:]
 
@@ -30,5 +32,5 @@ class CardDeck:
 
     def __init__(self, lang_id):
         self.deck = self.create_deck()
-        self.value_str = [translation("ace", lang_id), "2", "3", "4", "5", "6", "7", "8", "9", "10",
-                          translation("jack", lang_id), translation("queen", lang_id), translation("king", lang_id)]
+        self.value_str = [translate("ace", lang_id), "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                          translate("jack", lang_id), translate("queen", lang_id), translate("king", lang_id)]
