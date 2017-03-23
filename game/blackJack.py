@@ -49,18 +49,19 @@ class BlackJack(object):
         return None
 
     def next_player(self):
-        if (self.current_player + 1) < len(self.players):
-            self.logger.debug("Next Player!")
-            self.current_player += 1
-            self.send_message(self.chat_id, translate("overview", self.lang_id) + "\n\n" + self.get_player_overview(show_points=True) + "\n" +
-                                            translate("nextPlayer", self.lang_id).format(self.players[self.current_player].first_name),
-                                            message_id=self.join_message_ids[self.current_player], reply_markup=self.keyboard_running)
+        if self.game_running:
+            if (self.current_player + 1) < len(self.players):
+                self.logger.debug("Next Player!")
+                self.current_player += 1
+                self.send_message(self.chat_id, translate("overview", self.lang_id) + "\n\n" + self.get_player_overview(show_points=True) + "\n" +
+                                                translate("nextPlayer", self.lang_id).format(self.players[self.current_player].first_name),
+                                                message_id=self.join_message_ids[self.current_player], reply_markup=self.keyboard_running)
 
-            self.give_player_one()
-        else:
-            self.logger.debug("Dealer's turn")
-            self.current_player = -1
-            self.dealers_turn()
+                self.give_player_one()
+            else:
+                self.logger.debug("Dealer's turn")
+                self.current_player = -1
+                self.dealers_turn()
 
     # gives player one card
     def give_player_one(self):
