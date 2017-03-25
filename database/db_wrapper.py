@@ -10,7 +10,8 @@ class DBwrapper(object):
         dir_path = os.path.dirname(os.path.abspath(__file__))
 
         def __init__(self):
-            self.connection = sqlite3.connect(self.dir_path + "\\users.db")
+            database_path = os.path.join(self.dir_path, "users.db")
+            self.connection = sqlite3.connect(database_path)
             self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
             self.cursor = self.connection.cursor()
 
