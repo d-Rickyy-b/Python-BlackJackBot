@@ -161,9 +161,6 @@ class BlackJack(object):
 
                 if self.game_type == self.GROUP_CHAT:
                     self.send_message(self.chat_id, translate("gameBegins", self.lang_id) + "\n" + translate("gameBegins2", self.lang_id) + "\n\n" + self.get_player_overview())
-                else:
-                    # Anything here
-                    pass
 
                 self.dealers_turn()
                 self.give_player_one()
