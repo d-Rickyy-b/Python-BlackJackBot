@@ -29,7 +29,7 @@ class BlackJack(object):
                 self.players.append(player)
                 self.join_message_ids.append(message_id)
 
-                if silent is None:
+                if silent is None or silent is False:
                     self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id)
             else:
                 self.logger.debug("User '" + first_name + "' already in player list.")
@@ -152,7 +152,7 @@ class BlackJack(object):
             self.evaluation()
 
     def start_game(self, message_id=None):
-        if len(self.players) >= 2:
+        if (self.game_type == self.GROUP_CHAT and len(self.players) >= 2) or self.game_type == self.PRIVATE_CHAT:
             if not self.game_running:
                 self.game_running = True
 
@@ -161,9 +161,6 @@ class BlackJack(object):
 
                 if self.game_type == self.GROUP_CHAT:
                     self.send_message(self.chat_id, translate("gameBegins", self.lang_id) + "\n" + translate("gameBegins2", self.lang_id) + "\n\n" + self.get_player_overview())
-                else:
-                    # Anything here
-                    pass
 
                 self.dealers_turn()
                 self.give_player_one()

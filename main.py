@@ -89,6 +89,7 @@ def language(bot, update):
 
 
 def comment(bot, update):
+    # TODO add comment functionality
     pass
 
 

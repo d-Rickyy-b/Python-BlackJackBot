@@ -39,7 +39,7 @@ def get_user_stats(user_id):
     db = DBwrapper.get_instance()
     user = db.get_user(user_id)
 
-    played_games = int(user[6])
+    played_games = int(user[5])
     if played_games == 0:
         played_games = 1
     statistics_string = "Here are your statistics  📊:\n\nPlayed Games: " + str(played_games) + "\nWon Games : " + str(user[6]) + \
