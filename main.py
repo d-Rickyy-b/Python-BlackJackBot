@@ -37,7 +37,7 @@ def start(bot, update):
     if not (db.is_user_saved(user_id)):
         # ask user for language:
         logger.info("New user")
-        db.write(user_id, "en", first_name, last_name, username)
+        db.add_user(user_id, "en", first_name, last_name, username)
         language(bot, update)
         return
 
@@ -152,7 +152,7 @@ def game_commands(bot, update):
     if not (db.is_user_saved(user_id)):
         # ask user for language:
         logger.info("New user")
-        db.write(user_id, "en", first_name, last_name, username)
+        db.add_user(user_id, "en", first_name, last_name, username)
         language(bot, update)
         return
 

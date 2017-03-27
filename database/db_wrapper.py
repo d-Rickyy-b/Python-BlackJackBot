@@ -45,7 +45,7 @@ class DBwrapper(object):
             else:
                 return "en"
 
-        def write(self, user_id, lang_id, first_name, last_name, username):
+        def add_user(self, user_id, lang_id, first_name, last_name, username):
             try:
                 self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username), "0", "0", "0", "0"))
                 self.connection.commit()
