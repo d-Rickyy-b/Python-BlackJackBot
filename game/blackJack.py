@@ -246,7 +246,7 @@ class BlackJack(object):
                 else:
                     text += "👤"
                 if show_points is True and (i < self.current_player or self.current_player == -1):
-                    text += (user.first_name + " - [" + str(self.players[i].cardvalue) + "]\n")
+                    text += (user.first_name + " - [" + str(user.get_cardvalue()) + "]\n")
                 else:
                     text += (user.first_name + "\n")
                 i += 1
