@@ -49,7 +49,7 @@ def start(bot, update):
         bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message)
         game_handler.add_game(bj)
     else:
-        logger.debug("Game already existing")
+        logger.debug("Game already existing. Starting game!")
         game = game_handler.get_game_by_index(game_index)
         game.start_game()
 
