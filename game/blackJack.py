@@ -269,7 +269,8 @@ class BlackJack(object):
         else:
             command = text.lower()
 
-        if self.game_type == self.GROUP_CHAT:
+        # TODO following "or self.game_type == self.MULTIPLAYER_GAME" is not neccessary
+        if self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME:
             if command.startswith(translate("join", self.lang_id)):
                 self.add_player(user_id, first_name, message_id)
             elif command.startswith(translate("startCmd", self.lang_id)):
@@ -310,7 +311,10 @@ class BlackJack(object):
         self.send_message = send_message
         self.logger = logging.getLogger(__name__)
 
-        if chat_id >= 0:
+        if multiplayer:
+            self.game_type = self.MULTIPLAYER_GAME
+            chat_id = 0
+        elif chat_id >= 0:
             self.game_type = self.PRIVATE_CHAT
         else:
             self.game_type = self.GROUP_CHAT
@@ -325,6 +329,8 @@ class BlackJack(object):
         # Only send a "Please join the game" message, when it's a group chat
         if self.game_type == self.GROUP_CHAT:
             send_message(chat_id, translate("newRound", lang_id), message_id=message_id)  # keyboard=self.keyboard_not_running
+        elif self.game_type == self.MULTIPLAYER_GAME:
+            pass
         else:
             self.start_game()
             # start game and send message to private chat
