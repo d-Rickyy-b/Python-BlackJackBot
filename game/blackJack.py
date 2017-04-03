@@ -16,8 +16,9 @@ __author__ = 'Rico & Julian'
 
 
 class BlackJack(object):
-    GROUP_CHAT = 1
     PRIVATE_CHAT = 0
+    GROUP_CHAT = 1
+    MULTIPLAYER_GAME = 2
     MAX_PLAYERS = 5
 
     # Adds Player to the Game
