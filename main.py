@@ -54,6 +54,40 @@ def start(bot, update):
         game.start_game()
 
 
+def multiplayer(bot, update):
+    chat_id = update.message.chat_id
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+    first_name = update.message.from_user.first_name
+    # last_name = update.message.from_user.last_name
+    # username = update.message.from_user.username
+    db = DBwrapper.get_instance()
+
+    game_index = game_handler.get_index_by_chatid(chat_id)
+    if game_index == -1:
+        logger.debug("Creating a game")
+        lang_id = db.get_lang_id(user_id)
+        game_id = game_handler.generate_id()
+        bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_mp_message, multiplayer=True, game_id=game_id)
+        game_handler.add_game(bj)
+        send_message(chat_id, "Your game_id: " + bj.get_game_id())
+    else:
+        logger.debug("Game already existing")
+
+
+def join(bot, update):
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+    first_name = update.message.from_user.first_name
+    text = update.message.text
+    game_id = text.split(' ')[1]
+
+    print("ID: " + game_id)
+    game = game_handler.get_game_by_id(game_id)
+    game.add_player(user_id, first_name, message_id)
+    # TODO send message that user joined
+
+
 def stop(bot, update):
     pass
 
@@ -140,6 +174,17 @@ def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=N
     tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode, reply_markup=reply_markup)
 
 
+def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
+    game = game_handler.get_game_by_id(game_id)
+
+    if game is not None:
+        for player in game.players:
+            user_id = player.user_id
+            send_message(chat_id=user_id, text=text, parse_mode=parse_mode, reply_markup=reply_markup)
+    else:
+        print("Game is None")
+
+
 def game_commands(bot, update):
     text = update.message.text
     chat_id = update.message.chat_id
@@ -157,11 +202,14 @@ def game_commands(bot, update):
         return
 
     # check if user already has got a game (in the same chat):
+    # TODO multiplayer games
     game_index = game_handler.get_index_by_chatid(chat_id)
     if game_index != -1:
         logger.debug("Game already existing. Forwarding text '" + text + "' to game")
         game = game_handler.get_game_by_index(game_index)
         game.analyze_message(update)
+    else:
+        pass
 
 
 start_handler = CommandHandler('start', start)
@@ -170,10 +218,15 @@ language_handler = CommandHandler('language', language)
 callback_handler = CallbackQueryHandler(callback_eval)
 game_command_handler = MessageHandler(Filters.all, game_commands)
 
+mp_handler = CommandHandler('multiplayer', multiplayer)
+join = CommandHandler('join', join)
+
 dispatcher.add_handler(callback_handler)
 dispatcher.add_handler(language_handler)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(stats_handler)
+dispatcher.add_handler(mp_handler)
+dispatcher.add_handler(join)
 dispatcher.add_handler(game_command_handler)
 
 updater.start_polling()
