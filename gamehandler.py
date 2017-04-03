@@ -34,6 +34,14 @@ class GameHandler(object):
     def get_game_by_index(self, index):
         return self.GameList[index]
 
+    def get_game_by_id(self, game_id):
+        if game_id is None:
+            return None
+        for game in self.GameList:
+            if game.get_game_id() == game_id:
+                return game
+        return None
+
     def generate_id(self):
         game_id = ''.join(random.choice(string.digits + string.ascii_letters) for i in range(8))
 
