@@ -17,11 +17,11 @@ class GameHandler(object):
         return -1
 
     def gl_create(self):
-        self.GameList = []*0
+        self.GameList = []
 
     def gl_remove(self, chat_id):
         index = self.get_index_by_chatid(chat_id)
-        if not index == -1:
+        if not index < 0:
             self.GameList.pop(index)
 
     def add_game(self, blackjackgame):
