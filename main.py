@@ -58,7 +58,7 @@ def stop(bot, update):
     pass
 
 
-def help(bot, update):
+def help_def(bot, update):
     pass
 
 
