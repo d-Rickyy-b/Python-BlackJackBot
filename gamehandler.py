@@ -59,4 +59,4 @@ class GameHandler(object):
         return False
 
     def __init__(self):
-        self.GameList = []*0
+        self.GameList = []
