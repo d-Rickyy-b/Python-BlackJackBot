@@ -86,6 +86,7 @@ class BlackJack(object):
                 cards_string = "\n" + user.get_cards_string() + "\n"
                 self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(
                     user.first_name, cards_string, str(user.cardvalue))), reply_markup=self.keyboard_running,
+                                  message_id=self.join_message_ids[self.current_player], game_id=self.__game_id)
             else:
                 card = self.deck.pick_one_card()
                 cardvalue = self.deck.get_card_value(card)
@@ -302,7 +303,9 @@ class BlackJack(object):
         self.chat_id = chat_id
         self.__game_id = game_id
         self.lang_id = lang_id
-        self.deck = CardDeck(lang_id)  # TODO language of the cards & dealer cannot be changed
+        self.deck = CardDeck(lang_id)
+        # TODO language of the cards & dealer cannot be changed
+        # TODO especially with new multiplayer important!
         self.dealer = Dealer(translate("dealerName", lang_id), self.deck)
         self.game_running = False
         self.current_player = 0
