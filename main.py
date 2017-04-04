@@ -241,10 +241,9 @@ def game_commands(bot, update):
 
     # check if user already has got a game (in the same chat):
     # TODO multiplayer games
-    game_index = game_handler.get_index_by_chatid(chat_id)
-    if game_index != -1:
+    game = game_handler.get_game_by_chatid(chat_id)
+    if game is not None:
         logger.debug("Game already existing. Forwarding text '" + text + "' to game")
-        game = game_handler.get_game_by_index(game_index)
         game.analyze_message(update)
     else:
         pass
