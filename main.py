@@ -42,6 +42,9 @@ def start(bot, update):
         language(bot, update)
         return
 
+    if user_id in comment_list:
+        comment_list.remove(user_id)
+
     # check if user already has got a game (in the same chat):
     game_index = game_handler.get_index_by_chatid(chat_id)
     if game_index is None:
@@ -90,6 +93,9 @@ def join(bot, update):
 
 
 def stop(bot, update):
+    user_id = update.message.from_user.id
+    if user_id in comment_list:
+        comment_list.remove(user_id)
     pass
 
 
@@ -218,10 +224,17 @@ def game_commands(bot, update):
     last_name = update.message.from_user.last_name
     username = update.message.from_user.username
     db = DBwrapper.get_instance()
+    lang_id = db.get_lang_id(user_id)
+
+    if user_id in comment_list:
+        # User wants to comment!
+        send_message(chat_id, translate("userComment", lang_id))
+        send_message(24421134, "New comment: " + text)
+        return
 
     if not (db.is_user_saved(user_id)):
         # ask user for language:
-        logger.info("New user")
+        logger.info("New user - " + user_id)
         db.add_user(user_id, "en", first_name, last_name, username)
         language(bot, update)
         return
