@@ -1,12 +1,13 @@
+import random
+import string
+
 __author__ = 'Rico'
-import random, string
 
 
 # game_handler handles the blackJack-game-objects. When a new object is created, it is saved in "GameList"
 # get_index_by_chatid returns the index of a running game in the list
 class GameHandler(object):
-
-    GameList = []         # List, where the running Games are stored in
+    GameList = []  # List, where the running Games are stored in
 
     def gl_create(self):
         self.GameList = []

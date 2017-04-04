@@ -58,8 +58,8 @@ class BlackJack(object):
                 self.logger.debug("Next Player!")
                 self.current_player += 1
                 self.send_message(self.chat_id, translate("overview", self.lang_id) + "\n\n" + self.get_player_overview(show_points=True) + "\n" +
-                                                translate("nextPlayer", self.lang_id).format(self.players[self.current_player].first_name),
-                                                message_id=self.join_message_ids[self.current_player], reply_markup=self.keyboard_running, game_id=self.__game_id)
+                                  translate("nextPlayer", self.lang_id).format(self.players[self.current_player].first_name),
+                                  message_id=self.join_message_ids[self.current_player], reply_markup=self.keyboard_running, game_id=self.__game_id)
 
                 self.give_player_one()
             else:
@@ -86,7 +86,6 @@ class BlackJack(object):
                 cards_string = "\n" + user.get_cards_string() + "\n"
                 self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(
                     user.first_name, cards_string, str(user.cardvalue))), reply_markup=self.keyboard_running,
-                    message_id=self.join_message_ids[self.current_player], game_id=self.__game_id)
             else:
                 card = self.deck.pick_one_card()
                 cardvalue = self.deck.get_card_value(card)
