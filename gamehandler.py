@@ -30,10 +30,12 @@ class GameHandler(object):
                     if player.user_id == chat_id:
                         return index
             index += 1
-        return -1
+        return None
 
     def get_game_by_chatid(self, chat_id):
         index = self.get_index_by_chatid(chat_id)
+        if index is None:
+            return None
         return self.GameList[index]
 
     def get_game_by_index(self, index):
