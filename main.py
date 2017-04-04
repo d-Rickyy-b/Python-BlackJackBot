@@ -23,6 +23,7 @@ dispatcher = updater.dispatcher
 
 game_handler = GameHandler()
 tg_bot = updater.bot
+comment_list = []
 
 
 def start(bot, update):
@@ -124,8 +125,32 @@ def language(bot, update):
 
 def comment(bot, update):
     # TODO add comment functionality
-    pass
+    user_id = update.message.from_user.id
+    chat_id = update.message.chat_id
+    first_name = update.message.from_user.first_name
+    last_name = update.message.from_user.last_name
+    username = update.message.from_user.username
+    db = DBwrapper.get_instance()
+    lang_id = db.get_lang_id(user_id)
+    text = update.message.text
+    params = text.split()
+    if game_handler.get_game_by_chatid(chat_id) is None:
+        if len(params) > 1:
+            text = " ".join(params[1:])
+            logger.debug("New comment! {}!".format(user_id))
+            send_message(24421134, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
+            send_message(chat_id, translate("userComment", lang_id))
 
+            if user_id in comment_list:
+                # comment_list.pop(comment_list.index(user_id))
+                logger.debug("Remove {} from comment_list!".format(user_id))
+                comment_list.remove(user_id)
+        else:
+            # The user just wrote "/comment" -> Ask him to send a message
+            logger.debug("Add {} to comment_list!".format(user_id))
+            send_message(chat_id, translate("sendCommentNow", lang_id))
+            if user_id not in comment_list:
+                comment_list.append(user_id)
 
 def mentions(bot, update):
     # TODO mention users which helped (translations, etc.)
@@ -216,6 +241,7 @@ start_handler = CommandHandler('start', start)
 stats_handler = CommandHandler('stats', stats)
 language_handler = CommandHandler('language', language)
 callback_handler = CallbackQueryHandler(callback_eval)
+comment_handler = CommandHandler('comment', comment)
 game_command_handler = MessageHandler(Filters.all, game_commands)
 
 mp_handler = CommandHandler('multiplayer', multiplayer)
@@ -227,6 +253,7 @@ dispatcher.add_handler(start_handler)
 dispatcher.add_handler(stats_handler)
 dispatcher.add_handler(mp_handler)
 dispatcher.add_handler(join)
+dispatcher.add_handler(comment_handler)
 dispatcher.add_handler(game_command_handler)
 
 updater.start_polling()
