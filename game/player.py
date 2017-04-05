@@ -45,11 +45,10 @@ class Player(object):
     def get_userid(self):
         return self.user_id
 
-    def __init__(self, user_id, first_name, deck, lang_id="en"):
+    def __init__(self, user_id, first_name, deck):
+        self.number_of_cards = 0
         self.user_id = user_id
         self.first_name = first_name
-        self.lang_id = lang_id
-        self.number_of_cards = 0
         self.cardvalue = 0
         self.has_ace = False
         self.cards = []
