@@ -14,7 +14,7 @@ from lang.language import translate
 
 __author__ = 'Rico'
 
-BOT_TOKEN = "<your_bot_token>"
+BOT_TOKEN = "93649491:AAGqs2JEuCZuq7qBgei7-6x2ObXwXft76kA"
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
