@@ -45,6 +45,9 @@ class Player(object):
     def get_userid(self):
         return self.user_id
 
+    def get_lang_id(self):
+        return self.lang_id
+
     def __init__(self, user_id, first_name, deck,lang_id="en"):
         self.user_id = user_id
         self.first_name = first_name
