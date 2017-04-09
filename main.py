@@ -198,9 +198,7 @@ def callback_eval(bot, update):
     elif query_data == "com_ch_lang":
         language(bot, update)
 
-    print(query_data)
-
-
+    
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
     tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode, reply_markup=reply_markup)
 
@@ -232,7 +230,7 @@ def game_commands(bot, update):
         send_message(24421134, "New comment: " + text)
         return
 
-    if not (db.is_user_saved(user_id)):
+    if not db.is_user_saved(user_id):
         # ask user for language:
         logger.info("New user - " + user_id)
         db.add_user(user_id, "en", first_name, last_name, username)
