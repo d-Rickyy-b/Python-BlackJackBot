@@ -45,7 +45,7 @@ class DBwrapper(object):
             else:
                 return "en"
 
-        def write(self, user_id, lang_id, first_name, last_name, username):
+        def add_user(self, user_id, lang_id, first_name, last_name, username):
             try:
                 self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username), "0", "0", "0", "0"))
                 self.connection.commit()
@@ -76,6 +76,8 @@ class DBwrapper(object):
             if result:
                 if result[2] == first_name and result[3] == last_name and result[4] == username:
                     return False
+                return True
+            else:
                 return True
 
         def update_user_data(self, user_id, first_name, last_name, username):
