@@ -79,7 +79,7 @@ def multiplayer(bot, update):
         logger.debug("Game already existing")
 
 
-def join(bot, update):
+def join_secret(bot, update):
     user_id = update.message.from_user.id
     message_id = update.message.message_id
     first_name = update.message.from_user.first_name
@@ -255,14 +255,14 @@ comment_handler = CommandHandler('comment', comment)
 game_command_handler = MessageHandler(Filters.all, game_commands)
 
 mp_handler = CommandHandler('multiplayer', multiplayer)
-join = CommandHandler('join', join)
+join_sec = CommandHandler('join_secret', join_secret)
 
 dispatcher.add_handler(callback_handler)
 dispatcher.add_handler(language_handler)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(stats_handler)
 dispatcher.add_handler(mp_handler)
-dispatcher.add_handler(join)
+dispatcher.add_handler(join_sec)
 dispatcher.add_handler(comment_handler)
 dispatcher.add_handler(game_command_handler)
 
