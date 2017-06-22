@@ -68,7 +68,7 @@ def multiplayer(bot, update):
     db = DBwrapper.get_instance()
 
     game_index = game_handler.get_index_by_chatid(chat_id)
-    if game_index == -1:
+    if game_index is None:
         logger.debug("Creating a game")
         lang_id = db.get_lang_id(user_id)
         game_id = game_handler.generate_id()
