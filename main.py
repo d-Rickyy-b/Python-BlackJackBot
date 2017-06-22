@@ -130,7 +130,6 @@ def language(bot, update):
 
 
 def comment(bot, update):
-    # TODO add comment functionality
     user_id = update.message.from_user.id
     chat_id = update.message.chat_id
     first_name = update.message.from_user.first_name
@@ -157,6 +156,7 @@ def comment(bot, update):
             send_message(chat_id, translate("sendCommentNow", lang_id))
             if user_id not in comment_list:
                 comment_list.append(user_id)
+
 
 def mentions(bot, update):
     # TODO mention users which helped (translations, etc.)
@@ -227,7 +227,7 @@ def game_commands(bot, update):
     if user_id in comment_list:
         # User wants to comment!
         send_message(chat_id, translate("userComment", lang_id))
-        send_message(24421134, "New comment: " + text)
+        send_message(24421134, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
         return
 
     if not db.is_user_saved(user_id):
