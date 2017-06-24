@@ -35,12 +35,13 @@ def start(bot, update):
     username = update.message.from_user.username
     db = DBwrapper.get_instance()
 
-    if not (db.is_user_saved(user_id)):
-        # ask user for language:
+    if not db.is_user_saved(user_id):
         logger.info("New user")
         db.add_user(user_id, "en", first_name, last_name, username)
-        language(bot, update)
-        return
+        if chat_id > 0:
+            # ask user for language:
+            language(bot, update)
+            return
 
     if user_id in comment_list:
         comment_list.remove(user_id)
