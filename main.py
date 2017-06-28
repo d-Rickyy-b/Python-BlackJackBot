@@ -229,6 +229,7 @@ def game_commands(bot, update):
         # User wants to comment!
         send_message(chat_id, translate("userComment", lang_id))
         send_message(24421134, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
+        comment_list.remove(user_id)
         return
 
     if not db.is_user_saved(user_id):
