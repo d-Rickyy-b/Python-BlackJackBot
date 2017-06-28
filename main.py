@@ -236,7 +236,11 @@ def game_commands(bot, update):
         # ask user for language:
         logger.info("New user - " + str(user_id))
         db.add_user(user_id, "en", first_name, last_name, username)
-        language(bot, update)
+
+        if chat_id > 0:
+            # ask user for language if it's a private chat:
+            language(bot, update)
+
         return
 
     # check if user already has got a game (in the same chat):
