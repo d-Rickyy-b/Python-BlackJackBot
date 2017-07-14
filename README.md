@@ -2,8 +2,7 @@
 
 [![Build Status](https://travis-ci.org/d-Rickyy-b/Python-BlackJackBot.svg?branch=master)](https://travis-ci.org/d-Rickyy-b/Python-BlackJackBot) [![Code Health](https://landscape.io/github/d-Rickyy-b/Python-BlackJackBot/master/landscape.svg?style=flat)](https://landscape.io/github/d-Rickyy-b/Python-BlackJackBot/master)
 
-# TelegramBot
-This is the code for my Telegram Bot. You can find it here: https://telegram.me/BlackJackBot
+This is the code for my Telegram Bot with which you can play the game Black Jack. You can find it here: https://telegram.me/BlackJackBot
 
 The main file, which needs to be executed is main.py
 You need to put your API-Token in the right place.
