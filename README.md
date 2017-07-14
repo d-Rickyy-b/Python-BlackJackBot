@@ -1,6 +1,6 @@
 # Python-BlackJackBot
 
-[![Build Status](https://travis-ci.org/d-Rickyy-b/Python-BlackJackBot.svg?branch=master)](https://travis-ci.org/d-Rickyy-b/Python-BlackJackBot)
+[![Build Status](https://travis-ci.org/d-Rickyy-b/Python-BlackJackBot.svg?branch=master)](https://travis-ci.org/d-Rickyy-b/Python-BlackJackBot) [![Code Health](https://landscape.io/github/d-Rickyy-b/Python-BlackJackBot/master/landscape.svg?style=flat)](https://landscape.io/github/d-Rickyy-b/Python-BlackJackBot/master)
 
 # TelegramBot
 This is the code for my Telegram Bot. You can find it here: https://telegram.me/BlackJackBot
