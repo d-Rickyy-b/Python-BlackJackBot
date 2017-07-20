@@ -25,7 +25,7 @@ class DBwrapper(object):
 
         def create_database(self, database_path):
             # Create database file and add admin and users table to the database
-            open(database_path, 'a')
+            open(database_path, 'a').close()
 
             connection = sqlite3.connect(database_path)
             connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
