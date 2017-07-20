@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import logging
 
 from telegram.keyboardbutton import KeyboardButton
@@ -16,21 +15,23 @@ __author__ = 'Rico & Julian'
 
 
 class BlackJack(object):
-    GROUP_CHAT = 1
     PRIVATE_CHAT = 0
+    GROUP_CHAT = 1
+    MULTIPLAYER_GAME = 2
     MAX_PLAYERS = 5
 
     # Adds Player to the Game
     def add_player(self, user_id, first_name, message_id, silent=None):
         if not self.game_running:
-            if self.get_index_by_user_id(user_id) == -1 and len(self.players) <= self.MAX_PLAYERS:
+            if self.get_index_by_user_id(user_id) == None and len(self.players) <= self.MAX_PLAYERS:
                 self.logger.debug("Adding user '" + first_name + "' to players.")
                 player = Player(user_id, first_name, self.deck)
                 self.players.append(player)
                 self.join_message_ids.append(message_id)
 
                 if silent is None or silent is False:
-                    self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id)
+                    # TODO When game is multiplayer then print current players?
+                    self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id, game_id=self.__game_id)
             else:
                 self.logger.debug("User '" + first_name + "' already in player list.")
 
@@ -41,7 +42,7 @@ class BlackJack(object):
                 return index
             index += 1
 
-        return -1
+        return None
 
     def get_user_by_user_id(self, user_id):
         for user in self.players:
@@ -51,17 +52,17 @@ class BlackJack(object):
 
     def next_player(self):
         if self.game_running:
-            if (self.current_player + 1) < len(self.players):
+            if self.current_player is not None and (self.current_player + 1) < len(self.players):
                 self.logger.debug("Next Player!")
                 self.current_player += 1
                 self.send_message(self.chat_id, translate("overview", self.lang_id) + "\n\n" + self.get_player_overview(show_points=True) + "\n" +
-                                                translate("nextPlayer", self.lang_id).format(self.players[self.current_player].first_name),
-                                                message_id=self.join_message_ids[self.current_player], reply_markup=self.keyboard_running)
+                                  translate("nextPlayer", self.lang_id).format(self.players[self.current_player].first_name),
+                                  message_id=self.join_message_ids[self.current_player], reply_markup=self.keyboard_running, game_id=self.__game_id)
 
                 self.give_player_one()
             else:
                 self.logger.debug("Dealer's turn")
-                self.current_player = -1
+                self.current_player = None
                 self.dealers_turn()
 
     # gives player one card
@@ -83,7 +84,7 @@ class BlackJack(object):
                 cards_string = "\n" + user.get_cards_string() + "\n"
                 self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(
                     user.first_name, cards_string, str(user.cardvalue))), reply_markup=self.keyboard_running,
-                    message_id=self.join_message_ids[self.current_player])
+                                  message_id=self.join_message_ids[self.current_player], game_id=self.__game_id)
             else:
                 card = self.deck.pick_one_card()
                 cardvalue = self.deck.get_card_value(card)
@@ -92,7 +93,7 @@ class BlackJack(object):
                     # user got an ace
                     cardvalue = 1
                     user.remove_ace()
-                    self.send_message(self.chat_id, translate("softHandLater", self.lang_id))
+                    self.send_message(self.chat_id, translate("softHandLater", self.lang_id), game_id=self.__game_id)
 
                 if self.game_type == self.PRIVATE_CHAT:
                     player_drew = translate("playerDraws1", self.lang_id).format(str(self.deck.get_card_name(card)))
@@ -111,10 +112,10 @@ class BlackJack(object):
                     elif user.cardvalue == 21:
                         player_drew += "\n\n" + user.first_name + " " + translate("got21", self.lang_id)
 
-                    self.send_message(self.chat_id, text=player_drew)
+                    self.send_message(self.chat_id, text=player_drew, game_id=self.__game_id)
                     self.next_player()
                 else:
-                    self.send_message(self.chat_id, text=player_drew, reply_markup=self.keyboard_running)
+                    self.send_message(self.chat_id, text=player_drew, reply_markup=self.keyboard_running, game_id=self.__game_id)
 
     # Gives the dealer cards
     def dealers_turn(self):
@@ -151,20 +152,20 @@ class BlackJack(object):
             self.evaluation()
 
     def start_game(self, message_id=None):
-        if (self.game_type == self.GROUP_CHAT and len(self.players) >= 2) or self.game_type == self.PRIVATE_CHAT:
+        if ((self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME) and len(self.players) >= 1) or self.game_type == self.PRIVATE_CHAT:
             if not self.game_running:
                 self.game_running = True
 
                 for player in self.players:
                     add_game_played(player.user_id)
 
-                if self.game_type == self.GROUP_CHAT:
-                    self.send_message(self.chat_id, translate("gameBegins", self.lang_id) + "\n" + translate("gameBegins2", self.lang_id) + "\n\n" + self.get_player_overview())
+                if self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME:
+                    self.send_message(self.chat_id, translate("gameBegins", self.lang_id) + "\n" + translate("gameBegins2", self.lang_id) + "\n\n" + self.get_player_overview(), game_id=self.__game_id)
 
                 self.dealers_turn()
                 self.give_player_one()
         else:
-            self.send_message(self.chat_id, translate("notEnoughPlayers", self.lang_id), message_id=message_id)
+            self.send_message(self.chat_id, translate("notEnoughPlayers", self.lang_id), message_id=message_id, game_id=self.__game_id)
 
     def evaluation(self):
         list_21 = []
@@ -232,7 +233,7 @@ class BlackJack(object):
         for user in list_busted:
             final_message += str(user.get_cardvalue()) + " - " + user.get_first_name() + "\n"
 
-        self.send_message(self.chat_id, final_message)
+        self.send_message(self.chat_id, final_message, game_id=self.__game_id)
         self.game_handler.gl_remove(self.chat_id)
 
     def get_player_overview(self, show_points=False, text="", i=0, dealer=False):
@@ -243,7 +244,7 @@ class BlackJack(object):
                 else:
                     text += "👤"
                 if show_points is True and (i < self.current_player or self.current_player == -1):
-                    text += (user.first_name + " - [" + str(self.players[i].cardvalue) + "]\n")
+                    text += (user.first_name + " - [" + str(user.get_cardvalue()) + "]\n")
                 else:
                     text += (user.first_name + "\n")
                 i += 1
@@ -266,7 +267,8 @@ class BlackJack(object):
         else:
             command = text.lower()
 
-        if self.game_type == self.GROUP_CHAT:
+        # TODO following "or self.game_type == self.MULTIPLAYER_GAME" is not neccessary
+        if self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME:
             if command.startswith(translate("join", self.lang_id)):
                 self.add_player(user_id, first_name, message_id)
             elif command.startswith(translate("startCmd", self.lang_id)):
@@ -277,7 +279,7 @@ class BlackJack(object):
                 if self.current_player >= 0 and user_id == current_player.user_id:
                     self.give_player_one()
                 else:
-                    self.send_message(self.chat_id, translate("notYourTurn", self.lang_id).format(first_name))
+                    self.send_message(self.chat_id, translate("notYourTurn", self.lang_id).format(first_name), game_id=self.__game_id)
 
             elif command.startswith(translate("noMore", self.lang_id)):
                 current_player = self.players[self.current_player]
@@ -288,14 +290,20 @@ class BlackJack(object):
                 if user_id == self.players[0].user_id:
                     self.game_handler.gl_remove(self.chat_id)
 
+    def get_game_id(self):
+        return self.__game_id
+
     # When game is being initialized
-    def __init__(self, chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message):
+    def __init__(self, chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message, multiplayer=None, game_id=None):
         # declare variables and set initial values
         self.players = []
         self.join_message_ids = []
         self.chat_id = chat_id
+        self.__game_id = game_id
         self.lang_id = lang_id
-        self.deck = CardDeck(lang_id)  # TODO language of the cards & dealer cannot be changed
+        self.deck = CardDeck(lang_id)
+        # TODO language of the cards & dealer cannot be changed
+        # TODO especially with new multiplayer important!
         self.dealer = Dealer(translate("dealerName", lang_id), self.deck)
         self.game_running = False
         self.current_player = 0
@@ -303,7 +311,10 @@ class BlackJack(object):
         self.send_message = send_message
         self.logger = logging.getLogger(__name__)
 
-        if chat_id >= 0:
+        if multiplayer:
+            self.game_type = self.MULTIPLAYER_GAME
+            chat_id = 0
+        elif chat_id >= 0:
             self.game_type = self.PRIVATE_CHAT
         else:
             self.game_type = self.GROUP_CHAT
@@ -318,11 +329,13 @@ class BlackJack(object):
         # Only send a "Please join the game" message, when it's a group chat
         if self.game_type == self.GROUP_CHAT:
             send_message(chat_id, translate("newRound", lang_id), message_id=message_id)  # keyboard=self.keyboard_not_running
+        elif self.game_type == self.MULTIPLAYER_GAME:
+            pass
         else:
             self.start_game()
             # start game and send message to private chat
 
     # When game is being ended / object is destructed
     def __del__(self):
-        self.send_message(self.chat_id, translate("gameEnded", self.lang_id), reply_markup=ReplyKeyboardHide())
+        self.send_message(self.chat_id, translate("gameEnded", self.lang_id), reply_markup=ReplyKeyboardHide(), game_id=self.__game_id)
         pass

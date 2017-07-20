@@ -11,9 +11,45 @@ class DBwrapper(object):
 
         def __init__(self):
             database_path = os.path.join(self.dir_path, "users.db")
+
+            if not os.path.exists(database_path):
+                print("File '" + database_path + "' does not exist! Trying to create one.")
+                try:
+                    self.create_database(database_path)
+                except:
+                    print("An error has occured while creating the database!")
+
             self.connection = sqlite3.connect(database_path)
             self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
             self.cursor = self.connection.cursor()
+
+        def create_database(self, database_path):
+            # Create database file and add admin and users table to the database
+            open(database_path, 'a').close()
+
+            connection = sqlite3.connect(database_path)
+            connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
+            cursor = connection.cursor()
+
+            cursor.execute("CREATE TABLE 'admins' "
+                           "('userID' INTEGER NOT NULL,"
+                           "'first_name' TEXT,"
+                           "'username' TEXT,"
+                           "PRIMARY KEY('userID'));")
+
+            cursor.execute("CREATE TABLE 'users'"
+                           "('userID' INTEGER NOT NULL,"
+                           "'languageID' TEXT,"
+                           "'first_name' TEXT,"
+                           "'last_name' TEXT,"
+                           "'username' TEXT,"
+                           "'gamesPlayed' INTEGER,"
+                           "'gamesWon' INTEGER,"
+                           "'gamesTie' INTEGER,"
+                           "'lastPlayed' INTEGER,"
+                           "PRIMARY KEY('userID'));")
+            connection.commit()
+            connection.close()
 
         def get_user(self, user_id):
             self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
@@ -45,9 +81,9 @@ class DBwrapper(object):
             else:
                 return "en"
 
-        def write(self, user_id, lang_id, first_name, last_name, username):
+        def add_user(self, user_id, lang_id, first_name, last_name, username):
             try:
-                self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username), "0", "0", "0", "0"))
+                self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, 0, 0, 0, 0);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username)))
                 self.connection.commit()
             except sqlite3.IntegrityError:
                 # print("User already exists")
@@ -76,6 +112,8 @@ class DBwrapper(object):
             if result:
                 if result[2] == first_name and result[3] == last_name and result[4] == username:
                     return False
+                return True
+            else:
                 return True
 
         def update_user_data(self, user_id, first_name, last_name, username):

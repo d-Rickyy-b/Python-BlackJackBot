@@ -5,7 +5,7 @@ from lang.language import translate
 __author__ = 'Rico'
 
 
-class CardDeck:
+class CardDeck(object):
     symbols = ["♥", "♦", "♣", "♠"]
     valueInt = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
 
