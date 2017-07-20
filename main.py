@@ -97,7 +97,6 @@ def stop(bot, update):
     user_id = update.message.from_user.id
     if user_id in comment_list:
         comment_list.remove(user_id)
-    pass
 
 
 def help_def(bot, update):
