@@ -73,6 +73,10 @@ class DBwrapper(object):
             self.cursor.execute("SELECT rowid, * FROM users;")
             return self.cursor.fetchall()
 
+        def get_admins(self):
+            self.cursor.execute("SELECT admins.userID from admins;")
+            return self.cursor.fetchall()
+
         def get_lang_id(self, user_id):
             self.cursor.execute("SELECT languageID FROM users WHERE userID=?;", [str(user_id)])
             result = self.cursor.fetchone()
