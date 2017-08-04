@@ -66,8 +66,7 @@ class BlackJack(object):
     # gives player one card
     def give_player_one(self):
         if self.game_running:
-            player_index = self.current_player
-            user = self.players[player_index]
+            user = self.players[self.current_player]
             self.logger.debug("Giving player one card | chatID: " + str(self.chat_id) + " | player: " + user.get_first_name())
 
             if user.get_number_of_cards() == 0:
