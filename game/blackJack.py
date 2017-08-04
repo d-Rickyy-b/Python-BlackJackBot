@@ -149,7 +149,7 @@ class BlackJack(object):
             self.evaluation()
 
     def start_game(self, message_id=None):
-        if ((self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME) and len(self.players) >= 1) or self.game_type == self.PRIVATE_CHAT:
+        if ((self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME) and len(self.players) > 1) or self.game_type == self.PRIVATE_CHAT:
             if not self.game_running:
                 self.game_running = True
 
