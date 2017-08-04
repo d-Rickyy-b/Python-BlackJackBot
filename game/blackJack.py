@@ -10,6 +10,7 @@ from game.cardDeck import CardDeck
 from game.dealer import Dealer
 from game.player import Player
 from lang.language import translate
+from game.message import Message
 
 __author__ = 'Rico & Julian'
 
@@ -85,6 +86,7 @@ class BlackJack(object):
             else:
                 card = self.deck.pick_one_card()
                 cardvalue = self.deck.get_card_value(card)
+                message = Message()
 
                 if user.has_ace and (user.cardvalue + cardvalue > 21):
                     # user got already an ace -> soft hand
@@ -92,13 +94,12 @@ class BlackJack(object):
                     self.send_message(self.chat_id, translate("softHandLater", self.lang_id), game_id=self.__game_id)
 
                 if self.game_type == self.PRIVATE_CHAT:
-                    player_drew = translate("playerDraws1", self.lang_id).format(str(self.deck.get_card_name(card)))
+                    message.add_text(translate("playerDraws1", self.lang_id).format(str(self.deck.get_card_name(card))))
                 else:
-                    player_drew = translate("playerDrew", self.lang_id).format(user.first_name, str(self.deck.get_card_name(card)))
+                    message.add_text(translate("playerDrew", self.lang_id).format(user.first_name, str(self.deck.get_card_name(card))))
 
                 user.give_card(card, cardvalue)
-
-                player_drew += "\n" + translate("cardvalue", self.lang_id).format(str(user.cardvalue))
+                message.add_text_nl(translate("cardvalue", self.lang_id).format(str(user.cardvalue)))
 
                 if user.cardvalue >= 21:
                     if user.cardvalue > 21:
@@ -106,12 +107,12 @@ class BlackJack(object):
                             player_drew += "\n\n" + translate("playerBusted", self.lang_id).format(user.first_name)
 
                     elif user.cardvalue == 21:
-                        player_drew += "\n\n" + user.first_name + " " + translate("got21", self.lang_id)
+                        message.add_text("\n\n" + user.first_name + " " + translate("got21", self.lang_id))
 
-                    self.send_message(self.chat_id, text=player_drew, game_id=self.__game_id)
+                    self.send_message(self.chat_id, text=message.get_text(), game_id=self.__game_id)
                     self.next_player()
                 else:
-                    self.send_message(self.chat_id, text=player_drew, reply_markup=self.keyboard_running, game_id=self.__game_id)
+                    self.send_message(self.chat_id, text=message.get_text(), reply_markup=self.keyboard_running, game_id=self.__game_id)
 
     # Gives the dealer cards
     def dealers_turn(self):
