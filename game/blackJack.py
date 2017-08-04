@@ -90,7 +90,7 @@ class BlackJack(object):
                 if user.has_ace and (user.cardvalue + cardvalue > 21):
                     # user got already an ace -> soft hand
                     user.remove_ace()
-                    self.send_message(self.chat_id, translate("softHandLater", self.lang_id), game_id=self.__game_id)
+                    message.add_text(translate("softHandLater", self.lang_id))
 
                 if self.game_type == self.PRIVATE_CHAT:
                     message.add_text(translate("playerDraws1", self.lang_id).format(str(self.deck.get_card_name(card))))
