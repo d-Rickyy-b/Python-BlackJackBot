@@ -8,9 +8,9 @@ from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 from database.statistics import add_game_played, set_game_won
 from game.cardDeck import CardDeck
 from game.dealer import Dealer
+from game.message import Message
 from game.player import Player
 from lang.language import translate
-from game.message import Message
 
 __author__ = 'Rico & Julian'
 
