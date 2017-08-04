@@ -50,7 +50,7 @@ class BlackJack(object):
 
     def next_player(self):
         if self.game_running:
-            if self.current_player is not None and (self.current_player + 1) < len(self.players):
+            if self.current_player is not None and self.current_player < (len(self.players) - 1):
                 self.logger.debug("Next Player!")
                 self.current_player += 1
                 self.send_message(self.chat_id, translate("overview", self.lang_id) + "\n\n" + self.get_player_overview(show_points=True) + "\n" +
