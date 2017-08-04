@@ -104,7 +104,7 @@ class BlackJack(object):
                 if user.cardvalue >= 21:
                     if user.cardvalue > 21:
                         if self.game_type == self.GROUP_CHAT:
-                            player_drew += "\n\n" + translate("playerBusted", self.lang_id).format(user.first_name)
+                            message.add_text("\n\n" + translate("playerBusted", self.lang_id).format(user.first_name))
 
                     elif user.cardvalue == 21:
                         message.add_text("\n\n" + user.first_name + " " + translate("got21", self.lang_id))
