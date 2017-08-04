@@ -75,7 +75,6 @@ class BlackJack(object):
                 for _ in range(2):
                     card = self.deck.pick_one_card()
                     cardvalue = self.deck.get_card_value(card)
-
                     user.give_card(card, cardvalue)
 
                 # TODO check if cardvalue = 21. If yes, mention it in the message
