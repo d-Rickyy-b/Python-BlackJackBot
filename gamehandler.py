@@ -14,6 +14,8 @@ class GameHandler(object):
 
     def gl_remove(self, chat_id):
         index = self.get_index_by_chatid(chat_id)
+        if index is None:
+            return
         if not index < 0:
             self.GameList.pop(index)
 
