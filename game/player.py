@@ -25,6 +25,9 @@ class Player(object):
     def has_busted(self):
         return self.cardvalue > 21
 
+    def has_cards(self):
+        return len(self.cards) > 0
+
     def get_cards_string(self):
         cards_string = ""
         for i, card in enumerate(self.cards):
