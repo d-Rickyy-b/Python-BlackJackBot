@@ -36,11 +36,9 @@ class BlackJack(object):
                 self.logger.debug("User '" + first_name + "' already in player list. Or max players reached")
 
     def get_index_by_user_id(self, user_id):
-        index = 0
-        for user in self.players:
+        for index, user in enumerate(self.players):
             if user.get_userid() == user_id:
                 return index
-            index += 1
 
         return None
 
