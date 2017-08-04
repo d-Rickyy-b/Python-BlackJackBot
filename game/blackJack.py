@@ -33,7 +33,7 @@ class BlackJack(object):
                     # TODO When game is multiplayer then print current players?
                     self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id, game_id=self.__game_id)
             else:
-                self.logger.debug("User '" + first_name + "' already in player list.")
+                self.logger.debug("User '" + first_name + "' already in player list. Or max players reached")
 
     def get_index_by_user_id(self, user_id):
         index = 0
