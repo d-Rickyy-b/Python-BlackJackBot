@@ -71,7 +71,7 @@ class BlackJack(object):
 
             if not user.has_cards():
                 # give user 2 cards at beginning
-                for i in range(2):
+                for _ in range(2):
                     card = self.deck.pick_one_card()
                     cardvalue = self.deck.get_card_value(card)
 
