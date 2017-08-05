@@ -2,7 +2,7 @@
 import logging
 
 from telegram.keyboardbutton import KeyboardButton
-from telegram.replykeyboardhide import ReplyKeyboardHide
+from telegram.replykeyboardremove import ReplyKeyboardRemove
 from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 
 from database.statistics import add_game_played, set_game_won
@@ -333,4 +333,4 @@ class BlackJack(object):
 
     # When game is being ended / object is destructed
     def __del__(self):
-        self.send_message(self.chat_id, translate("gameEnded", self.lang_id), reply_markup=ReplyKeyboardHide(), game_id=self.__game_id)
+        self.send_message(self.chat_id, translate("gameEnded", self.lang_id), reply_markup=ReplyKeyboardRemove(), game_id=self.__game_id)

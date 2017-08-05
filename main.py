@@ -3,8 +3,8 @@
 import logging
 
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
-from telegram.inlinekeyboardbutton import InlineKeyboardButton
-from telegram.inlinekeyboardmarkup import InlineKeyboardMarkup
+from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
+from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
