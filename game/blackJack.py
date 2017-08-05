@@ -82,12 +82,12 @@ class BlackJack(object):
                     got21_text = "\n\n" + user.first_name + " " + translate("got21", self.lang_id)
 
                     self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(
-                    user.first_name, cards_string, str(user.cardvalue))) + got21_text, reply_markup=ReplyKeyboardRemove, game_id=self.__game_id)
+                        user.first_name, cards_string, str(user.cardvalue))) + got21_text, reply_markup=ReplyKeyboardRemove, game_id=self.__game_id)
                     self.next_player()
                 else:
                     self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(
-                    user.first_name, cards_string, str(user.cardvalue))), reply_markup=self.keyboard_running,
-                                  message_id=self.join_message_ids[self.current_player], game_id=self.__game_id)
+                        user.first_name, cards_string, str(user.cardvalue))), reply_markup=self.keyboard_running,
+                                      message_id=self.join_message_ids[self.current_player], game_id=self.__game_id)
             else:
                 card = self.deck.pick_one_card()
                 cardvalue = self.deck.get_card_value(card)
