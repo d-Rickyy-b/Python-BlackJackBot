@@ -168,7 +168,7 @@ class TestBlackJack(TestCase):
 
         @staticmethod
         def create_deck():
-            deck = list([1,7,9,13,2,5])
+            deck = list([1, 7, 9, 13, 2, 5])
             return deck[:]
 
         def pick_one_card(self):
