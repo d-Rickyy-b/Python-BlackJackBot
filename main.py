@@ -98,6 +98,9 @@ def stop(bot, update):
     if user_id in comment_list:
         comment_list.remove(user_id)
 
+    chat_id = update.message.chat_id
+    game_handler.gl_remove(chat_id)
+
 
 def help_def(bot, update):
     pass
