@@ -148,7 +148,6 @@ def comment(bot, update):
                 send_message(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
 
             if user_id in comment_list:
-                # comment_list.pop(comment_list.index(user_id))
                 logger.debug("Remove {} from comment_list!".format(user_id))
                 comment_list.remove(user_id)
         else:
@@ -235,7 +234,6 @@ def game_commands(bot, update):
         return
 
     if not db.is_user_saved(user_id):
-        # ask user for language:
         logger.info("New user - " + str(user_id))
         db.add_user(user_id, "en", first_name, last_name, username)
 
@@ -251,8 +249,6 @@ def game_commands(bot, update):
     if game is not None:
         logger.debug("Game already existing. Forwarding text '" + text + "' to game")
         game.analyze_message(update)
-    else:
-        pass
 
 
 start_handler = CommandHandler('start', start)
