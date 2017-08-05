@@ -4,7 +4,8 @@ __author__ = 'Rico'
 
 class Message(object):
 
-    def __init__(self, message = ""):
+
+    def __init__(self, message=""):
         self.message = message
 
     def add_text(self, text):
