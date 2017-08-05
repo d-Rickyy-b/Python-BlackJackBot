@@ -143,8 +143,9 @@ def comment(bot, update):
         if len(params) > 1:
             text = " ".join(params[1:])
             logger.debug("New comment! {}!".format(user_id))
-            send_message(24421134, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
             send_message(chat_id, translate("userComment", lang_id))
+            for admin_id in db.get_admins():
+                send_message(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
 
             if user_id in comment_list:
                 # comment_list.pop(comment_list.index(user_id))
