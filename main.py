@@ -256,6 +256,7 @@ def game_commands(bot, update):
 
 
 start_handler = CommandHandler('start', start)
+stop_handler = CommandHandler('stop', stop)
 stats_handler = CommandHandler('stats', stats)
 language_handler = CommandHandler('language', language)
 callback_handler = CallbackQueryHandler(callback_eval)
@@ -268,6 +269,7 @@ join_sec = CommandHandler('join_secret', join_secret)
 dispatcher.add_handler(callback_handler)
 dispatcher.add_handler(language_handler)
 dispatcher.add_handler(start_handler)
+dispatcher.add_handler(stop_handler)
 dispatcher.add_handler(stats_handler)
 dispatcher.add_handler(mp_handler)
 dispatcher.add_handler(join_sec)
