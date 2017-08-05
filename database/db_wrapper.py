@@ -74,8 +74,12 @@ class DBwrapper(object):
             return self.cursor.fetchall()
 
         def get_admins(self):
-            self.cursor.execute("SELECT admins.userID from admins;")
-            return self.cursor.fetchall()
+            self.cursor.execute("SELECT userID from admins;")
+            admins = self.cursor.fetchall()
+            admin_list = []
+            for admin in admins:
+                admin_list.append(admin[0])
+            return admin_list
 
         def get_lang_id(self, user_id):
             self.cursor.execute("SELECT languageID FROM users WHERE userID=?;", [str(user_id)])
