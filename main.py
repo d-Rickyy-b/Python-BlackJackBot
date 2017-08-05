@@ -232,7 +232,7 @@ def game_commands(bot, update):
         send_message(chat_id, translate("userComment", lang_id))
         for admin_id in db.get_admins():
             send_message(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
-        
+
         comment_list.remove(user_id)
         return
 
