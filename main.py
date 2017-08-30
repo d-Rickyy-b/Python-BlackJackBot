@@ -5,6 +5,7 @@ import logging
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
+import re
 
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
@@ -18,6 +19,11 @@ BOT_TOKEN = "<your_bot_token>"
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+
+if not re.match("[0-9]+\:[a-zA-Z0-9\-\_]+", BOT_TOKEN):
+    logging.error("Bot token not correct - please check.")
+    exit(1)
+
 updater = Updater(token=BOT_TOKEN)
 dispatcher = updater.dispatcher
 
