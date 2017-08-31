@@ -167,6 +167,30 @@ def comment(bot, update):
                 comment_list.append(user_id)
 
 
+def answer(bot, update):
+    sender_id = update.message.from_user.id
+    reply_to_message = update.message.reply_to_message
+    text = str(update.message.text[8:])
+    db = DBwrapper.get_instance()
+
+    if not sender_id in db.get_admins():
+        return
+
+    if reply_to_message is None:
+        return
+
+    try:
+        last_line = reply_to_message.text.split("\n")
+        ll_list = last_line[-1].split(" | ")
+        user_id = ll_list[0]
+    except:
+        return
+
+    answer = translate("answerFromDev", db.get_lang_id(user_id)) + "\n\n" + text
+    send_message(user_id, answer)
+    send_message(sender_id, "Message sent!")
+
+
 def mentions(bot, update):
     # TODO mention users which helped (translations, etc.)
     pass
@@ -207,7 +231,7 @@ def callback_eval(bot, update):
     elif query_data == "com_ch_lang":
         language(bot, update)
 
-    
+
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
     tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode, reply_markup=reply_markup)
 
@@ -266,6 +290,8 @@ stats_handler = CommandHandler('stats', stats)
 language_handler = CommandHandler('language', language)
 callback_handler = CallbackQueryHandler(callback_eval)
 comment_handler = CommandHandler('comment', comment)
+answer_handler = CommandHandler('answer', answer)
+
 game_command_handler = MessageHandler(Filters.all, game_commands)
 
 mp_handler = CommandHandler('multiplayer', multiplayer)
@@ -275,6 +301,7 @@ dispatcher.add_handler(callback_handler)
 dispatcher.add_handler(language_handler)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(stop_handler)
+dispatcher.add_handler(answer_handler)
 dispatcher.add_handler(stats_handler)
 dispatcher.add_handler(mp_handler)
 dispatcher.add_handler(join_sec)
