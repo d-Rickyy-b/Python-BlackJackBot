@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import re
 
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
-import re
+from telegram.keyboardbutton import KeyboardButton
+from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
@@ -163,7 +165,8 @@ def comment(bot, update):
         else:
             # The user just wrote "/comment" -> Ask him to send a message
             logger.debug("Add {} to comment_list!".format(user_id))
-            send_message(chat_id, translate("sendCommentNow", lang_id))
+            comment_keyboard = ReplyKeyboardMarkup([[KeyboardButton(translate("cancel", lang_id))]])
+            send_message(chat_id, translate("sendCommentNow", lang_id), reply_markup=comment_keyboard)
             if user_id not in comment_list:
                 comment_list.append(user_id)
 
