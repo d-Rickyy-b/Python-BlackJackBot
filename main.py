@@ -168,6 +168,18 @@ def comment(bot, update):
                 comment_list.append(user_id)
 
 
+def cancel(bot, update):
+    user_id = update.message.from_user.id
+    chat_id = update.message.chat_id
+    db = DBwrapper.get_instance()
+    lang_id = db.get_lang_id(user_id)
+
+    if user_id in comment_list:
+        comment_list.remove(user_id)
+        # send message - cancelledMessage
+        send_message(chat_id, translate("cancelledMessage", lang_id))
+
+
 def answer(bot, update):
     sender_id = update.message.from_user.id
     reply_to_message = update.message.reply_to_message
@@ -285,8 +297,6 @@ def game_commands(bot, update):
         game.analyze_message(update)
 
 
-start_handler = CommandHandler('start', start)
-stop_handler = CommandHandler('stop', stop)
 def get_translations_of_string(string):
     strings = []
 
@@ -294,10 +304,15 @@ def get_translations_of_string(string):
         strings.append(translate(string, lang))
 
     return strings
+
+
+start_handler = CommandHandler(get_translations_of_string("startCmd"), start)
+stop_handler = CommandHandler(get_translations_of_string("stopCmd"), stop)
 stats_handler = CommandHandler('stats', stats)
 language_handler = CommandHandler('language', language)
 callback_handler = CallbackQueryHandler(callback_eval)
 comment_handler = CommandHandler('comment', comment)
+cancel_handler = CommandHandler(get_translations_of_string("cancel"), cancel)
 answer_handler = CommandHandler('answer', answer)
 
 game_command_handler = MessageHandler(Filters.all, game_commands)
@@ -314,6 +329,7 @@ dispatcher.add_handler(stats_handler)
 dispatcher.add_handler(mp_handler)
 dispatcher.add_handler(join_sec)
 dispatcher.add_handler(comment_handler)
+dispatcher.add_handler(cancel_handler)
 dispatcher.add_handler(game_command_handler)
 
 updater.start_polling()
