@@ -30,6 +30,7 @@ dispatcher = updater.dispatcher
 game_handler = GameHandler()
 tg_bot = updater.bot
 comment_list = []
+lang_list = ["de", "en", "nl", "eo", "br", "es", "ru", "fa"]
 
 
 def start(bot, update):
@@ -286,6 +287,13 @@ def game_commands(bot, update):
 
 start_handler = CommandHandler('start', start)
 stop_handler = CommandHandler('stop', stop)
+def get_translations_of_string(string):
+    strings = []
+
+    for lang in lang_list:
+        strings.append(translate(string, lang))
+
+    return strings
 stats_handler = CommandHandler('stats', stats)
 language_handler = CommandHandler('language', language)
 callback_handler = CallbackQueryHandler(callback_eval)
