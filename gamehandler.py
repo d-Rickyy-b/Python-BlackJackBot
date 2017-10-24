@@ -14,6 +14,8 @@ class GameHandler(object):
 
     def gl_remove(self, chat_id):
         index = self.get_index_by_chatid(chat_id)
+        if index is None:
+            return
         if not index < 0:
             self.GameList.pop(index)
 
@@ -50,11 +52,11 @@ class GameHandler(object):
         return None
 
     def generate_id(self):
-        game_id = ''.join(random.choice(string.digits + string.ascii_letters) for i in range(8))
+        game_id = ''.join(random.choice(string.digits + string.ascii_letters) for _ in range(8))
 
         while self.id_already_existing(game_id):
             print("ID already existing: " + str(game_id))
-            game_id = ''.join(random.choice(string.digits + string.ascii_letters) for i in range(8))
+            game_id = ''.join(random.choice(string.digits + string.ascii_letters) for _ in range(8))
 
         return game_id
 

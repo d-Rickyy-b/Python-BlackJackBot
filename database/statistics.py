@@ -28,9 +28,9 @@ def add_game_played(user_id):
 def get_stats(percentage):
     text = ""
     perc = int(percentage//10+1)
-    for x in range(perc):
+    for _ in range(perc):
         text += "🏆"
-    for x in range(10-perc):
+    for _ in range(10-perc):
         text += "🔴"
     return text
 

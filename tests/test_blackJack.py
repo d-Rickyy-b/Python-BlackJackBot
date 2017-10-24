@@ -108,6 +108,8 @@ class TestBlackJack(TestCase):
         # Adding another player to the game
         self.blackJackGame.add_player(user_id_2, "Carl", 555666)
 
+        self.blackJackGame.deck = self.CardDeckMockup(1)
+
         self.blackJackGame.start_game()
         self.assertTrue(self.blackJackGame.game_running)
         self.assertTrue(len(self.blackJackGame.players[0].cards) > 0)
@@ -153,9 +155,37 @@ class TestBlackJack(TestCase):
         self.blackJackGame.add_player(user_id_2, first_name_2, message_id_2)
 
     def send_message_mockup(self, chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
-        # print("send_message called | text: " + text)
+        print("send_message called | text: " + text + "\n---------------")
         pass
 
     class GameHandlerMockup:
         def gl_remove(self, chat_id):
             print("gl_remove called")
+
+    class CardDeckMockup(object):
+        symbols = ["♥", "♦", "♣", "♠"]
+        valueInt = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+
+        @staticmethod
+        def create_deck():
+            deck = list([1, 7, 9, 13, 2, 5])
+            return deck[:]
+
+        def pick_one_card(self):
+            card = self.deck[0]
+            self.deck.pop(0)
+            return card
+
+        def get_card_name(self, card):
+            symbol = self.symbols[card//13]
+            value = self.value_str[card % 13]
+            card_name = "|"+symbol+" "+value+"|"
+            return card_name
+
+        def get_card_value(self, card):
+            return self.valueInt[card % 13]
+
+        def __init__(self, lang_id):
+            self.deck = self.create_deck()
+            self.value_str = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                              "jack", "queen", "king"]

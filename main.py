@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import re
 
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
-from telegram.inlinekeyboardbutton import InlineKeyboardButton
-from telegram.inlinekeyboardmarkup import InlineKeyboardMarkup
+from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
+from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
+from telegram.keyboardbutton import KeyboardButton
+from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
@@ -18,12 +21,18 @@ BOT_TOKEN = "<your_bot_token>"
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+
+if not re.match("[0-9]+\:[a-zA-Z0-9\-\_]+", BOT_TOKEN):
+    logging.error("Bot token not correct - please check.")
+    exit(1)
+
 updater = Updater(token=BOT_TOKEN)
 dispatcher = updater.dispatcher
 
 game_handler = GameHandler()
 tg_bot = updater.bot
 comment_list = []
+lang_list = ["de", "en", "nl", "eo", "br", "es", "ru", "fa"]
 
 
 def start(bot, update):
@@ -97,7 +106,9 @@ def stop(bot, update):
     user_id = update.message.from_user.id
     if user_id in comment_list:
         comment_list.remove(user_id)
-    pass
+
+    chat_id = update.message.chat_id
+    game_handler.gl_remove(chat_id)
 
 
 def help_def(bot, update):
@@ -144,19 +155,56 @@ def comment(bot, update):
         if len(params) > 1:
             text = " ".join(params[1:])
             logger.debug("New comment! {}!".format(user_id))
-            send_message(24421134, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
             send_message(chat_id, translate("userComment", lang_id))
+            for admin_id in db.get_admins():
+                send_message(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
 
             if user_id in comment_list:
-                # comment_list.pop(comment_list.index(user_id))
                 logger.debug("Remove {} from comment_list!".format(user_id))
                 comment_list.remove(user_id)
         else:
             # The user just wrote "/comment" -> Ask him to send a message
             logger.debug("Add {} to comment_list!".format(user_id))
-            send_message(chat_id, translate("sendCommentNow", lang_id))
+            comment_keyboard = ReplyKeyboardMarkup([[KeyboardButton(translate("cancel", lang_id))]])
+            send_message(chat_id, translate("sendCommentNow", lang_id), reply_markup=comment_keyboard)
             if user_id not in comment_list:
                 comment_list.append(user_id)
+
+
+def cancel(bot, update):
+    user_id = update.message.from_user.id
+    chat_id = update.message.chat_id
+    db = DBwrapper.get_instance()
+    lang_id = db.get_lang_id(user_id)
+
+    if user_id in comment_list:
+        comment_list.remove(user_id)
+        # send message - cancelledMessage
+        send_message(chat_id, translate("cancelledMessage", lang_id))
+
+
+def answer(bot, update):
+    sender_id = update.message.from_user.id
+    reply_to_message = update.message.reply_to_message
+    text = str(update.message.text[8:])
+    db = DBwrapper.get_instance()
+
+    if not sender_id in db.get_admins():
+        return
+
+    if reply_to_message is None:
+        return
+
+    try:
+        last_line = reply_to_message.text.split("\n")
+        ll_list = last_line[-1].split(" | ")
+        user_id = ll_list[0]
+    except:
+        return
+
+    answer = translate("answerFromDev", db.get_lang_id(user_id)) + "\n\n" + text
+    send_message(user_id, answer)
+    send_message(sender_id, "Message sent!")
 
 
 def mentions(bot, update):
@@ -199,7 +247,7 @@ def callback_eval(bot, update):
     elif query_data == "com_ch_lang":
         language(bot, update)
 
-    
+
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
     tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode, reply_markup=reply_markup)
 
@@ -228,12 +276,13 @@ def game_commands(bot, update):
     if user_id in comment_list:
         # User wants to comment!
         send_message(chat_id, translate("userComment", lang_id))
-        send_message(24421134, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
+        for admin_id in db.get_admins():
+            send_message(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
+
         comment_list.remove(user_id)
         return
 
     if not db.is_user_saved(user_id):
-        # ask user for language:
         logger.info("New user - " + str(user_id))
         db.add_user(user_id, "en", first_name, last_name, username)
 
@@ -249,15 +298,26 @@ def game_commands(bot, update):
     if game is not None:
         logger.debug("Game already existing. Forwarding text '" + text + "' to game")
         game.analyze_message(update)
-    else:
-        pass
 
 
-start_handler = CommandHandler('start', start)
+def get_translations_of_string(string):
+    strings = []
+
+    for lang in lang_list:
+        strings.append(translate(string, lang))
+
+    return strings
+
+
+start_handler = CommandHandler(get_translations_of_string("startCmd"), start)
+stop_handler = CommandHandler(get_translations_of_string("stopCmd"), stop)
 stats_handler = CommandHandler('stats', stats)
 language_handler = CommandHandler('language', language)
 callback_handler = CallbackQueryHandler(callback_eval)
 comment_handler = CommandHandler('comment', comment)
+cancel_handler = CommandHandler(get_translations_of_string("cancel"), cancel)
+answer_handler = CommandHandler('answer', answer)
+
 game_command_handler = MessageHandler(Filters.all, game_commands)
 
 mp_handler = CommandHandler('multiplayer', multiplayer)
@@ -266,10 +326,13 @@ join_sec = CommandHandler('join_secret', join_secret)
 dispatcher.add_handler(callback_handler)
 dispatcher.add_handler(language_handler)
 dispatcher.add_handler(start_handler)
+dispatcher.add_handler(stop_handler)
+dispatcher.add_handler(answer_handler)
 dispatcher.add_handler(stats_handler)
 dispatcher.add_handler(mp_handler)
 dispatcher.add_handler(join_sec)
 dispatcher.add_handler(comment_handler)
+dispatcher.add_handler(cancel_handler)
 dispatcher.add_handler(game_command_handler)
 
 updater.start_polling()
