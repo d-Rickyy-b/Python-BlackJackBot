@@ -94,3 +94,4 @@ ENV/
 .git
 __pycache__
 *.db
+.vs
