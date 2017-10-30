@@ -189,7 +189,7 @@ def answer(bot, update):
     text = str(update.message.text[8:])
     db = DBwrapper.get_instance()
 
-    if not sender_id in db.get_admins():
+    if sender_id not in db.get_admins():
         return
 
     if reply_to_message is None:
