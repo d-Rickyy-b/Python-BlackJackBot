@@ -283,7 +283,7 @@ def game_commands(bot, update):
         return
 
     if not db.is_user_saved(user_id):
-        logger.info("New user - " + str(user_id))
+        logger.info("New user - {}".format(user_id))
         db.add_user(user_id, "en", first_name, last_name, username)
 
         if chat_id > 0:
@@ -296,7 +296,7 @@ def game_commands(bot, update):
     # TODO multiplayer games
     game = game_handler.get_game_by_chatid(chat_id)
     if game is not None:
-        logger.debug("Game already existing. Forwarding text '" + text + "' to game")
+        logger.debug("Game already existing. Forwarding text '{}' to game".format(text))
         game.analyze_message(update)
 
 
