@@ -82,7 +82,8 @@ def multiplayer(bot, update):
         logger.debug("Creating a game")
         lang_id = db.get_lang_id(user_id)
         game_id = game_handler.generate_id()
-        bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_mp_message, multiplayer=True, game_id=game_id)
+        bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_mp_message,
+                       multiplayer=True, game_id=game_id)
         game_handler.add_game(bj)
         send_message(chat_id, "Your game_id: " + bj.get_game_id())
     else:
@@ -129,16 +130,20 @@ def language(bot, update):
     lang_ru_button = InlineKeyboardButton(text="Русский \U0001F1F7\U0001F1FA", callback_data="ch_lang_ru")
     lang_fa_button = InlineKeyboardButton(text="فارسی \U0001F1EE\U0001F1F7", callback_data="ch_lang_fa")
 
-    lang_keyboard = InlineKeyboardMarkup([[lang_de_button, lang_en_button], [lang_br_button, lang_ru_button, lang_nl_button], [lang_es_button, lang_eo_button, lang_fa_button]])
+    lang_keyboard = InlineKeyboardMarkup(
+        [[lang_de_button, lang_en_button], [lang_br_button, lang_ru_button, lang_nl_button],
+         [lang_es_button, lang_eo_button, lang_fa_button]])
     db = DBwrapper.get_instance()
 
     if update.callback_query:
         # TODO maybe text user in private instead of group!
         lang_id = db.get_lang_id(update.callback_query.from_user.id)
-        bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langSelect", lang_id), reply_markup=lang_keyboard, message_id=update.callback_query.message.message_id)
+        bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langSelect", lang_id),
+                            reply_markup=lang_keyboard, message_id=update.callback_query.message.message_id)
     else:
         lang_id = db.get_lang_id(update.message.from_user.id)
-        bot.sendMessage(chat_id=update.message.chat_id, text=translate("langSelect", lang_id), reply_markup=lang_keyboard, message_id=update.message.message_id)
+        bot.sendMessage(chat_id=update.message.chat_id, text=translate("langSelect", lang_id),
+                        reply_markup=lang_keyboard, message_id=update.message.message_id)
 
 
 def comment(bot, update):
@@ -157,7 +162,9 @@ def comment(bot, update):
             logger.debug("New comment! {}!".format(user_id))
             send_message(chat_id, translate("userComment", lang_id))
             for admin_id in db.get_admins():
-                send_message(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
+                send_message(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name,
+                                                                                              last_name, username,
+                                                                                              lang_id))
 
             if user_id in comment_list:
                 logger.debug("Remove {} from comment_list!".format(user_id))
@@ -213,7 +220,8 @@ def mentions(bot, update):
 
 
 def change_language(bot, update, lang_id):
-    bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id), message_id=update.callback_query.message.message_id, reply_markup=None)
+    bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id),
+                        message_id=update.callback_query.message.message_id, reply_markup=None)
     db = DBwrapper.get_instance()
     db.insert("languageID", lang_id, update.callback_query.from_user.id)
 
@@ -249,7 +257,8 @@ def callback_eval(bot, update):
 
 
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
-    tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode, reply_markup=reply_markup)
+    tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode,
+                       reply_markup=reply_markup)
 
 
 def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
@@ -277,7 +286,9 @@ def game_commands(bot, update):
         # User wants to comment!
         send_message(chat_id, translate("userComment", lang_id))
         for admin_id in db.get_admins():
-            send_message(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name, username, lang_id))
+            send_message(admin_id,
+                         "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name,
+                                                                                username, lang_id))
 
         comment_list.remove(user_id)
         return
