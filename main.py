@@ -231,25 +231,7 @@ def callback_eval(bot, update):
 
     # For changing the language:
     if query_data.startswith("ch_lang"):
-        if query_data == "ch_lang_de":
-            lang_id = "de"
-        elif query_data == "ch_lang_en":
-            lang_id = "en"
-        elif query_data == "ch_lang_nl":
-            lang_id = "nl"
-        elif query_data == "ch_lang_eo":
-            lang_id = "eo"
-        elif query_data == "ch_lang_br":
-            lang_id = "br"
-        elif query_data == "ch_lang_es":
-            lang_id = "es"
-        elif query_data == "ch_lang_ru":
-            lang_id = "ru"
-        elif query_data == "ch_lang_fa":
-            lang_id = "fa"
-        else:
-            lang_id = "en"
-
+        lang_id = re.search("ch_lang_([a-z]{2})", query_data).group(1)
         change_language(bot=bot, update=update, lang_id=lang_id)
 
     elif query_data == "com_ch_lang":
