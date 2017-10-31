@@ -6,7 +6,7 @@ from telegram.replykeyboardremove import ReplyKeyboardRemove
 from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 
 from database.statistics import add_game_played, set_game_won
-from game.cardDeck import CardDeck
+from game.deck import CardDeck
 from game.dealer import Dealer
 from game.message import Message
 from game.player import Player
