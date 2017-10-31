@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class UserState(object):
     IDLE = 0
     COMMENTING = 1
