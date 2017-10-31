@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from time import time
-from datetime import datetime
-from database.db_wrapper import DBwrapper
 import logging
+from datetime import datetime
+from time import time
+
+from database.db_wrapper import DBwrapper
 
 __author__ = 'Rico'
 logger = logging.getLogger(__name__)
@@ -27,10 +28,10 @@ def add_game_played(user_id):
 
 def get_stats(percentage):
     text = ""
-    perc = int(percentage//10+1)
+    perc = int(percentage // 10 + 1)
     for _ in range(perc):
         text += "🏆"
-    for _ in range(10-perc):
+    for _ in range(10 - perc):
         text += "🔴"
     return text
 
