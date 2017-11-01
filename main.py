@@ -186,10 +186,10 @@ def comment(bot, update):
 
 
 def cancel(bot, update):
-    user_id = update.callback_query.from_user.id
-    message_id = update.callback_query.message.message_id
+    user_id = update.effective_user.id
+    message_id = update.effective_message.message_id
     callback_query_id = update.callback_query.id
-    chat_id = update.message.chat_id
+    chat_id = update.effective_chat.id
 
     state_handler = StateHandler.get_instance()
     user = state_handler.get_user(user_id)
