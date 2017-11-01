@@ -6,13 +6,13 @@ from telegram.replykeyboardremove import ReplyKeyboardRemove
 from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 
 from database.statistics import add_game_played, set_game_won
-from game.deck import CardDeck
 from game.dealer import Dealer
+from game.deck import CardDeck
 from game.message import Message
 from game.player import Player
 from lang.language import translate
 
-__author__ = 'Rico & Julian'
+__author__ = 'Rico'
 
 
 class BlackJack(object):

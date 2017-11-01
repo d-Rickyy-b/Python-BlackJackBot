@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from unittest import TestCase
-from game.blackJack import BlackJack
+
 from database.db_wrapper import DBwrapper
 
 
@@ -179,7 +181,7 @@ class TestBlackJack(TestCase):
         def get_card_name(self, card):
             symbol = self.symbols[card//13]
             value = self.value_str[card % 13]
-            card_name = "|"+symbol+" "+value+"|"
+            card_name = "|" + symbol + " " + value + "|"
             return card_name
 
         def get_card_value(self, card):

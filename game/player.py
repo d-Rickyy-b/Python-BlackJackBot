@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 __author__ = 'Rico'
 
 
@@ -32,7 +34,7 @@ class Player(object):
         cards_string = ""
         for i, card in enumerate(self.cards):
             cards_string += self.deck.get_card_name(card)
-            if i+1 < len(self.cards):
+            if i + 1 < len(self.cards):
                 cards_string += ", "
         return cards_string
 

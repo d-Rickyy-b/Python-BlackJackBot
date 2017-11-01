@@ -14,6 +14,8 @@ from database.statistics import get_user_stats
 from game.blackJack import BlackJack
 from gamehandler import GameHandler
 from lang.language import translate
+from statehandler import StateHandler
+from userstate import UserState
 
 __author__ = 'Rico'
 
@@ -31,7 +33,6 @@ dispatcher = updater.dispatcher
 
 game_handler = GameHandler()
 tg_bot = updater.bot
-comment_list = []
 lang_list = ["de", "en", "nl", "eo", "br", "es", "ru", "fa"]
 
 
@@ -44,6 +45,9 @@ def start(bot, update):
     username = update.message.from_user.username
     db = DBwrapper.get_instance()
 
+    state_handler = StateHandler.get_instance()
+    user = state_handler.get_user(user_id)
+
     if not db.is_user_saved(user_id):
         logger.info("New user")
         db.add_user(user_id, "en", first_name, last_name, username)
@@ -52,12 +56,10 @@ def start(bot, update):
             language(bot, update)
             return
 
-    if user_id in comment_list:
-        comment_list.remove(user_id)
-
     # check if user already has got a game (in the same chat):
     game_index = game_handler.get_index_by_chatid(chat_id)
     if game_index is None:
+        user.set_state(UserState.PLAYING)
         logger.debug("Creating a game")
         lang_id = db.get_lang_id(user_id)
         bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message)
@@ -105,8 +107,10 @@ def join_secret(bot, update):
 
 def stop(bot, update):
     user_id = update.message.from_user.id
-    if user_id in comment_list:
-        comment_list.remove(user_id)
+    state_handler = StateHandler.get_instance()
+    user = state_handler.get_user(user_id)
+
+    user.set_state(UserState.IDLE)
 
     chat_id = update.message.chat_id
     game_handler.gl_remove(chat_id)
@@ -156,38 +160,49 @@ def comment(bot, update):
     lang_id = db.get_lang_id(user_id)
     text = update.message.text
     params = text.split()
-    if game_handler.get_game_by_chatid(chat_id) is None:
+
+    state_handler = StateHandler.get_instance()
+    user = state_handler.get_user(user_id)
+
+    if user.get_state() == UserState.IDLE:
         if len(params) > 1:
             text = " ".join(params[1:])
             logger.debug("New comment! {}!".format(user_id))
-            send_message(chat_id, translate("userComment", lang_id))
-            for admin_id in db.get_admins():
-                send_message(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name,
-                                                                                              last_name, username,
-                                                                                              lang_id))
 
-            if user_id in comment_list:
-                logger.debug("Remove {} from comment_list!".format(user_id))
-                comment_list.remove(user_id)
+            bot.sendMessage(chat_id=chat_id, text=translate("userComment", lang_id))
+            for admin_id in db.get_admins():
+                bot.sendMessage(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name,
+                                                                                                 last_name, username,
+                                                                                                 lang_id))
+            logger.debug("Set {}'s state to IDLE!".format(user_id))
+            user.set_state(UserState.IDLE)
         else:
             # The user just wrote "/comment" -> Ask him to send a message
             logger.debug("Add {} to comment_list!".format(user_id))
-            comment_keyboard = ReplyKeyboardMarkup([[KeyboardButton(translate("cancel", lang_id))]])
-            send_message(chat_id, translate("sendCommentNow", lang_id), reply_markup=comment_keyboard)
-            if user_id not in comment_list:
-                comment_list.append(user_id)
+
+            keyboard = [[InlineKeyboardButton(text=translate("cancel", lang_id), callback_data="cancel_comment")]]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+
+            bot.sendMessage(chat_id=chat_id, text=translate("sendCommentNow", lang_id), reply_markup=reply_markup)
+            user.set_state(UserState.COMMENTING)
 
 
 def cancel(bot, update):
-    user_id = update.message.from_user.id
+    user_id = update.callback_query.from_user.id
+    message_id = update.callback_query.message.message_id
+    callback_query_id = update.callback_query.id
     chat_id = update.message.chat_id
-    db = DBwrapper.get_instance()
-    lang_id = db.get_lang_id(user_id)
 
-    if user_id in comment_list:
-        comment_list.remove(user_id)
-        # send message - cancelledMessage
-        send_message(chat_id, translate("cancelledMessage", lang_id))
+    state_handler = StateHandler.get_instance()
+    user = state_handler.get_user(user_id)
+
+    if user.get_state() == UserState.COMMENTING:
+        db = DBwrapper.get_instance()
+        lang_id = db.get_lang_id(user_id)
+
+        user.set_state(UserState.IDLE)
+        bot.editMessageText(chat_id=chat_id, message_id=message_id, text=translate("cancelledMessage", lang_id))
+        bot.answerCallbackQuery(callback_query_id=callback_query_id, text=translate("cancelledMessage", lang_id))
 
 
 def answer(bot, update):
@@ -237,6 +252,8 @@ def callback_eval(bot, update):
     elif query_data == "com_ch_lang":
         language(bot, update)
 
+    elif query_data == "cancel_comment":
+        cancel(bot, update)
 
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
     tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode,
@@ -264,7 +281,10 @@ def game_commands(bot, update):
     db = DBwrapper.get_instance()
     lang_id = db.get_lang_id(user_id)
 
-    if user_id in comment_list:
+    state_handler = StateHandler.get_instance()
+    user = state_handler.get_user(user_id)
+
+    if user.get_state() == UserState.COMMENTING:
         # User wants to comment!
         send_message(chat_id, translate("userComment", lang_id))
         for admin_id in db.get_admins():
@@ -272,7 +292,7 @@ def game_commands(bot, update):
                          "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name,
                                                                                 username, lang_id))
 
-        comment_list.remove(user_id)
+        user.set_state(UserState.IDLE)
         return
 
     if not db.is_user_saved(user_id):
