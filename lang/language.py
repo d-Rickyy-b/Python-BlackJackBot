@@ -5,10 +5,11 @@ import configparser
 import os
 
 __author__ = 'Rico'
+dir_path = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(dir_path, "translations.ini")
 
-path = os.path.dirname(os.path.abspath(__file__))
 translations = configparser.ConfigParser()
-translations.read_file(codecs.open(path + "/translations.ini", encoding="UTF-8"))
+translations.read_file(codecs.open(file_path, encoding="UTF-8"))
 
 
 # translate returns the translation for a specific string
