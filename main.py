@@ -6,6 +6,7 @@ import re
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
+from telegram import ReplyKeyboardRemove
 
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
@@ -232,6 +233,12 @@ def mentions(bot, update):
     pass
 
 
+def hide_cmd(bot, update):
+    chat_id = update.message.chat_id
+    reply_markup = ReplyKeyboardRemove()
+    bot.sendMessage(chat_id=chat_id, text="\U0001F44D", reply_markup=reply_markup)
+
+
 def change_language(bot, update, lang_id):
     bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id),
                         message_id=update.callback_query.message.message_id, reply_markup=None)
@@ -322,6 +329,7 @@ def get_translations_of_string(string):
 
 start_handler = CommandHandler(get_translations_of_string("startCmd"), start_cmd)
 stop_handler = CommandHandler(get_translations_of_string("stopCmd"), stop_cmd)
+hide_handler = CommandHandler('hide', hide_cmd)
 stats_handler = CommandHandler('stats', stats_cmd)
 language_handler = CommandHandler('language', language_cmd)
 callback_handler = CallbackQueryHandler(callback_eval)
@@ -344,6 +352,7 @@ dispatcher.add_handler(mp_handler)
 dispatcher.add_handler(join_sec)
 dispatcher.add_handler(comment_handler)
 dispatcher.add_handler(cancel_handler)
+dispatcher.add_handler(hide_handler)
 dispatcher.add_handler(game_command_handler)
 
 updater.start_polling()
