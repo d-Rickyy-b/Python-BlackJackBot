@@ -46,7 +46,7 @@ def start(bot, update):
     db = DBwrapper.get_instance()
 
     state_handler = StateHandler.get_instance()
-    user_state = state_handler.get_user(user_id)
+    user = state_handler.get_user(user_id)
 
     if not db.is_user_saved(user_id):
         logger.info("New user")
@@ -59,7 +59,7 @@ def start(bot, update):
     # check if user already has got a game (in the same chat):
     game_index = game_handler.get_index_by_chatid(chat_id)
     if game_index is None:
-        user_state.set_state(UserState.PLAYING)
+        user.set_state(UserState.PLAYING)
         logger.debug("Creating a game")
         lang_id = db.get_lang_id(user_id)
         bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message)
@@ -108,9 +108,9 @@ def join_secret(bot, update):
 def stop(bot, update):
     user_id = update.message.from_user.id
     state_handler = StateHandler.get_instance()
-    user_state = state_handler.get_user(user_id)
+    user = state_handler.get_user(user_id)
 
-    user_state.set_state(UserState.IDLE)
+    user.set_state(UserState.IDLE)
 
     chat_id = update.message.chat_id
     game_handler.gl_remove(chat_id)
@@ -162,9 +162,9 @@ def comment(bot, update):
     params = text.split()
 
     state_handler = StateHandler.get_instance()
-    user_state = state_handler.get_user(user_id)
+    user = state_handler.get_user(user_id)
 
-    if user_state.get_state() == UserState.IDLE:
+    if user.get_state() == UserState.IDLE:
         if len(params) > 1:
             text = " ".join(params[1:])
             logger.debug("New comment! {}!".format(user_id))
@@ -175,7 +175,7 @@ def comment(bot, update):
                                                                                               lang_id))
 
             logger.debug("Set {}'s state to IDLE!".format(user_id))
-            user_state.set_state(UserState.IDLE)
+            user.set_state(UserState.IDLE)
         else:
             # The user just wrote "/comment" -> Ask him to send a message
             logger.debug("Add {} to comment_list!".format(user_id))
@@ -191,7 +191,7 @@ def cancel(bot, update):
     lang_id = db.get_lang_id(user_id)
 
     state_handler = StateHandler.get_instance()
-    user_state = state_handler.get_user()
+    user = state_handler.get_user(user_id)
 
     if user_state.get_state() == UserState.COMMENTING:
         user_state.set_state(UserState.IDLE)
@@ -273,9 +273,9 @@ def game_commands(bot, update):
     lang_id = db.get_lang_id(user_id)
 
     state_handler = StateHandler.get_instance()
-    user_state = state_handler.get_user(user_id)
+    user = state_handler.get_user(user_id)
 
-    if user_state.get_state() == UserState.COMMENTING:
+    if user.get_state() == UserState.COMMENTING:
         # User wants to comment!
         send_message(chat_id, translate("userComment", lang_id))
         for admin_id in db.get_admins():
@@ -283,7 +283,7 @@ def game_commands(bot, update):
                          "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name,
                                                                                 username, lang_id))
 
-        user_state.set_state(UserState.IDLE)
+        user.set_state(UserState.IDLE)
         return
 
     if not db.is_user_saved(user_id):
