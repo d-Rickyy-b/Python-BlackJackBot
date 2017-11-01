@@ -8,7 +8,7 @@ __author__ = 'Rico'
 
 path = os.path.dirname(os.path.abspath(__file__))
 translations = configparser.ConfigParser()
-translations.read_file(codecs.open(path + "/translations.ini", "r", "UTF-8"))
+translations.read_file(codecs.open(path + "/translations.ini", encoding="UTF-8"))
 
 
 # translate returns the translation for a specific string
