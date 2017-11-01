@@ -80,7 +80,7 @@ def stop_cmd(bot, update):
     game_handler.gl_remove(chat_id)
 
 
-def help_def(bot, update):
+def help_cmd(bot, update):
     pass
 
 
