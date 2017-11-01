@@ -8,10 +8,10 @@ class StateHandler(object):
         def __init__(self):
             self.user_list = []
 
-        def add_user(self, user_id):
+        def add_user(self, user_id: int) -> None:
             self.user_list.append(UserState(user_id))
 
-        def get_user(self, user_id):
+        def get_user(self, user_id: int) -> UserState:
             for userState in self.user_list:
                 if userState.get_userid() == user_id:
                     return userState

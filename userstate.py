@@ -5,15 +5,15 @@ class UserState(object):
     COMMENTING = 1
     PLAYING = 2
 
-    def __init__(self, user_id):
+    def __init__(self, user_id: int):
         self._user_id = user_id
         self._state = UserState.IDLE
 
-    def get_state(self):
+    def get_state(self) -> int:
         return self._state
 
-    def set_state(self, state):
+    def set_state(self, state: int) -> None:
         self._state = state
 
-    def get_userid(self):
+    def get_userid(self) -> int:
         return self._user_id
