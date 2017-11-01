@@ -186,7 +186,7 @@ def comment_cmd(bot, update):
             user.set_state(UserState.COMMENTING)
 
 
-def cancel(bot, update):
+def cancel_cmd(bot, update):
     user_id = update.effective_user.id
     message_id = update.effective_message.message_id
     callback_query_id = update.callback_query.id
@@ -258,7 +258,7 @@ def callback_eval(bot, update):
         language_cmd(bot, update)
 
     elif query_data == "cancel_comment":
-        cancel(bot, update)
+        cancel_cmd(bot, update)
 
 
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
