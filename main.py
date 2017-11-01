@@ -69,41 +69,6 @@ def start_cmd(bot, update):
         game.start_game()
 
 
-def multiplayer(bot, update):
-    chat_id = update.message.chat_id
-    user_id = update.message.from_user.id
-    message_id = update.message.message_id
-    first_name = update.message.from_user.first_name
-    # last_name = update.message.from_user.last_name
-    # username = update.message.from_user.username
-    db = DBwrapper.get_instance()
-
-    game_index = game_handler.get_index_by_chatid(chat_id)
-    if game_index is None:
-        logger.debug("Creating a game")
-        lang_id = db.get_lang_id(user_id)
-        game_id = game_handler.generate_id()
-        bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_mp_message,
-                       multiplayer=True, game_id=game_id)
-        game_handler.add_game(bj)
-        send_message(chat_id, "Your game_id: " + bj.get_game_id())
-    else:
-        logger.debug("Game already existing")
-
-
-def join_secret(bot, update):
-    user_id = update.message.from_user.id
-    message_id = update.message.message_id
-    first_name = update.message.from_user.first_name
-    text = update.message.text
-    game_id = text.split(' ')[1]
-
-    print("ID: " + game_id)
-    game = game_handler.get_game_by_id(game_id)
-    game.add_player(user_id, first_name, message_id)
-    # TODO send message that user joined
-
-
 def stop_cmd(bot, update):
     user_id = update.message.from_user.id
     state_handler = StateHandler.get_instance()
@@ -202,6 +167,41 @@ def cancel_cmd(bot, update):
         user.set_state(UserState.IDLE)
         bot.editMessageText(chat_id=chat_id, message_id=message_id, text=translate("cancelledMessage", lang_id))
         bot.answerCallbackQuery(callback_query_id=callback_query_id, text=translate("cancelledMessage", lang_id))
+
+
+def multiplayer(bot, update):
+    chat_id = update.message.chat_id
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+    first_name = update.message.from_user.first_name
+    # last_name = update.message.from_user.last_name
+    # username = update.message.from_user.username
+    db = DBwrapper.get_instance()
+
+    game_index = game_handler.get_index_by_chatid(chat_id)
+    if game_index is None:
+        logger.debug("Creating a game")
+        lang_id = db.get_lang_id(user_id)
+        game_id = game_handler.generate_id()
+        bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_mp_message,
+                       multiplayer=True, game_id=game_id)
+        game_handler.add_game(bj)
+        bot.sendMessage(chat_id, "Your game_id: {}".format(bj.get_game_id()))
+    else:
+        logger.debug("Game already existing")
+
+
+def join_secret(bot, update):
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+    first_name = update.message.from_user.first_name
+    text = update.message.text
+    game_id = text.split(' ')[1]
+
+    print("ID: " + game_id)
+    game = game_handler.get_game_by_id(game_id)
+    game.add_player(user_id, first_name, message_id)
+    # TODO send message that user joined
 
 
 def answer(bot, update):
@@ -333,9 +333,8 @@ stop_handler = CommandHandler(get_translations_of_string("stopCmd"), stop_cmd)
 hide_handler = CommandHandler('hide', hide_cmd)
 stats_handler = CommandHandler('stats', stats_cmd)
 language_handler = CommandHandler('language', language_cmd)
-callback_handler = CallbackQueryHandler(callback_eval)
 comment_handler = CommandHandler('comment', comment_cmd)
-cancel_handler = CommandHandler(get_translations_of_string("cancel"), cancel)
+callback_handler = CallbackQueryHandler(callback_eval)
 answer_handler = CommandHandler('answer', answer)
 
 game_command_handler = MessageHandler(Filters.all, game_commands)
@@ -343,17 +342,19 @@ game_command_handler = MessageHandler(Filters.all, game_commands)
 mp_handler = CommandHandler('multiplayer', multiplayer)
 join_sec = CommandHandler('join_secret', join_secret)
 
-dispatcher.add_handler(callback_handler)
-dispatcher.add_handler(language_handler)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(stop_handler)
-dispatcher.add_handler(answer_handler)
+dispatcher.add_handler(hide_handler)
 dispatcher.add_handler(stats_handler)
+dispatcher.add_handler(language_handler)
+dispatcher.add_handler(comment_handler)
+dispatcher.add_handler(callback_handler)
+dispatcher.add_handler(answer_handler)
+
 dispatcher.add_handler(mp_handler)
 dispatcher.add_handler(join_sec)
-dispatcher.add_handler(comment_handler)
-dispatcher.add_handler(cancel_handler)
-dispatcher.add_handler(hide_handler)
+
+# Should always be the last handler to add -> Fallback if no command found
 dispatcher.add_handler(game_command_handler)
 
 updater.start_polling()
