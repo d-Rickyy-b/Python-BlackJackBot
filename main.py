@@ -223,9 +223,9 @@ def answer(bot, update):
     except:
         return
 
-    answer = translate("answerFromDev", db.get_lang_id(user_id)) + "\n\n" + text
-    send_message(user_id, answer)
-    send_message(sender_id, "Message sent!")
+    answer_text = "{}\n\n{}".format(translate("answerFromDev", db.get_lang_id(user_id)), text)
+    bot.sendMessage(chat_id=user_id, text=answer_text)
+    bot.sendMessage(chat_id=sender_id, text="Message sent!")
 
 
 def mentions(bot, update):
