@@ -168,34 +168,41 @@ def comment(bot, update):
         if len(params) > 1:
             text = " ".join(params[1:])
             logger.debug("New comment! {}!".format(user_id))
-            send_message(chat_id, translate("userComment", lang_id))
-            for admin_id in db.get_admins():
-                send_message(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name,
-                                                                                              last_name, username,
-                                                                                              lang_id))
 
+            bot.sendMessage(chat_id=chat_id, text=translate("userComment", lang_id))
+            for admin_id in db.get_admins():
+                bot.sendMessage(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name,
+                                                                                                 last_name, username,
+                                                                                                 lang_id))
             logger.debug("Set {}'s state to IDLE!".format(user_id))
             user.set_state(UserState.IDLE)
         else:
             # The user just wrote "/comment" -> Ask him to send a message
             logger.debug("Add {} to comment_list!".format(user_id))
-            comment_keyboard = ReplyKeyboardMarkup([[KeyboardButton(translate("cancel", lang_id))]])
-            send_message(chat_id, translate("sendCommentNow", lang_id), reply_markup=comment_keyboard)
-            user_state.set_state(UserState.COMMENTING)
+
+            keyboard = [[InlineKeyboardButton(text=translate("cancel", lang_id), callback_data="cancel_comment")]]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+
+            bot.sendMessage(chat_id=chat_id, text=translate("sendCommentNow", lang_id), reply_markup=reply_markup)
+            user.set_state(UserState.COMMENTING)
 
 
 def cancel(bot, update):
-    user_id = update.message.from_user.id
+    user_id = update.callback_query.from_user.id
+    message_id = update.callback_query.message.message_id
+    callback_query_id = update.callback_query.id
     chat_id = update.message.chat_id
-    db = DBwrapper.get_instance()
-    lang_id = db.get_lang_id(user_id)
 
     state_handler = StateHandler.get_instance()
     user = state_handler.get_user(user_id)
 
-    if user_state.get_state() == UserState.COMMENTING:
-        user_state.set_state(UserState.IDLE)
-        send_message(chat_id, translate("cancelledMessage", lang_id))
+    if user.get_state() == UserState.COMMENTING:
+        db = DBwrapper.get_instance()
+        lang_id = db.get_lang_id(user_id)
+
+        user.set_state(UserState.IDLE)
+        bot.editMessageText(chat_id=chat_id, message_id=message_id, text=translate("cancelledMessage", lang_id))
+        bot.answerCallbackQuery(callback_query_id=callback_query_id, text=translate("cancelledMessage", lang_id))
 
 
 def answer(bot, update):
@@ -245,6 +252,8 @@ def callback_eval(bot, update):
     elif query_data == "com_ch_lang":
         language(bot, update)
 
+    elif query_data == "cancel_comment":
+        cancel(bot, update)
 
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
     tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode,
