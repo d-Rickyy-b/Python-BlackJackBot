@@ -6,8 +6,7 @@ import re
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
-from telegram.keyboardbutton import KeyboardButton
-from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
+from telegram import ReplyKeyboardRemove
 
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
@@ -24,7 +23,7 @@ BOT_TOKEN = "<your_bot_token>"
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
-if not re.match("[0-9]+\:[a-zA-Z0-9\-\_]+", BOT_TOKEN):
+if not re.match("[0-9]+:[a-zA-Z0-9\-_]+", BOT_TOKEN):
     logging.error("Bot token not correct - please check.")
     exit(1)
 
@@ -36,7 +35,7 @@ tg_bot = updater.bot
 lang_list = ["de", "en", "nl", "eo", "br", "es", "ru", "fa"]
 
 
-def start(bot, update):
+def start_cmd(bot, update):
     chat_id = update.message.chat_id
     user_id = update.message.from_user.id
     message_id = update.message.message_id
@@ -53,7 +52,7 @@ def start(bot, update):
         db.add_user(user_id, "en", first_name, last_name, username)
         if chat_id > 0:
             # ask user for language:
-            language(bot, update)
+            language_cmd(bot, update)
             return
 
     # check if user already has got a game (in the same chat):
@@ -105,7 +104,7 @@ def join_secret(bot, update):
     # TODO send message that user joined
 
 
-def stop(bot, update):
+def stop_cmd(bot, update):
     user_id = update.message.from_user.id
     state_handler = StateHandler.get_instance()
     user = state_handler.get_user(user_id)
@@ -120,11 +119,11 @@ def help_def(bot, update):
     pass
 
 
-def stats(bot, update):
+def stats_cmd(bot, update):
     bot.sendMessage(chat_id=update.message.chat_id, text=get_user_stats(update.message.from_user.id))
 
 
-def language(bot, update):
+def language_cmd(bot, update):
     lang_de_button = InlineKeyboardButton(text="Deutsch \U0001F1E9\U0001F1EA", callback_data="ch_lang_de")
     lang_en_button = InlineKeyboardButton(text="Englisch \U0001F1FA\U0001F1F8", callback_data="ch_lang_en")
     lang_nl_button = InlineKeyboardButton(text="Nederlands \U0001F1F3\U0001F1F1", callback_data="ch_lang_nl")
@@ -150,7 +149,7 @@ def language(bot, update):
                         reply_markup=lang_keyboard, message_id=update.message.message_id)
 
 
-def comment(bot, update):
+def comment_cmd(bot, update):
     user_id = update.message.from_user.id
     chat_id = update.message.chat_id
     first_name = update.message.from_user.first_name
@@ -188,10 +187,10 @@ def comment(bot, update):
 
 
 def cancel(bot, update):
-    user_id = update.callback_query.from_user.id
-    message_id = update.callback_query.message.message_id
+    user_id = update.effective_user.id
+    message_id = update.effective_message.message_id
     callback_query_id = update.callback_query.id
-    chat_id = update.message.chat_id
+    chat_id = update.effective_chat.id
 
     state_handler = StateHandler.get_instance()
     user = state_handler.get_user(user_id)
@@ -234,6 +233,12 @@ def mentions(bot, update):
     pass
 
 
+def hide_cmd(bot, update):
+    chat_id = update.message.chat_id
+    reply_markup = ReplyKeyboardRemove()
+    bot.sendMessage(chat_id=chat_id, text="\U0001F44D", reply_markup=reply_markup)
+
+
 def change_language(bot, update, lang_id):
     bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id),
                         message_id=update.callback_query.message.message_id, reply_markup=None)
@@ -250,10 +255,11 @@ def callback_eval(bot, update):
         change_language(bot=bot, update=update, lang_id=lang_id)
 
     elif query_data == "com_ch_lang":
-        language(bot, update)
+        language_cmd(bot, update)
 
     elif query_data == "cancel_comment":
         cancel(bot, update)
+
 
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
     tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode,
@@ -301,7 +307,7 @@ def game_commands(bot, update):
 
         if chat_id > 0:
             # ask user for language if it's a private chat:
-            language(bot, update)
+            language_cmd(bot, update)
 
         return
 
@@ -322,12 +328,13 @@ def get_translations_of_string(string):
     return strings
 
 
-start_handler = CommandHandler(get_translations_of_string("startCmd"), start)
-stop_handler = CommandHandler(get_translations_of_string("stopCmd"), stop)
-stats_handler = CommandHandler('stats', stats)
-language_handler = CommandHandler('language', language)
+start_handler = CommandHandler(get_translations_of_string("startCmd"), start_cmd)
+stop_handler = CommandHandler(get_translations_of_string("stopCmd"), stop_cmd)
+hide_handler = CommandHandler('hide', hide_cmd)
+stats_handler = CommandHandler('stats', stats_cmd)
+language_handler = CommandHandler('language', language_cmd)
 callback_handler = CallbackQueryHandler(callback_eval)
-comment_handler = CommandHandler('comment', comment)
+comment_handler = CommandHandler('comment', comment_cmd)
 cancel_handler = CommandHandler(get_translations_of_string("cancel"), cancel)
 answer_handler = CommandHandler('answer', answer)
 
@@ -346,6 +353,7 @@ dispatcher.add_handler(mp_handler)
 dispatcher.add_handler(join_sec)
 dispatcher.add_handler(comment_handler)
 dispatcher.add_handler(cancel_handler)
+dispatcher.add_handler(hide_handler)
 dispatcher.add_handler(game_command_handler)
 
 updater.start_polling()
