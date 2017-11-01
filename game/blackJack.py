@@ -2,8 +2,8 @@
 import logging
 
 from telegram.keyboardbutton import KeyboardButton
-from telegram.replykeyboardremove import ReplyKeyboardRemove
 from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
+from telegram.replykeyboardremove import ReplyKeyboardRemove
 
 from database.statistics import add_game_played, set_game_won
 from game.dealer import Dealer
