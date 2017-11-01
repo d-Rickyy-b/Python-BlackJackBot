@@ -292,11 +292,11 @@ def game_commands(bot, update):
 
     if user.get_state() == UserState.COMMENTING:
         # User wants to comment!
-        send_message(chat_id, translate("userComment", lang_id))
+        bot.sendMessage(chat_id, text=translate("userComment", lang_id))
         for admin_id in db.get_admins():
-            send_message(admin_id,
-                         "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name,
-                                                                                username, lang_id))
+            admin_message = "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name,
+                                                                                   username, lang_id)
+            bot.sendMessage(admin_id, text=admin_message)
 
         user.set_state(UserState.IDLE)
         return
