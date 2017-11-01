@@ -280,10 +280,11 @@ def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_marku
 def game_commands(bot, update):
     text = update.message.text
     chat_id = update.message.chat_id
-    user_id = update.message.from_user.id
-    first_name = update.message.from_user.first_name
-    last_name = update.message.from_user.last_name
-    username = update.message.from_user.username
+    user = update.effective_user
+    user_id = user.id
+    first_name = user.first_name
+    last_name = user.last_name
+    username = user.username
     db = DBwrapper.get_instance()
     lang_id = db.get_lang_id(user_id)
 
