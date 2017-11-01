@@ -6,8 +6,6 @@ import re
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
-from telegram.keyboardbutton import KeyboardButton
-from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
