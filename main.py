@@ -164,8 +164,7 @@ def comment(bot, update):
     state_handler = StateHandler.get_instance()
     user_state = state_handler.get_user(user_id)
 
-    if user_state == UserState.IDLE:
-
+    if user_state.get_state() == UserState.IDLE:
         if len(params) > 1:
             text = " ".join(params[1:])
             logger.debug("New comment! {}!".format(user_id))
