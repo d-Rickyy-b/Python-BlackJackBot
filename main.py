@@ -338,7 +338,7 @@ comment_handler = CommandHandler('comment', comment_cmd)
 callback_handler = CallbackQueryHandler(callback_eval)
 answer_handler = CommandHandler('answer', answer)
 
-game_command_handler = MessageHandler(Filters.all, game_commands)
+game_command_handler = MessageHandler(Filters.text, game_commands)
 
 mp_handler = CommandHandler('multiplayer', multiplayer)
 join_sec = CommandHandler('join_secret', join_secret)
