@@ -156,20 +156,23 @@ class BlackJack(object):
             self.evaluation()
 
     def start_game(self, message_id=None):
-        if ((self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME) and len(self.players) > 1) or self.game_type == self.PRIVATE_CHAT:
-            if not self.game_running:
-                self.game_running = True
+        if not self.game_running:
+            if ((self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME) and len(self.players) > 1) or self.game_type == self.PRIVATE_CHAT:
+                    self.game_running = True
 
-                for player in self.players:
-                    add_game_played(player.user_id)
+                    for player in self.players:
+                        add_game_played(player.user_id)
 
-                if self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME:
-                    self.send_message(self.chat_id, translate("gameBegins", self.lang_id) + "\n" + translate("gameBegins2", self.lang_id) + "\n\n" + self.get_player_overview(), game_id=self.__game_id)
+                    if self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME:
+                        self.send_message(self.chat_id, translate("gameBegins", self.lang_id) + "\n" + translate("gameBegins2", self.lang_id) + "\n\n" + self.get_player_overview(), game_id=self.__game_id)
 
-                self.dealers_turn()
-                self.give_player_one()
+                    self.dealers_turn()
+                    self.give_player_one()
+            else:
+                self.send_message(self.chat_id, translate("notEnoughPlayers", self.lang_id), message_id=message_id, game_id=self.__game_id)
         else:
-            self.send_message(self.chat_id, translate("notEnoughPlayers", self.lang_id), message_id=message_id, game_id=self.__game_id)
+            #TODO Game already running
+            pass
 
     def evaluation(self):
         list_21 = []
