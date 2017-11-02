@@ -22,7 +22,7 @@ class BlackJack(object):
     MAX_PLAYERS = 5
 
     # Adds Player to the Game
-    def add_player(self, user_id, first_name, message_id, silent=None):
+    def add_player(self, user_id, first_name, message_id, silent=False):
         if not self.game_running:
             if self.get_index_by_user_id(user_id) is None and len(self.players) < self.MAX_PLAYERS:
                 self.logger.debug("Adding user '" + first_name + "' to players.")
@@ -30,7 +30,8 @@ class BlackJack(object):
                 self.players.append(player)
                 self.join_message_ids.append(message_id)
 
-                if silent is None or silent is False:
+                if silent is False:
+                    # When the parameter 'silent' is not set, a message will be sent.
                     # TODO When game is multiplayer then print current players?
                     self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id, game_id=self.__game_id)
             else:
