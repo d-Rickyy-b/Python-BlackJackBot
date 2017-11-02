@@ -3,10 +3,10 @@
 import logging
 import re
 
+from telegram import ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
-from telegram import ReplyKeyboardRemove
 
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
@@ -69,41 +69,6 @@ def start_cmd(bot, update):
         game.start_game()
 
 
-def multiplayer(bot, update):
-    chat_id = update.message.chat_id
-    user_id = update.message.from_user.id
-    message_id = update.message.message_id
-    first_name = update.message.from_user.first_name
-    # last_name = update.message.from_user.last_name
-    # username = update.message.from_user.username
-    db = DBwrapper.get_instance()
-
-    game_index = game_handler.get_index_by_chatid(chat_id)
-    if game_index is None:
-        logger.debug("Creating a game")
-        lang_id = db.get_lang_id(user_id)
-        game_id = game_handler.generate_id()
-        bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_mp_message,
-                       multiplayer=True, game_id=game_id)
-        game_handler.add_game(bj)
-        send_message(chat_id, "Your game_id: " + bj.get_game_id())
-    else:
-        logger.debug("Game already existing")
-
-
-def join_secret(bot, update):
-    user_id = update.message.from_user.id
-    message_id = update.message.message_id
-    first_name = update.message.from_user.first_name
-    text = update.message.text
-    game_id = text.split(' ')[1]
-
-    print("ID: " + game_id)
-    game = game_handler.get_game_by_id(game_id)
-    game.add_player(user_id, first_name, message_id)
-    # TODO send message that user joined
-
-
 def stop_cmd(bot, update):
     user_id = update.message.from_user.id
     state_handler = StateHandler.get_instance()
@@ -115,7 +80,7 @@ def stop_cmd(bot, update):
     game_handler.gl_remove(chat_id)
 
 
-def help_def(bot, update):
+def help_cmd(bot, update):
     pass
 
 
@@ -186,7 +151,7 @@ def comment_cmd(bot, update):
             user.set_state(UserState.COMMENTING)
 
 
-def cancel(bot, update):
+def cancel_cmd(bot, update):
     user_id = update.effective_user.id
     message_id = update.effective_message.message_id
     callback_query_id = update.callback_query.id
@@ -202,6 +167,41 @@ def cancel(bot, update):
         user.set_state(UserState.IDLE)
         bot.editMessageText(chat_id=chat_id, message_id=message_id, text=translate("cancelledMessage", lang_id))
         bot.answerCallbackQuery(callback_query_id=callback_query_id, text=translate("cancelledMessage", lang_id))
+
+
+def multiplayer(bot, update):
+    chat_id = update.message.chat_id
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+    first_name = update.message.from_user.first_name
+    # last_name = update.message.from_user.last_name
+    # username = update.message.from_user.username
+    db = DBwrapper.get_instance()
+
+    game_index = game_handler.get_index_by_chatid(chat_id)
+    if game_index is None:
+        logger.debug("Creating a game")
+        lang_id = db.get_lang_id(user_id)
+        game_id = game_handler.generate_id()
+        bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_mp_message,
+                       multiplayer=True, game_id=game_id)
+        game_handler.add_game(bj)
+        bot.sendMessage(chat_id, "Your game_id: {}".format(bj.get_game_id()))
+    else:
+        logger.debug("Game already existing")
+
+
+def join_secret(bot, update):
+    user_id = update.message.from_user.id
+    message_id = update.message.message_id
+    first_name = update.message.from_user.first_name
+    text = update.message.text
+    game_id = text.split(' ')[1]
+
+    print("ID: " + game_id)
+    game = game_handler.get_game_by_id(game_id)
+    game.add_player(user_id, first_name, message_id)
+    # TODO send message that user joined
 
 
 def answer(bot, update):
@@ -223,9 +223,9 @@ def answer(bot, update):
     except:
         return
 
-    answer = translate("answerFromDev", db.get_lang_id(user_id)) + "\n\n" + text
-    send_message(user_id, answer)
-    send_message(sender_id, "Message sent!")
+    answer_text = "{}\n\n{}".format(translate("answerFromDev", db.get_lang_id(user_id)), text)
+    bot.sendMessage(chat_id=user_id, text=answer_text)
+    bot.sendMessage(chat_id=sender_id, text="Message sent!")
 
 
 def mentions(bot, update):
@@ -258,7 +258,7 @@ def callback_eval(bot, update):
         language_cmd(bot, update)
 
     elif query_data == "cancel_comment":
-        cancel(bot, update)
+        cancel_cmd(bot, update)
 
 
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
@@ -280,10 +280,11 @@ def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_marku
 def game_commands(bot, update):
     text = update.message.text
     chat_id = update.message.chat_id
-    user_id = update.message.from_user.id
-    first_name = update.message.from_user.first_name
-    last_name = update.message.from_user.last_name
-    username = update.message.from_user.username
+    user = update.effective_user
+    user_id = user.id
+    first_name = user.first_name
+    last_name = user.last_name
+    username = user.username
     db = DBwrapper.get_instance()
     lang_id = db.get_lang_id(user_id)
 
@@ -292,11 +293,11 @@ def game_commands(bot, update):
 
     if user.get_state() == UserState.COMMENTING:
         # User wants to comment!
-        send_message(chat_id, translate("userComment", lang_id))
+        bot.sendMessage(chat_id, text=translate("userComment", lang_id))
         for admin_id in db.get_admins():
-            send_message(admin_id,
-                         "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name,
-                                                                                username, lang_id))
+            admin_message = "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name,
+                                                                                   username, lang_id)
+            bot.sendMessage(admin_id, text=admin_message)
 
         user.set_state(UserState.IDLE)
         return
@@ -333,27 +334,28 @@ stop_handler = CommandHandler(get_translations_of_string("stopCmd"), stop_cmd)
 hide_handler = CommandHandler('hide', hide_cmd)
 stats_handler = CommandHandler('stats', stats_cmd)
 language_handler = CommandHandler('language', language_cmd)
-callback_handler = CallbackQueryHandler(callback_eval)
 comment_handler = CommandHandler('comment', comment_cmd)
-cancel_handler = CommandHandler(get_translations_of_string("cancel"), cancel)
+callback_handler = CallbackQueryHandler(callback_eval)
 answer_handler = CommandHandler('answer', answer)
 
-game_command_handler = MessageHandler(Filters.all, game_commands)
+game_command_handler = MessageHandler(Filters.text, game_commands)
 
 mp_handler = CommandHandler('multiplayer', multiplayer)
 join_sec = CommandHandler('join_secret', join_secret)
 
-dispatcher.add_handler(callback_handler)
-dispatcher.add_handler(language_handler)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(stop_handler)
-dispatcher.add_handler(answer_handler)
+dispatcher.add_handler(hide_handler)
 dispatcher.add_handler(stats_handler)
+dispatcher.add_handler(language_handler)
+dispatcher.add_handler(comment_handler)
+dispatcher.add_handler(callback_handler)
+dispatcher.add_handler(answer_handler)
+
 dispatcher.add_handler(mp_handler)
 dispatcher.add_handler(join_sec)
-dispatcher.add_handler(comment_handler)
-dispatcher.add_handler(cancel_handler)
-dispatcher.add_handler(hide_handler)
+
+# Should always be the last handler to add -> Fallback if no command found
 dispatcher.add_handler(game_command_handler)
 
 updater.start_polling()

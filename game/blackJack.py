@@ -2,8 +2,8 @@
 import logging
 
 from telegram.keyboardbutton import KeyboardButton
-from telegram.replykeyboardremove import ReplyKeyboardRemove
 from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
+from telegram.replykeyboardremove import ReplyKeyboardRemove
 
 from database.statistics import add_game_played, set_game_won
 from game.dealer import Dealer
@@ -22,7 +22,7 @@ class BlackJack(object):
     MAX_PLAYERS = 5
 
     # Adds Player to the Game
-    def add_player(self, user_id, first_name, message_id, silent=None):
+    def add_player(self, user_id, first_name, message_id, silent=False):
         if not self.game_running:
             if self.get_index_by_user_id(user_id) is None and len(self.players) < self.MAX_PLAYERS:
                 self.logger.debug("Adding user '" + first_name + "' to players.")
@@ -30,7 +30,8 @@ class BlackJack(object):
                 self.players.append(player)
                 self.join_message_ids.append(message_id)
 
-                if silent is None or silent is False:
+                if silent is False:
+                    # When the parameter 'silent' is not set, a message will be sent.
                     # TODO When game is multiplayer then print current players?
                     self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id, game_id=self.__game_id)
             else:
@@ -132,7 +133,7 @@ class BlackJack(object):
             if self.game_type == self.PRIVATE_CHAT:
                 text += translate("gameBegins", self.lang_id) + "\n"
 
-            text += "\n*" + translate("dealersCards", self.lang_id) + "*\n\n" + self.deck.get_card_name(card) + ", | -- |"
+            text += "\n*{}*\n\n{}, | -- |".format(translate("dealersCards", self.lang_id), self.deck.get_card_name(card))
             self.send_message(self.chat_id, text, parse_mode="Markdown", reply_markup=self.keyboard_running)
         else:
             output_text = translate("croupierDrew", self.lang_id) + "\n\n"
@@ -150,25 +151,28 @@ class BlackJack(object):
                     output_text += " , " + self.deck.get_card_name(card)
                 i += 1
 
-            output_text += "\n\n" + translate("cardvalueDealer", self.lang_id) + " " + str(self.dealer.get_cardvalue())
+            output_text += "\n\n{} {}".format(translate("cardvalueDealer", self.lang_id), self.dealer.get_cardvalue())
             self.send_message(self.chat_id, output_text, parse_mode="Markdown", reply_markup=self.keyboard_running)
             self.evaluation()
 
     def start_game(self, message_id=None):
-        if ((self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME) and len(self.players) > 1) or self.game_type == self.PRIVATE_CHAT:
-            if not self.game_running:
-                self.game_running = True
+        if not self.game_running:
+            if ((self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME) and len(self.players) > 1) or self.game_type == self.PRIVATE_CHAT:
+                    self.game_running = True
 
-                for player in self.players:
-                    add_game_played(player.user_id)
+                    for player in self.players:
+                        add_game_played(player.user_id)
 
-                if self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME:
-                    self.send_message(self.chat_id, translate("gameBegins", self.lang_id) + "\n" + translate("gameBegins2", self.lang_id) + "\n\n" + self.get_player_overview(), game_id=self.__game_id)
+                    if self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME:
+                        self.send_message(self.chat_id, translate("gameBegins", self.lang_id) + "\n" + translate("gameBegins2", self.lang_id) + "\n\n" + self.get_player_overview(), game_id=self.__game_id)
 
-                self.dealers_turn()
-                self.give_player_one()
+                    self.dealers_turn()
+                    self.give_player_one()
+            else:
+                self.send_message(self.chat_id, translate("notEnoughPlayers", self.lang_id), message_id=message_id, game_id=self.__game_id)
         else:
-            self.send_message(self.chat_id, translate("notEnoughPlayers", self.lang_id), message_id=message_id, game_id=self.__game_id)
+            #TODO Game already running
+            pass
 
     def evaluation(self):
         list_21 = []
