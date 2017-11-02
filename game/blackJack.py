@@ -132,7 +132,7 @@ class BlackJack(object):
             if self.game_type == self.PRIVATE_CHAT:
                 text += translate("gameBegins", self.lang_id) + "\n"
 
-            text += "\n*" + translate("dealersCards", self.lang_id) + "*\n\n" + self.deck.get_card_name(card) + ", | -- |"
+            text += "\n*{}*\n\n{}, | -- |".format(translate("dealersCards", self.lang_id), self.deck.get_card_name(card))
             self.send_message(self.chat_id, text, parse_mode="Markdown", reply_markup=self.keyboard_running)
         else:
             output_text = translate("croupierDrew", self.lang_id) + "\n\n"
@@ -150,7 +150,7 @@ class BlackJack(object):
                     output_text += " , " + self.deck.get_card_name(card)
                 i += 1
 
-            output_text += "\n\n" + translate("cardvalueDealer", self.lang_id) + " " + str(self.dealer.get_cardvalue())
+            output_text += "\n\n{} {}".format(translate("cardvalueDealer", self.lang_id), self.dealer.get_cardvalue())
             self.send_message(self.chat_id, output_text, parse_mode="Markdown", reply_markup=self.keyboard_running)
             self.evaluation()
 
