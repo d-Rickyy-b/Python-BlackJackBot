@@ -19,11 +19,11 @@ def set_game_won(user_id):
 
 def add_game_played(user_id):
     db = DBwrapper.get_instance()
-    games_played = int(db.get_played_games(user_id))
+    games_played = db.get_played_games(user_id)
     games_played = games_played + 1
     logger.debug("Add game played for userID: " + str(user_id))
     db.insert("gamesPlayed", str(games_played), user_id)
-    db.insert("lastPlayed", int(time()), user_id)
+    db.insert("lastPlayed", str(int(time())), user_id)
 
 
 def get_stats(percentage):

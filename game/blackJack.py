@@ -155,7 +155,7 @@ class BlackJack(object):
             self.send_message(self.chat_id, output_text, parse_mode="Markdown", reply_markup=self.keyboard_running)
             self.evaluation()
 
-    def start_game(self, message_id=None):
+    def start_game(self, message_id: int = None) -> None:
         if not self.game_running:
             if ((self.game_type == self.GROUP_CHAT or self.game_type == self.MULTIPLAYER_GAME) and len(self.players) > 1) or self.game_type == self.PRIVATE_CHAT:
                 self.game_running = True
@@ -174,7 +174,7 @@ class BlackJack(object):
             # TODO Game already running
             pass
 
-    def evaluation(self):
+    def evaluation(self) -> None:
         list_21 = []
         list_busted = []
         list_lower_21 = []
@@ -243,7 +243,7 @@ class BlackJack(object):
         self.send_message(self.chat_id, final_message, game_id=self.__game_id)
         self.game_handler.gl_remove(self.chat_id)
 
-    def get_player_overview(self, show_points=False, text="", i=0, dealer=False):
+    def get_player_overview(self, show_points: bool = False, text: str = "", i=0, dealer: bool = False) -> str:
         if self.game_running:
             for user in self.players:
                 if i == self.current_player:
@@ -297,7 +297,7 @@ class BlackJack(object):
                 if user_id == self.players[0].user_id:
                     self.game_handler.gl_remove(self.chat_id)
 
-    def get_game_id(self):
+    def get_game_id(self) -> int:
         return self.__game_id
 
     # When game is being initialized
