@@ -25,15 +25,14 @@ class GameHandler(object):
         self.GameList.append(blackjackgame)
 
     def get_index_by_chatid(self, chat_id):
-        index = 0
-        for game in self.GameList:
+        for index, game in enumerate(self.GameList):
             if game.chat_id == chat_id:
                 return index
             else:
                 for player in game.players:
                     if player.user_id == chat_id:
                         return index
-            index += 1
+
         return None
 
     def get_game_by_chatid(self, chat_id):
