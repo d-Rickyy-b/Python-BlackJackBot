@@ -169,6 +169,17 @@ def cancel_cmd(bot, update):
         bot.answerCallbackQuery(callback_query_id=callback_query_id, text=translate("cancelledMessage", lang_id))
 
 
+def hide_cmd(bot, update):
+    chat_id = update.message.chat_id
+    reply_markup = ReplyKeyboardRemove()
+    bot.sendMessage(chat_id=chat_id, text="\U0001F44D", reply_markup=reply_markup)
+
+
+def mentions_cmd(bot, update):
+    # TODO mention users which helped (translations, etc.)
+    pass
+
+
 def multiplayer(bot, update):
     chat_id = update.message.chat_id
     user_id = update.message.from_user.id
@@ -204,6 +215,9 @@ def join_secret(bot, update):
     # TODO send message that user joined
 
 
+# -----------------
+# Admin commands
+# -----------------
 def answer(bot, update):
     sender_id = update.message.from_user.id
     reply_to_message = update.message.reply_to_message
@@ -228,17 +242,11 @@ def answer(bot, update):
     bot.sendMessage(chat_id=sender_id, text="Message sent!")
 
 
-def mentions(bot, update):
-    # TODO mention users which helped (translations, etc.)
-    pass
 
 
-def hide_cmd(bot, update):
-    chat_id = update.message.chat_id
-    reply_markup = ReplyKeyboardRemove()
-    bot.sendMessage(chat_id=chat_id, text="\U0001F44D", reply_markup=reply_markup)
-
-
+# -----------------
+# Internal methods
+# -----------------
 def change_language(bot, update, lang_id):
     bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id),
                         message_id=update.callback_query.message.message_id, reply_markup=None)
