@@ -29,7 +29,7 @@ class CardDeck(object):
     def get_card_value(self, card: int) -> int:
         return self.valueInt[card % 13]
 
-    def __init__(self, lang_id: int) -> None:
+    def __init__(self, lang_id: str) -> None:
         self.deck = self.create_deck()
         self.value_str = [translate("ace", lang_id), "2", "3", "4", "5", "6", "7", "8", "9", "10",
                           translate("jack", lang_id), translate("queen", lang_id), translate("king", lang_id)]
