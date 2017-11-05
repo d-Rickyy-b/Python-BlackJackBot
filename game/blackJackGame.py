@@ -10,12 +10,13 @@ from game.dealer import Dealer
 from game.deck import CardDeck
 from game.message import Message
 from game.player import Player
+from gamehandler import GameHandler
 from lang.language import translate
 
 __author__ = 'Rico'
 
 
-class BlackJack(object):
+class BlackJackGame(object):
     PRIVATE_CHAT = 0
     GROUP_CHAT = 1
     MULTIPLAYER_GAME = 2
@@ -244,6 +245,7 @@ class BlackJack(object):
         self.game_handler.gl_remove(self.chat_id)
 
     def get_player_overview(self, show_points: bool = False, text: str = "", i=0, dealer: bool = False) -> str:
+        """Return the overview of all players in a game room"""
         if self.game_running:
             for user in self.players:
                 if i == self.current_player:
@@ -263,6 +265,7 @@ class BlackJack(object):
 
     # Messages are analyzed here. Most function calls come from here
     def analyze_message(self, update):
+        """Commands for a game are forwarded to the specific game's 'analyze_message' method"""
         text = update.message.text
         user_id = update.message.from_user.id
         first_name = update.message.from_user.first_name
@@ -298,10 +301,20 @@ class BlackJack(object):
                     self.game_handler.gl_remove(self.chat_id)
 
     def get_game_id(self) -> int:
+        """Return the game_id of the current game"""
         return self.__game_id
 
     # When game is being initialized
-    def __init__(self, chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message, multiplayer=None, game_id=None):
+    def __init__(self,
+                 chat_id: int,
+                 user_id: int,
+                 lang_id: str,
+                 first_name: str,
+                 game_handler: GameHandler,
+                 message_id: int,
+                 send_message: callable,
+                 multiplayer: bool = None,
+                 game_id: int = None):
         # declare variables and set initial values
         self.players = []
         self.chat_id = chat_id

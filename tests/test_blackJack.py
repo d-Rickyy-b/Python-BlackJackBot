@@ -3,7 +3,7 @@
 from unittest import TestCase
 
 from database.db_wrapper import DBwrapper
-from game.blackJack import BlackJack
+from game.blackJackGame import BlackJackGame
 
 
 class TestBlackJack(TestCase):
@@ -151,7 +151,7 @@ class TestBlackJack(TestCase):
         pass
 
     def setup_blackJack_game(self, user_id, chat_id, message_id, first_name, lang_id):
-        self.blackJackGame = BlackJack(chat_id, user_id, lang_id, first_name, self.GameHandlerMockup, message_id, self.send_message_mockup)
+        self.blackJackGame = BlackJackGame(chat_id, user_id, lang_id, first_name, self.GameHandlerMockup, message_id, self.send_message_mockup)
 
     def setup_multiplayer_game(self, user_id, chat_id, message_id, first_name, lang_id, user_id_2, first_name_2, message_id_2=111):
         self.setup_blackJack_game(user_id, chat_id, message_id, first_name, lang_id)

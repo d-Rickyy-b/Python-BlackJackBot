@@ -10,7 +10,7 @@ from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
-from game.blackJack import BlackJack
+from game.blackJackGame import BlackJackGame
 from gamehandler import GameHandler
 from lang.language import translate
 from statehandler import StateHandler
@@ -61,7 +61,7 @@ def start_cmd(bot, update):
         user.set_state(UserState.PLAYING)
         logger.debug("Creating a game")
         lang_id = db.get_lang_id(user_id)
-        bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message)
+        bj = BlackJackGame(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_message)
         game_handler.add_game(bj)
     else:
         logger.debug("Game already existing. Starting game!")
@@ -194,8 +194,8 @@ def multiplayer(bot, update):
         logger.debug("Creating a game")
         lang_id = db.get_lang_id(user_id)
         game_id = game_handler.generate_id()
-        bj = BlackJack(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_mp_message,
-                       multiplayer=True, game_id=game_id)
+        bj = BlackJackGame(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_mp_message,
+                           multiplayer=True, game_id=game_id)
         game_handler.add_game(bj)
         bot.sendMessage(chat_id, "Your game_id: {}".format(bj.get_game_id()))
     else:
