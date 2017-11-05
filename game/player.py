@@ -49,13 +49,17 @@ class Player(object):
 
     def get_userid(self):
         return self.user_id
+    @property
+    def join_id(self):
+        return self.__join_id
 
     def get_lang_id(self):
         return self.lang_id
 
-    def __init__(self, user_id, first_name, deck, lang_id="en"):
         self.user_id = user_id
+    def __init__(self, user_id, first_name, deck, join_id, lang_id="en"):
         self.first_name = first_name
+        self.__join_id = join_id
         self.lang_id = lang_id
         self.deck = deck
         self.number_of_cards = 0
