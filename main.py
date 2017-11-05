@@ -234,7 +234,7 @@ def answer(bot, update):
         last_line = reply_to_message.text.split("\n")
         ll_list = last_line[-1].split(" | ")
         user_id = ll_list[0]
-    except:
+    except Exception:
         return
 
     answer_text = "{}\n\n{}".format(translate("answerFromDev", db.get_lang_id(user_id)), text)

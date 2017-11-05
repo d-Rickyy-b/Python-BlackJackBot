@@ -17,7 +17,7 @@ class DBwrapper(object):
                 print("File '" + database_path + "' does not exist! Trying to create one.")
                 try:
                     self.create_database(database_path)
-                except:
+                except Exception:
                     print("An error has occurred while creating the database!")
 
             self.connection = sqlite3.connect(database_path)
