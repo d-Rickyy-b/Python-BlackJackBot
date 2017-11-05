@@ -224,7 +224,7 @@ def answer(bot, update):
     text = str(update.message.text[8:])
     db = DBwrapper.get_instance()
 
-    if sender_id not in db.get_admins():
+    if not sender_is_admin(sender_id):
         return
 
     if reply_to_message is None:
@@ -242,6 +242,9 @@ def answer(bot, update):
     bot.sendMessage(chat_id=sender_id, text="Message sent!")
 
 
+def sender_is_admin(user_id: int) -> bool:
+    db = DBwrapper.get_instance()
+    return user_id in db.get_admins()
 
 
 # -----------------
