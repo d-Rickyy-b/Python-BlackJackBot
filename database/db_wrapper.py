@@ -62,9 +62,9 @@ class DBwrapper(object):
                 return ()
 
         def get_recent_players(self):
-            oneDayInSecs = 60 * 60 * 24
-            currentTime = int(time())
-            self.cursor.execute("SELECT userID FROM users WHERE lastPlayed>=?;", [currentTime - oneDayInSecs])
+            one_day_in_secs = 60 * 60 * 24
+            current_time = int(time())
+            self.cursor.execute("SELECT userID FROM users WHERE lastPlayed>=?;", [current_time - one_day_in_secs])
 
             return self.cursor.fetchall()
 
