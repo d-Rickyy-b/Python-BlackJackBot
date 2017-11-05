@@ -47,8 +47,10 @@ class Player(object):
     def get_cardvalue(self):
         return self.cardvalue
 
-    def get_userid(self):
-        return self.user_id
+    @property
+    def user_id(self):
+        return self.__user_id
+
     @property
     def join_id(self):
         return self.__join_id
@@ -56,8 +58,8 @@ class Player(object):
     def get_lang_id(self):
         return self.lang_id
 
-        self.user_id = user_id
     def __init__(self, user_id, first_name, deck, join_id, lang_id="en"):
+        self.__user_id = user_id
         self.first_name = first_name
         self.__join_id = join_id
         self.lang_id = lang_id

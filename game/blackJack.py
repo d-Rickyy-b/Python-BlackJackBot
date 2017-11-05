@@ -38,14 +38,14 @@ class BlackJack(object):
 
     def get_index_by_user_id(self, user_id):
         for index, user in enumerate(self.players):
-            if user.get_userid() == user_id:
+            if user.user_id == user_id:
                 return index
 
         return None
 
     def get_user_by_user_id(self, user_id):
         for user in self.players:
-            if user.get_userid() == user_id:
+            if user.user_id == user_id:
                 return user
         return None
 
@@ -202,24 +202,24 @@ class BlackJack(object):
 
         if self.dealer.get_cardvalue() > 21:
             for user in list_21:
-                set_game_won(user.get_userid())
+                set_game_won(user.user_id)
             for user in list_lower_21:
-                set_game_won(user.get_userid())
+                set_game_won(user.user_id)
                 # Alle mit 21 > Punkte >= 0 haben Einsatz x 1,5 gewonnen.
                 # Alle mit 21 haben Einsatz mal 2 gewonnen
                 # Alle mit 21 und Kartenanzahl = 2 haben Einsatz mal 3 gewonnen
         elif self.dealer.get_cardvalue() == 21:  # todo differentiate between blackjack and 21
             for user in list_21:
                 if user.get_first_name() != translate("dealerName", self.lang_id):
-                    set_game_won(user.get_userid())
+                    set_game_won(user.user_id)
                     # Alle mit 21 > Punkte >= 0 haben verloren . || Alle mit 21 haben Einsatz gewonnen || Alle mit 21 und Kartenanzahl = 2 haben Einsatz mal 2 gewonnen
                     # todo if dealer got Blackjack: || Everyone with BlackJack won their bet back. || Everone else lost
         elif self.dealer.get_cardvalue() < 21:
             for user in list_21:
-                set_game_won(user.get_userid())
+                set_game_won(user.user_id)
             for user in list_lower_21:
                 if user.get_cardvalue() > self.dealer.get_cardvalue():
-                    set_game_won(user.get_userid())
+                    set_game_won(user.user_id)
                     # print(str(user.get_userid()) + " you've got " + )
                     # Alle mit Dealer > Punkte haben verloren.
                     # Alle mit Dealer = Punkte erhalten Einsatz
