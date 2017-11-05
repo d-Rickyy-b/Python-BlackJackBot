@@ -228,13 +228,18 @@ def answer(bot, update):
         return
 
     if reply_to_message is None:
+        bot.sendMessage(sender_id, text="⚠ You need to reply to the user's comment!")
         return
 
     try:
         last_line = reply_to_message.text.split("\n")
         ll_list = last_line[-1].split(" | ")
         user_id = ll_list[0]
-    except Exception:
+    except ValueError:
+        return
+
+    if not re.match("[0-9]+", user_id):
+        bot.sendMessage(sender_id, "⚠ The user_id is not valid. Are you sure you replied to a user comment?")
         return
 
     answer_text = "{}\n\n{}".format(translate("answerFromDev", db.get_lang_id(user_id)), text)
