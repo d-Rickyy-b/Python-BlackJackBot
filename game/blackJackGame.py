@@ -300,7 +300,7 @@ class BlackJackGame(object):
                 if user_id == self.players[0].user_id:
                     self.game_handler.gl_remove(self.chat_id)
 
-    def get_game_id(self) -> int:
+    def get_game_id(self) -> str:
         """Return the game_id of the current game"""
         return self.__game_id
 
@@ -314,7 +314,7 @@ class BlackJackGame(object):
                  message_id: int,
                  send_message: callable,
                  multiplayer: bool = None,
-                 game_id: int = None):
+                 game_id: str = None):
         # declare variables and set initial values
         self.players = []
         self.chat_id = chat_id

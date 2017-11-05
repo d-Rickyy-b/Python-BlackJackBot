@@ -24,7 +24,7 @@ class GameHandler(object):
         if not index < 0:
             self.GameList.pop(index)
 
-    def add_game(self, blackjackgame) -> None:
+    def add_game(self, blackjackgame: BlackJackGame) -> None:
         self.GameList.append(blackjackgame)
 
     def get_index_by_chatid(self, chat_id: int) -> Optional[int]:
