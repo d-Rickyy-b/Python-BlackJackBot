@@ -4,8 +4,6 @@ import random
 import string
 from typing import Optional
 
-from game.blackJackGame import BlackJackGame
-
 __author__ = 'Rico'
 
 
@@ -24,7 +22,7 @@ class GameHandler(object):
         if not index < 0:
             self.GameList.pop(index)
 
-    def add_game(self, blackjackgame: BlackJackGame) -> None:
+    def add_game(self, blackjackgame: object) -> None:
         self.GameList.append(blackjackgame)
 
     def get_index_by_chatid(self, chat_id: int) -> Optional[int]:
@@ -38,16 +36,16 @@ class GameHandler(object):
 
         return None
 
-    def get_game_by_chatid(self, chat_id: int) -> Optional[BlackJackGame]:
+    def get_game_by_chatid(self, chat_id: int) -> Optional[object]:
         index = self.get_index_by_chatid(chat_id)
         if index is None:
             return None
         return self.GameList[index]
 
-    def get_game_by_index(self, index: int) -> BlackJackGame:
+    def get_game_by_index(self, index: int) -> object:
         return self.GameList[index]
 
-    def get_game_by_id(self, game_id: int) -> Optional[BlackJackGame]:
+    def get_game_by_id(self, game_id: int) -> Optional[object]:
         if game_id is None:
             return None
         for game in self.GameList:

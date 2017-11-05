@@ -10,7 +10,6 @@ from game.dealer import Dealer
 from game.deck import CardDeck
 from game.message import Message
 from game.player import Player
-from gamehandler import GameHandler
 from lang.language import translate
 
 __author__ = 'Rico'
@@ -310,7 +309,7 @@ class BlackJackGame(object):
                  user_id: int,
                  lang_id: str,
                  first_name: str,
-                 game_handler: GameHandler,
+                 game_handler: object,
                  message_id: int,
                  send_message: callable,
                  multiplayer: bool = None,
