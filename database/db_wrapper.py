@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sqlite3
+from time import time
 
 __author__ = 'Rico'
 
@@ -59,6 +60,13 @@ class DBwrapper(object):
                 return result
             else:
                 return ()
+
+        def get_recent_players(self):
+            oneDayInSecs = 60 * 60 * 24
+            currentTime = int(time())
+            self.cursor.execute("SELECT userID FROM users WHERE lastPlayed>=?;", [currentTime - oneDayInSecs])
+
+            return self.cursor.fetchall()
 
         def get_played_games(self, user_id: int) -> int:
             self.cursor.execute("SELECT gamesPlayed FROM users WHERE userID=?;", [str(user_id)])

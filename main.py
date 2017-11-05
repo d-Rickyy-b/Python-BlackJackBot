@@ -242,6 +242,18 @@ def answer(bot, update):
     bot.sendMessage(chat_id=sender_id, text="Message sent!")
 
 
+def users(bot, update):
+    sender_id = update.message.from_user.id
+    db = DBwrapper.get_instance()
+    players = db.get_recent_players()
+
+    text = "Last 24 hours: {}".format(len(players))
+
+    if sender_is_admin(sender_id):
+        bot.sendMessage(chat_id=sender_id, text=text)
+        # TODO get users of e.g. last 24 hours
+
+
 def sender_is_admin(user_id: int) -> bool:
     db = DBwrapper.get_instance()
     return user_id in db.get_admins()
@@ -347,6 +359,7 @@ stats_handler = CommandHandler('stats', stats_cmd)
 language_handler = CommandHandler('language', language_cmd)
 comment_handler = CommandHandler('comment', comment_cmd)
 callback_handler = CallbackQueryHandler(callback_eval)
+users_handler = CommandHandler('users', users)
 answer_handler = CommandHandler('answer', answer)
 
 game_command_handler = MessageHandler(Filters.text, game_commands)
@@ -361,6 +374,7 @@ dispatcher.add_handler(stats_handler)
 dispatcher.add_handler(language_handler)
 dispatcher.add_handler(comment_handler)
 dispatcher.add_handler(callback_handler)
+dispatcher.add_handler(users_handler)
 dispatcher.add_handler(answer_handler)
 
 dispatcher.add_handler(mp_handler)
