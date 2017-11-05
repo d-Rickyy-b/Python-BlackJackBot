@@ -254,14 +254,14 @@ def users(bot, update):
         # TODO get users of e.g. last 24 hours
 
 
+# -----------------
+# Internal methods
+# -----------------
 def sender_is_admin(user_id: int) -> bool:
     db = DBwrapper.get_instance()
     return user_id in db.get_admins()
 
 
-# -----------------
-# Internal methods
-# -----------------
 def change_language(bot, update, lang_id):
     bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id),
                         message_id=update.callback_query.message.message_id, reply_markup=None)
