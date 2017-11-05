@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sqlite3
+from time import time
 
 __author__ = 'Rico'
 
@@ -23,7 +24,7 @@ class DBwrapper(object):
             self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
             self.cursor = self.connection.cursor()
 
-        def create_database(self, database_path):
+        def create_database(self, database_path: str) -> None:
             # Create database file and add admin and users table to the database
             open(database_path, 'a').close()
 
@@ -51,29 +52,36 @@ class DBwrapper(object):
             connection.commit()
             connection.close()
 
-        def get_user(self, user_id):
+        def get_user(self, user_id: int) -> tuple:
             self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
             result = self.cursor.fetchone()
             if len(result) > 0:
                 return result
             else:
-                return []
+                return ()
 
-        def get_played_games(self, user_id):
+        def get_recent_players(self):
+            oneDayInSecs = 60 * 60 * 24
+            currentTime = int(time())
+            self.cursor.execute("SELECT userID FROM users WHERE lastPlayed>=?;", [currentTime - oneDayInSecs])
+
+            return self.cursor.fetchall()
+
+        def get_played_games(self, user_id: int) -> int:
             self.cursor.execute("SELECT gamesPlayed FROM users WHERE userID=?;", [str(user_id)])
 
             result = self.cursor.fetchone()
             if len(result) > 0:
-                return result[0]
+                return int(result[0])
             else:
                 return 0
 
-        def get_all_users(self):
+        def get_all_users(self) -> list:
             self.cursor.execute("SELECT rowid, * FROM users;")
             return self.cursor.fetchall()
 
-        def get_admins(self):
+        def get_admins(self) -> list:
             self.cursor.execute("SELECT userID from admins;")
             admins = self.cursor.fetchall()
             admin_list = []
@@ -81,7 +89,7 @@ class DBwrapper(object):
                 admin_list.append(admin[0])
             return admin_list
 
-        def get_lang_id(self, user_id):
+        def get_lang_id(self, user_id: int) -> str:
             self.cursor.execute("SELECT languageID FROM users WHERE userID=?;", [str(user_id)])
             result = self.cursor.fetchone()
             if result:
@@ -89,19 +97,19 @@ class DBwrapper(object):
             else:
                 return "en"
 
-        def add_user(self, user_id, lang_id, first_name, last_name, username):
+        def add_user(self, user_id: int, lang_id: str, first_name: str, last_name: str, username: str) -> None:
             try:
-                self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, 0, 0, 0, 0);", (str(user_id), str(lang_id), str(first_name), str(last_name), str(username)))
+                self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, 0, 0, 0, 0);", (str(user_id), lang_id, first_name, last_name, username))
                 self.connection.commit()
             except sqlite3.IntegrityError:
                 pass
 
-        def insert(self, column_name, value, user_id):
-            self.cursor.execute("UPDATE users SET " + str(column_name) + "= ? WHERE userID = ?;",
-                                [str(value), str(user_id)])
+        def insert(self, column_name: str, value: str, user_id: int) -> None:
+            self.cursor.execute("UPDATE users SET " + column_name + "= ? WHERE userID = ?;",
+                                [value, str(user_id)])
             self.connection.commit()
 
-        def is_user_saved(self, user_id):
+        def is_user_saved(self, user_id: int) -> bool:
             self.cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
 
             result = self.cursor.fetchall()
@@ -110,7 +118,7 @@ class DBwrapper(object):
             else:
                 return False
 
-        def user_data_changed(self, user_id, first_name, last_name, username):
+        def user_data_changed(self, user_id: int, first_name: str, last_name: str, username: str) -> bool:
             self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
             result = self.cursor.fetchone()
@@ -123,15 +131,15 @@ class DBwrapper(object):
             else:
                 return True
 
-        def update_user_data(self, user_id, first_name, last_name, username):
-            self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", (str(first_name), str(last_name), str(username), str(user_id)))
+        def update_user_data(self, user_id: int, first_name: str, last_name: str, username: str) -> None:
+            self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", (first_name, last_name, username, str(user_id)))
             self.connection.commit()
 
-        def reset_stats(self, user_id):
+        def reset_stats(self, user_id: int) -> None:
             self.cursor.execute("UPDATE users SET gamesPlayed='0', gamesWon='0', gamesTie='0', lastPlayed='0' WHERE userID=?;", [str(user_id)])
             self.connection.commit()
 
-        def close_conn(self):
+        def close_conn(self) -> None:
             self.connection.close()
 
     instance = None
@@ -141,7 +149,7 @@ class DBwrapper(object):
             DBwrapper.instance = DBwrapper.__DBwrapper()
 
     @staticmethod
-    def get_instance():
+    def get_instance() -> __DBwrapper:
         if not DBwrapper.instance:
             DBwrapper.instance = DBwrapper.__DBwrapper()
 

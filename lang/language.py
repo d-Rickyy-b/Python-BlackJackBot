@@ -13,7 +13,7 @@ translations.read_file(codecs.open(file_path, encoding="UTF-8"))
 
 
 # translate returns the translation for a specific string
-def translate(string, language):
+def translate(string: str, language: str) -> str:
     if language in translations and string in translations[language]:
         return translations[language][string]
     elif language == "br":

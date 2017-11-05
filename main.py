@@ -169,6 +169,17 @@ def cancel_cmd(bot, update):
         bot.answerCallbackQuery(callback_query_id=callback_query_id, text=translate("cancelledMessage", lang_id))
 
 
+def hide_cmd(bot, update):
+    chat_id = update.message.chat_id
+    reply_markup = ReplyKeyboardRemove()
+    bot.sendMessage(chat_id=chat_id, text="\U0001F44D", reply_markup=reply_markup)
+
+
+def mentions_cmd(bot, update):
+    # TODO mention users which helped (translations, etc.)
+    pass
+
+
 def multiplayer(bot, update):
     chat_id = update.message.chat_id
     user_id = update.message.from_user.id
@@ -204,13 +215,16 @@ def join_secret(bot, update):
     # TODO send message that user joined
 
 
+# -----------------
+# Admin commands
+# -----------------
 def answer(bot, update):
     sender_id = update.message.from_user.id
     reply_to_message = update.message.reply_to_message
     text = str(update.message.text[8:])
     db = DBwrapper.get_instance()
 
-    if sender_id not in db.get_admins():
+    if not sender_is_admin(sender_id):
         return
 
     if reply_to_message is None:
@@ -228,17 +242,26 @@ def answer(bot, update):
     bot.sendMessage(chat_id=sender_id, text="Message sent!")
 
 
-def mentions(bot, update):
-    # TODO mention users which helped (translations, etc.)
-    pass
+def users(bot, update):
+    sender_id = update.message.from_user.id
+    db = DBwrapper.get_instance()
+    players = db.get_recent_players()
+
+    text = "Last 24 hours: {}".format(len(players))
+
+    if sender_is_admin(sender_id):
+        bot.sendMessage(chat_id=sender_id, text=text)
+        # TODO get users of e.g. last 24 hours
 
 
-def hide_cmd(bot, update):
-    chat_id = update.message.chat_id
-    reply_markup = ReplyKeyboardRemove()
-    bot.sendMessage(chat_id=chat_id, text="\U0001F44D", reply_markup=reply_markup)
+def sender_is_admin(user_id: int) -> bool:
+    db = DBwrapper.get_instance()
+    return user_id in db.get_admins()
 
 
+# -----------------
+# Internal methods
+# -----------------
 def change_language(bot, update, lang_id):
     bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id),
                         message_id=update.callback_query.message.message_id, reply_markup=None)
@@ -336,6 +359,7 @@ stats_handler = CommandHandler('stats', stats_cmd)
 language_handler = CommandHandler('language', language_cmd)
 comment_handler = CommandHandler('comment', comment_cmd)
 callback_handler = CallbackQueryHandler(callback_eval)
+users_handler = CommandHandler('users', users)
 answer_handler = CommandHandler('answer', answer)
 
 game_command_handler = MessageHandler(Filters.text, game_commands)
@@ -350,6 +374,7 @@ dispatcher.add_handler(stats_handler)
 dispatcher.add_handler(language_handler)
 dispatcher.add_handler(comment_handler)
 dispatcher.add_handler(callback_handler)
+dispatcher.add_handler(users_handler)
 dispatcher.add_handler(answer_handler)
 
 dispatcher.add_handler(mp_handler)
