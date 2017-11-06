@@ -4,6 +4,7 @@ from unittest import TestCase
 
 from database.db_wrapper import DBwrapper
 from game.blackJackGame import BlackJackGame
+from game.card import Card
 
 
 class TestBlackJack(TestCase):
@@ -166,29 +167,17 @@ class TestBlackJack(TestCase):
             print("gl_remove called")
 
     class CardDeckMockup(object):
-        symbols = ["♥", "♦", "♣", "♠"]
-        valueInt = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+        def create_deck(self) -> list:
+            deck = []
 
-        @staticmethod
-        def create_deck():
-            deck = list([1, 7, 9, 13, 2, 5])
+            for card_id in list([1, 10, 9, 13, 2, 5]):
+                deck.append(Card(card_id, self.lang_id))
+
             return deck[:]
 
-        def pick_one_card(self):
-            card = self.deck[0]
-            self.deck.pop(0)
-            return card
+        def pick_one_card(self) -> Card:
+            return self.deck.pop(0)
 
-        def get_card_name(self, card):
-            symbol = self.symbols[card // 13]
-            value = self.value_str[card % 13]
-            card_name = "|" + symbol + " " + value + "|"
-            return card_name
-
-        def get_card_value(self, card):
-            return self.valueInt[card % 13]
-
-        def __init__(self, lang_id):
+        def __init__(self, lang_id: str) -> None:
+            self.lang_id = lang_id
             self.deck = self.create_deck()
-            self.value_str = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-                              "jack", "queen", "king"]
