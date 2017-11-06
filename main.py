@@ -132,9 +132,11 @@ def get_translations_of_string(string):
 def admin_method(func):
     def admin_check(bot, update):
         db = DBwrapper.get_instance()
-        user_id = update.message.from_user.id
-        if user_id in db.get_admins():
+        user = update.message.from_user
+        if user.id in db.get_admins():
             return func(bot, update)
+        else:
+            logger.warning("User {} ({}, @{}) tried to use admin function '{}'!".format(user.id, user.first_name, user.username, func.__name__))
 
     return admin_check
 
@@ -155,7 +157,7 @@ def start_cmd(bot, update):
     user = state_handler.get_user(user_id)
 
     if not db.is_user_saved(user_id):
-        logger.info("New user")
+        logger.info("New user: {}".format(user_id))
         db.add_user(user_id, "en", first_name, last_name, username)
         if chat_id > 0:
             # ask user for language:
