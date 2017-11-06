@@ -57,7 +57,7 @@ class BlackJackGame(object):
                 self.logger.debug("Next Player!")
                 self.current_player += 1
                 self.send_message(self.chat_id, translate("overview", self.lang_id) + "\n\n" + self.get_player_overview(show_points=True) + "\n" +
-                                  translate("nextPlayer", self.lang_id).format(self.players[self.current_player].get_first_name()),
+                                  translate("nextPlayer", self.lang_id).format(self.players[self.current_player].first_name),
                                   message_id=user.join_id, reply_markup=self.keyboard_running, game_id=self.__game_id)
 
                 self.give_player_one()
@@ -70,7 +70,7 @@ class BlackJackGame(object):
     def give_player_one(self):
         if self.game_running:
             user = self.players[self.current_player]
-            self.logger.debug("Giving player one card | chatID: " + str(self.chat_id) + " | player: " + user.get_first_name())
+            self.logger.debug("Giving player one card | chatID: " + str(self.chat_id) + " | player: " + user.first_name)
 
             if not user.has_cards():
                 # give user 2 cards at beginning
@@ -211,7 +211,7 @@ class BlackJackGame(object):
                 # Alle mit 21 und Kartenanzahl = 2 haben Einsatz mal 3 gewonnen
         elif self.dealer.get_cardvalue() == 21:  # todo differentiate between blackjack and 21
             for user in list_21:
-                if user.get_first_name() != translate("dealerName", self.lang_id):
+                if user.first_name != translate("dealerName", self.lang_id):
                     set_game_won(user.user_id)
                     # Alle mit 21 > Punkte >= 0 haben verloren . || Alle mit 21 haben Einsatz gewonnen || Alle mit 21 und Kartenanzahl = 2 haben Einsatz mal 2 gewonnen
                     # todo if dealer got Blackjack: || Everyone with BlackJack won their bet back. || Everone else lost
@@ -231,15 +231,15 @@ class BlackJackGame(object):
 
         final_message = translate("playerWith21", self.lang_id) + "\n"
         for user in list_21:
-            final_message += str(user.get_cardvalue()) + " - " + user.get_first_name() + "\n"
+            final_message += str(user.get_cardvalue()) + " - " + user.first_name + "\n"
 
         final_message += "\n" + translate("playerLess21", self.lang_id) + "\n"
         for user in list_lower_21:
-            final_message += str(user.get_cardvalue()) + " - " + user.get_first_name() + "\n"
+            final_message += str(user.get_cardvalue()) + " - " + user.first_name + "\n"
 
         final_message += "\n" + translate("playerOver21", self.lang_id) + "\n"
         for user in list_busted:
-            final_message += str(user.get_cardvalue()) + " - " + user.get_first_name() + "\n"
+            final_message += str(user.get_cardvalue()) + " - " + user.first_name + "\n"
 
         keyboard = [[InlineKeyboardButton(text=translate("new_game", self.lang_id), callback_data="new_game")]]
         reply_markup = InlineKeyboardMarkup(keyboard)

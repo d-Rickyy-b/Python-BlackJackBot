@@ -41,11 +41,12 @@ class Player(object):
     def get_number_of_cards(self):
         return self.number_of_cards
 
-    def get_first_name(self):
-        return self.first_name
-
     def get_cardvalue(self):
         return self.cardvalue
+
+    @property
+    def first_name(self):
+        return self.__first_name
 
     @property
     def user_id(self):
@@ -55,14 +56,15 @@ class Player(object):
     def join_id(self):
         return self.__join_id
 
-    def get_lang_id(self):
-        return self.lang_id
+    @property
+    def lang_id(self):
+        return self.__lang_id
 
     def __init__(self, user_id, first_name, deck, join_id, lang_id="en"):
         self.__user_id = user_id
-        self.first_name = first_name
+        self.__first_name = first_name
         self.__join_id = join_id
-        self.lang_id = lang_id
+        self.__lang_id = lang_id
         self.deck = deck
         self.number_of_cards = 0
         self.cardvalue = 0
