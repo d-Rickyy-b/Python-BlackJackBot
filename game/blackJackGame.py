@@ -129,7 +129,6 @@ class BlackJackGame(object):
             card = None
             for i in range(2):
                 card = self.deck.pick_one_card()
-                cardvalue = card.value
                 self.dealer.give_card(card)
 
             text = ""
@@ -141,9 +140,8 @@ class BlackJackGame(object):
         else:
             output_text = translate("croupierDrew", self.lang_id) + "\n\n"
 
-            while self.dealer.get_cardvalue() <= 16:
+            while self.dealer.cardvalue <= 16:
                 card = self.deck.pick_one_card()
-                cardvalue = card.value
                 self.dealer.give_card(card)
 
             i = 0
@@ -154,7 +152,7 @@ class BlackJackGame(object):
                     output_text += " , " + str(card)
                 i += 1
 
-            output_text += "\n\n{} {}".format(translate("cardvalueDealer", self.lang_id), self.dealer.get_cardvalue())
+            output_text += "\n\n{} {}".format(translate("cardvalueDealer", self.lang_id), self.dealer.cardvalue)
             self.send_message(self.chat_id, output_text, parse_mode="Markdown", reply_markup=self.keyboard_running)
             self.evaluation()
 
@@ -183,7 +181,7 @@ class BlackJackGame(object):
         list_lower_21 = []
 
         for user in self.players:
-            cv = user.get_cardvalue()
+            cv = user.cardvalue
 
             if cv > 21:
                 list_busted.append(user)
@@ -192,18 +190,18 @@ class BlackJackGame(object):
             elif cv < 21:
                 list_lower_21.append(user)
 
-        if self.dealer.get_cardvalue() > 21:
+        if self.dealer.cardvalue > 21:
             list_busted.append(self.dealer)
-        elif self.dealer.get_cardvalue() == 21:
+        elif self.dealer.cardvalue == 21:
             list_21.append(self.dealer)
-        elif self.dealer.get_cardvalue() < 21:
+        elif self.dealer.cardvalue < 21:
             list_lower_21.append(self.dealer)
 
-        list_21 = sorted(list_21, key=lambda x: x.get_cardvalue(), reverse=True)
-        list_lower_21 = sorted(list_lower_21, key=lambda x: x.get_cardvalue(), reverse=True)
-        list_busted = sorted(list_busted, key=lambda x: x.get_cardvalue(), reverse=True)
+        list_21 = sorted(list_21, key=lambda x: x.cardvalue, reverse=True)
+        list_lower_21 = sorted(list_lower_21, key=lambda x: x.cardvalue, reverse=True)
+        list_busted = sorted(list_busted, key=lambda x: x.cardvalue, reverse=True)
 
-        if self.dealer.get_cardvalue() > 21:
+        if self.dealer.cardvalue > 21:
             for user in list_21:
                 set_game_won(user.user_id)
             for user in list_lower_21:
@@ -211,17 +209,17 @@ class BlackJackGame(object):
                 # Alle mit 21 > Punkte >= 0 haben Einsatz x 1,5 gewonnen.
                 # Alle mit 21 haben Einsatz mal 2 gewonnen
                 # Alle mit 21 und Kartenanzahl = 2 haben Einsatz mal 3 gewonnen
-        elif self.dealer.get_cardvalue() == 21:  # todo differentiate between blackjack and 21
+        elif self.dealer.cardvalue == 21:  # todo differentiate between blackjack and 21
             for user in list_21:
                 if user.first_name != translate("dealerName", self.lang_id):
                     set_game_won(user.user_id)
                     # Alle mit 21 > Punkte >= 0 haben verloren . || Alle mit 21 haben Einsatz gewonnen || Alle mit 21 und Kartenanzahl = 2 haben Einsatz mal 2 gewonnen
                     # todo if dealer got Blackjack: || Everyone with BlackJack won their bet back. || Everone else lost
-        elif self.dealer.get_cardvalue() < 21:
+        elif self.dealer.cardvalue < 21:
             for user in list_21:
                 set_game_won(user.user_id)
             for user in list_lower_21:
-                if user.get_cardvalue() > self.dealer.get_cardvalue():
+                if user.cardvalue > self.dealer.cardvalue:
                     set_game_won(user.user_id)
                     # print(str(user.get_userid()) + " you've got " + )
                     # Alle mit Dealer > Punkte haben verloren.
@@ -233,15 +231,15 @@ class BlackJackGame(object):
 
         final_message = translate("playerWith21", self.lang_id) + "\n"
         for user in list_21:
-            final_message += str(user.get_cardvalue()) + " - " + user.first_name + "\n"
+            final_message += str(user.cardvalue) + " - " + user.first_name + "\n"
 
         final_message += "\n" + translate("playerLess21", self.lang_id) + "\n"
         for user in list_lower_21:
-            final_message += str(user.get_cardvalue()) + " - " + user.first_name + "\n"
+            final_message += str(user.cardvalue) + " - " + user.first_name + "\n"
 
         final_message += "\n" + translate("playerOver21", self.lang_id) + "\n"
         for user in list_busted:
-            final_message += str(user.get_cardvalue()) + " - " + user.first_name + "\n"
+            final_message += str(user.cardvalue) + " - " + user.first_name + "\n"
 
         keyboard = [[InlineKeyboardButton(text=translate("new_game", self.lang_id), callback_data="new_game")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -258,12 +256,12 @@ class BlackJackGame(object):
                 else:
                     text += "👤"
                 if show_points is True and (i < self.current_player or self.current_player == -1):
-                    text += (user.first_name + " - [" + str(user.get_cardvalue()) + "]\n")
+                    text += (user.first_name + " - [" + str(user.cardvalue) + "]\n")
                 else:
                     text += (user.first_name + "\n")
                 i += 1
             if dealer is True:
-                text += ("🎩" + translate("dealerName", self.lang_id) + " - [" + str(self.dealer.get_cardvalue()) + "]")
+                text += ("🎩" + translate("dealerName", self.lang_id) + " - [" + str(self.dealer.cardvalue) + "]")
             return text
         else:
             return ""

@@ -38,7 +38,8 @@ class Player(object):
     def get_number_of_cards(self):
         return len(self.cards)
 
-    def get_cardvalue(self):
+    @property
+    def cardvalue(self):
         return self.__cardvalue
 
     @property
