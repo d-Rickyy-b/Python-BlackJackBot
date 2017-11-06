@@ -33,7 +33,9 @@ class BlackJackGame(object):
                 if silent is False:
                     # When the parameter 'silent' is not set, a message will be sent.
                     # TODO When game is multiplayer then print current players?
-                    self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id, game_id=self.__game_id)
+                    keyboard = [[InlineKeyboardButton(text=translate("start_game", self.lang_id), callback_data="start_game")]]
+                    reply_markup = InlineKeyboardMarkup(keyboard)
+                    self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id, reply_markup=reply_markup, game_id=self.__game_id)
             else:
                 self.logger.debug("User '" + first_name + "' already in player list. Or max players reached")
 

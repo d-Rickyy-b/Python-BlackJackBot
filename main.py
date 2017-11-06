@@ -58,7 +58,8 @@ def callback_eval(bot, update):
     elif query_data == "cancel_comment":
         cancel_cmd(bot, update)
 
-    elif query_data == "new_game":
+    elif query_data == "new_game" or query_data == "start_game":
+        bot.answerCallbackQuery(callback_query_id=update.callback_query.id)
         start_cmd(bot, update)
 
 
