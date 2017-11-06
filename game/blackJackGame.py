@@ -108,7 +108,7 @@ class BlackJackGame(object):
                     message.add_text_nl(translate("playerDrew", self.lang_id).format(user.first_name, card))
 
                 user.give_card(card)
-                message.add_text_nl(translate("cardvalue", self.lang_id).format(str(user.cardvalue)))
+                message.add_text_nl(translate("cardvalue", self.lang_id).format(user.cardvalue))
 
                 if user.cardvalue >= 21:
                     if user.cardvalue > 21:
