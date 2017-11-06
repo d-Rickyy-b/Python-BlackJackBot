@@ -85,8 +85,8 @@ class BlackJackGame(object):
                 if user.cardvalue == 21:
                     got21_text = "\n\n" + user.first_name + " " + translate("got21", self.lang_id)
 
-                    self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(
-                        user.first_name, cards_string, str(user.cardvalue))) + got21_text, reply_markup=ReplyKeyboardRemove, game_id=self.__game_id)
+                    self.send_message(self.chat_id, translate("yourCardsAre", self.lang_id).format(user.first_name, cards_string, str(user.cardvalue)) + got21_text, reply_markup=ReplyKeyboardRemove(),
+                                      game_id=self.__game_id)
                     self.next_player()
                 else:
                     self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(
