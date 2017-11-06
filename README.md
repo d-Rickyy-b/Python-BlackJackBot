@@ -4,8 +4,8 @@
 
 This is the code for my Telegram Bot with which you can play the game Black Jack. You can find it here: https://telegram.me/BlackJackBot
 
-The main file, which needs to be executed is "main.py".
-You need to put your API-Token in the right place.
+The main file, which needs to be executed is 'main.py'.
+You need to put your API-Token in the right place in the main file.
 
 ## Other Software
 
@@ -15,10 +15,4 @@ The bot uses the [python-telegram-bot](https://python-telegram-bot.org/) framewo
 
 ## Database
 
-The bot uses a SQLite database. The database file is in the "database" directory. It is called 'users.db'.
-
-To set up the database, you need two tables:
-
-1) ```CREATE TABLE 'admins' ('userID'	INTEGER NOT NULL,	'first_name'	TEXT,	'username'	TEXT,	PRIMARY KEY('userID'));```
-
-2) ```CREATE TABLE 'users' ('userID'	INTEGER NOT NULL,	'languageID'	TEXT,	'first_name'	TEXT,	'last_name'	TEXT,	'username'	TEXT, 'gamesPlayed'	INTEGER,	'gamesWon'	INTEGER,	'gamesTie'	INTEGER,	'lastPlayed'	INTEGER,	PRIMARY KEY('userID'));```
+The bot uses a SQLite database. The database file is in the "database" directory. It is called 'users.db'. The database gets auto-generated, if it doesn't exist. Make sure the program has write access to the database directory.
