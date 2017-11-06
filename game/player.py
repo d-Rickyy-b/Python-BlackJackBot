@@ -12,7 +12,6 @@ class Player(object):
             self.give_ace()
 
         self.cardvalue += value
-        self.number_of_cards += 1
 
     def give_ace(self):
         self.has_ace = True
@@ -39,7 +38,7 @@ class Player(object):
         return cards_string
 
     def get_number_of_cards(self):
-        return self.number_of_cards
+        return len(self.deck)
 
     def get_cardvalue(self):
         return self.cardvalue
@@ -66,7 +65,6 @@ class Player(object):
         self.__join_id = join_id
         self.__lang_id = lang_id
         self.deck = deck
-        self.number_of_cards = 0
         self.cardvalue = 0
         self.has_ace = False
         self.cards = []
