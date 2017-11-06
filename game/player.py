@@ -58,12 +58,11 @@ class Player(object):
     def lang_id(self):
         return self.__lang_id
 
-    def __init__(self, user_id, first_name, deck, join_id, lang_id="en"):
+    def __init__(self, user_id, first_name, join_id, lang_id="en"):
         self.__user_id = user_id
         self.__first_name = first_name
         self.__join_id = join_id
         self.__lang_id = lang_id
-        self.deck = deck
         self.__cardvalue = 0
         self.has_ace = False
         self.cards = []
