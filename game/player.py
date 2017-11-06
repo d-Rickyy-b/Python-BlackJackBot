@@ -20,9 +20,6 @@ class Player(object):
         self.has_ace = False
         self.cardvalue -= 10
 
-    def has21(self):
-        return self.cardvalue == 21
-
     def has_busted(self):
         return self.cardvalue > 21
 
