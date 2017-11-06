@@ -354,7 +354,7 @@ def get_translations_of_string(string):
     for lang in lang_list:
         strings.append(translate(string, lang))
 
-    return strings
+    return set(strings)
 
 
 start_handler = CommandHandler(get_translations_of_string("startCmd"), start_cmd)
