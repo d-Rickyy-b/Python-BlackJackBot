@@ -38,7 +38,7 @@ class Player(object):
         return cards_string
 
     def get_number_of_cards(self):
-        return len(self.deck)
+        return len(self.cards)
 
     def get_cardvalue(self):
         return self.cardvalue
