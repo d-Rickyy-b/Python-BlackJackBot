@@ -21,9 +21,6 @@ class Player(object):
         self.has_ace = False
         self.__cardvalue -= 10
 
-    def has_busted(self):
-        return self.__cardvalue > 21
-
     def has_cards(self):
         return len(self.cards) > 0
 
