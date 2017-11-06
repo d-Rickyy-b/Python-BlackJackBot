@@ -423,3 +423,4 @@ dispatcher.add_handler(join_sec)
 dispatcher.add_handler(game_command_handler)
 
 updater.start_polling()
+updater.idle()
