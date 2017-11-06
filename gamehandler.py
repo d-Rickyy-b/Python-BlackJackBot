@@ -49,7 +49,7 @@ class GameHandler(object):
         if game_id is None:
             return None
         for game in self.GameList:
-            if game.get_game_id() == game_id:
+            if game.game_id == game_id:
                 return game
         return None
 
@@ -64,7 +64,7 @@ class GameHandler(object):
 
     def id_already_existing(self, game_id: str) -> bool:
         for game in self.GameList:
-            if game.get_game_id() == game_id:
+            if game.game_id == game_id:
                 return True
 
         return False

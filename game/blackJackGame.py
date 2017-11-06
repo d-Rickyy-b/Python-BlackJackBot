@@ -305,7 +305,8 @@ class BlackJackGame(object):
                 if user_id == self.players[0].user_id:
                     self.game_handler.gl_remove(self.chat_id)
 
-    def get_game_id(self) -> str:
+    @property
+    def game_id(self) -> str:
         """Return the game_id of the current game"""
         return self.__game_id
 

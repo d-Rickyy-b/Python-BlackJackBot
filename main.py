@@ -343,7 +343,7 @@ def multiplayer(bot, update):
         bj = BlackJackGame(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_mp_message,
                            multiplayer=True, game_id=game_id)
         game_handler.add_game(bj)
-        bot.sendMessage(chat_id, "Your game_id: {}".format(bj.get_game_id()))
+        bot.sendMessage(chat_id, "Your game_id: {}".format(bj.game_id))
     else:
         logger.debug("Game already existing")
 
