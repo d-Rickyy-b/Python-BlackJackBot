@@ -268,9 +268,10 @@ def comment_cmd(bot, update):
 
             bot.sendMessage(chat_id=chat_id, text=translate("userComment", lang_id))
             for admin_id in db.get_admins():
-                bot.sendMessage(admin_id, "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name,
-                                                                                                 last_name, username,
-                                                                                                 lang_id))
+                bot.sendMessage(admin_id,
+                                "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name,
+                                                                                       last_name, username,
+                                                                                       lang_id))
             logger.debug("Set {}'s state to IDLE!".format(user_id))
             user.set_state(UserState.IDLE)
         else:
