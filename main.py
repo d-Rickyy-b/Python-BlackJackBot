@@ -188,7 +188,33 @@ def stop_cmd(bot, update):
 
 
 def help_cmd(bot, update):
-    pass
+    # Explains commands to user
+
+    chat_id = update.message.chat_id
+    db = DBwrapper.get_instance()
+    lang_id = db.get_lang_id(update.message.from_user.id)
+
+    start_description = translate("start_description", lang_id)
+    stop_description = translate("stop_description", lang_id)
+    help_description = translate("help_description", lang_id)
+    language_description = translate("language_description", lang_id)
+    stats_description = translate("stats_description", lang_id)
+    hide_description = translate("hide_description", lang_id)
+    text = "/start - {}\n" \
+           "/stop - {}\n" \
+           "/help - {}\n" \
+           "/language - {}\n" \
+           "/stats - {}\n" \
+           "/hide - {}" \
+        .format(start_description,
+                stop_description,
+                help_description,
+                language_description,
+                stats_description,
+                hide_description
+                )
+
+    bot.sendMessage(chat_id=chat_id, text=text)
 
 
 def stats_cmd(bot, update):
@@ -365,6 +391,7 @@ def users(bot, update):
 
 start_handler = CommandHandler(get_translations_of_string("startCmd"), start_cmd)
 stop_handler = CommandHandler(get_translations_of_string("stopCmd"), stop_cmd)
+help_handler = CommandHandler('help', help_cmd)
 hide_handler = CommandHandler('hide', hide_cmd)
 stats_handler = CommandHandler('stats', stats_cmd)
 language_handler = CommandHandler('language', language_cmd)
@@ -380,6 +407,7 @@ join_sec = CommandHandler('join_secret', join_secret)
 
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(stop_handler)
+dispatcher.add_handler(help_handler)
 dispatcher.add_handler(hide_handler)
 dispatcher.add_handler(stats_handler)
 dispatcher.add_handler(language_handler)
