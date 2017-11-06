@@ -14,6 +14,7 @@ translations.read_file(codecs.open(file_path, encoding="UTF-8"))
 
 # translate returns the translation for a specific string
 def translate(string: str, language: str) -> str:
+    """Returns the translation in a specific language for a specific string"""
     if language in translations and string in translations[language]:
         return translations[language][string]
     elif language == "br":
@@ -24,6 +25,7 @@ def translate(string: str, language: str) -> str:
 
 
 def translate_all(string: str) -> set:
+    """Returns all the translations of a specific string"""
     strings = []
     lang_list = ["de", "en", "nl", "eo", "br", "es", "ru", "fa"]
 
