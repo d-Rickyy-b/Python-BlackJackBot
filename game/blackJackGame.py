@@ -103,9 +103,9 @@ class BlackJackGame(object):
                     message.add_text(translate("softHandLater", self.lang_id))
 
                 if self.game_type == self.PRIVATE_CHAT:
-                    message.add_text(translate("playerDraws1", self.lang_id).format(str(card)))
+                    message.add_text_nl(translate("playerDraws1", self.lang_id).format(card))
                 else:
-                    message.add_text(translate("playerDrew", self.lang_id).format(user.first_name, str(card)))
+                    message.add_text_nl(translate("playerDrew", self.lang_id).format(user.first_name, card))
 
                 user.give_card(card)
                 message.add_text_nl(translate("cardvalue", self.lang_id).format(str(user.cardvalue)))
