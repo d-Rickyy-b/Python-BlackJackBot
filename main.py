@@ -62,6 +62,10 @@ def callback_eval(bot, update):
         bot.answerCallbackQuery(callback_query_id=update.callback_query.id)
         start_cmd(bot, update)
 
+    elif query_data == "join_game":
+        bot.answerCallbackQuery(callback_query_id=update.callback_query.id)
+        join_cmd(bot, update)
+
 
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
     tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode,

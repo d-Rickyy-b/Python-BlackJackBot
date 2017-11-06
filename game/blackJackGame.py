@@ -351,7 +351,9 @@ class BlackJackGame(object):
 
         # Only send a "Please join the game" message, when it's a group chat
         if self.game_type == self.GROUP_CHAT:
-            send_message(chat_id, translate("newRound", lang_id), message_id=message_id)  # keyboard=self.keyboard_not_running
+            keyboard = [[InlineKeyboardButton(text=translate("join", self.lang_id).capitalize(), callback_data="join_game")]]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            send_message(chat_id, translate("newRound", lang_id), message_id=message_id, reply_markup=reply_markup)
         elif self.game_type == self.MULTIPLAYER_GAME:
             pass
         else:
