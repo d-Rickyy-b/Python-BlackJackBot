@@ -35,6 +35,102 @@ tg_bot = updater.bot
 lang_list = ["de", "en", "nl", "eo", "br", "es", "ru", "fa"]
 
 
+# -----------------
+# Internal methods
+# -----------------
+def change_language(bot, update, lang_id):
+    bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id),
+                        message_id=update.callback_query.message.message_id, reply_markup=None)
+    db = DBwrapper.get_instance()
+    db.insert("languageID", lang_id, update.callback_query.from_user.id)
+
+
+def callback_eval(bot, update):
+    query_data = update.callback_query.data
+
+    # For changing the language:
+    if query_data.startswith("ch_lang"):
+        lang_id = re.search("ch_lang_([a-z]{2})", query_data).group(1)
+        change_language(bot=bot, update=update, lang_id=lang_id)
+
+    elif query_data == "com_ch_lang":
+        language_cmd(bot, update)
+
+    elif query_data == "cancel_comment":
+        cancel_cmd(bot, update)
+
+
+def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
+    tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode,
+                       reply_markup=reply_markup)
+
+
+def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
+    game = game_handler.get_game_by_id(game_id)
+
+    if game is not None:
+        for player in game.players:
+            user_id = player.user_id
+            send_message(chat_id=user_id, text=text, parse_mode=parse_mode, reply_markup=reply_markup)
+    else:
+        print("Game is None")
+
+
+def game_commands(bot, update):
+    text = update.message.text
+    chat_id = update.message.chat_id
+    user = update.effective_user
+    user_id = user.id
+    first_name = user.first_name
+    last_name = user.last_name
+    username = user.username
+    db = DBwrapper.get_instance()
+    lang_id = db.get_lang_id(user_id)
+
+    state_handler = StateHandler.get_instance()
+    user = state_handler.get_user(user_id)
+
+    if user.get_state() == UserState.COMMENTING:
+        # User wants to comment!
+        bot.sendMessage(chat_id, text=translate("userComment", lang_id))
+        for admin_id in db.get_admins():
+            admin_message = "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name,
+                                                                                   username, lang_id)
+            bot.sendMessage(admin_id, text=admin_message)
+
+        user.set_state(UserState.IDLE)
+        return
+
+    if not db.is_user_saved(user_id):
+        logger.info("New user - {}".format(user_id))
+        db.add_user(user_id, "en", first_name, last_name, username)
+
+        if chat_id > 0:
+            # ask user for language if it's a private chat:
+            language_cmd(bot, update)
+
+        return
+
+    # check if user already has got a game (in the same chat):
+    # TODO multiplayer games
+    game = game_handler.get_game_by_chatid(chat_id)
+    if game is not None:
+        logger.debug("Game already existing. Forwarding text '{}' to game".format(text))
+        game.analyze_message(update)
+
+
+def get_translations_of_string(string):
+    strings = []
+
+    for lang in lang_list:
+        strings.append(translate(string, lang))
+
+    return set(strings)
+
+
+# -----------------
+# User commands
+# -----------------
 def start_cmd(bot, update):
     chat_id = update.message.chat_id
     user_id = update.message.from_user.id
@@ -257,104 +353,10 @@ def users(bot, update):
     if sender_is_admin(sender_id):
         bot.sendMessage(chat_id=sender_id, text=text)
         # TODO get users of e.g. last 24 hours
-
-
-# -----------------
-# Internal methods
-# -----------------
 def sender_is_admin(user_id: int) -> bool:
     db = DBwrapper.get_instance()
     return user_id in db.get_admins()
 
-
-def change_language(bot, update, lang_id):
-    bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id),
-                        message_id=update.callback_query.message.message_id, reply_markup=None)
-    db = DBwrapper.get_instance()
-    db.insert("languageID", lang_id, update.callback_query.from_user.id)
-
-
-def callback_eval(bot, update):
-    query_data = update.callback_query.data
-
-    # For changing the language:
-    if query_data.startswith("ch_lang"):
-        lang_id = re.search("ch_lang_([a-z]{2})", query_data).group(1)
-        change_language(bot=bot, update=update, lang_id=lang_id)
-
-    elif query_data == "com_ch_lang":
-        language_cmd(bot, update)
-
-    elif query_data == "cancel_comment":
-        cancel_cmd(bot, update)
-
-
-def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
-    tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode,
-                       reply_markup=reply_markup)
-
-
-def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
-    game = game_handler.get_game_by_id(game_id)
-
-    if game is not None:
-        for player in game.players:
-            user_id = player.user_id
-            send_message(chat_id=user_id, text=text, parse_mode=parse_mode, reply_markup=reply_markup)
-    else:
-        print("Game is None")
-
-
-def game_commands(bot, update):
-    text = update.message.text
-    chat_id = update.message.chat_id
-    user = update.effective_user
-    user_id = user.id
-    first_name = user.first_name
-    last_name = user.last_name
-    username = user.username
-    db = DBwrapper.get_instance()
-    lang_id = db.get_lang_id(user_id)
-
-    state_handler = StateHandler.get_instance()
-    user = state_handler.get_user(user_id)
-
-    if user.get_state() == UserState.COMMENTING:
-        # User wants to comment!
-        bot.sendMessage(chat_id, text=translate("userComment", lang_id))
-        for admin_id in db.get_admins():
-            admin_message = "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name,
-                                                                                   username, lang_id)
-            bot.sendMessage(admin_id, text=admin_message)
-
-        user.set_state(UserState.IDLE)
-        return
-
-    if not db.is_user_saved(user_id):
-        logger.info("New user - {}".format(user_id))
-        db.add_user(user_id, "en", first_name, last_name, username)
-
-        if chat_id > 0:
-            # ask user for language if it's a private chat:
-            language_cmd(bot, update)
-
-        return
-
-    # check if user already has got a game (in the same chat):
-    # TODO multiplayer games
-    game = game_handler.get_game_by_chatid(chat_id)
-    if game is not None:
-        logger.debug("Game already existing. Forwarding text '{}' to game".format(text))
-        game.analyze_message(update)
-
-
-def get_translations_of_string(string):
-    strings = []
-
-    for lang in lang_list:
-        strings.append(translate(string, lang))
-
-    return set(strings)
 
 
 start_handler = CommandHandler(get_translations_of_string("startCmd"), start_cmd)
