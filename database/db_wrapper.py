@@ -24,7 +24,8 @@ class DBwrapper(object):
             self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
             self.cursor = self.connection.cursor()
 
-        def create_database(self, database_path: str) -> None:
+        @staticmethod
+        def create_database(database_path: str) -> None:
             # Create database file and add admin and users table to the database
             open(database_path, 'a').close()
 
