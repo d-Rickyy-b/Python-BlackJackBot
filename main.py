@@ -128,6 +128,17 @@ def get_translations_of_string(string):
     return set(strings)
 
 
+# Decorator for marking admin methods
+def admin_method(func):
+    def admin_check(bot, update):
+        db = DBwrapper.get_instance()
+        user_id = update.message.from_user.id
+        if user_id in db.get_admins():
+            return func(bot, update)
+
+    return admin_check
+
+
 # -----------------
 # User commands
 # -----------------
@@ -314,14 +325,12 @@ def join_secret(bot, update):
 # -----------------
 # Admin commands
 # -----------------
+@admin_method
 def answer(bot, update):
     sender_id = update.message.from_user.id
     reply_to_message = update.message.reply_to_message
     text = str(update.message.text[8:])
     db = DBwrapper.get_instance()
-
-    if not sender_is_admin(sender_id):
-        return
 
     if reply_to_message is None:
         bot.sendMessage(sender_id, text="⚠ You need to reply to the user's comment!")
@@ -343,6 +352,7 @@ def answer(bot, update):
     bot.sendMessage(chat_id=sender_id, text="Message sent!")
 
 
+@admin_method
 def users(bot, update):
     sender_id = update.message.from_user.id
     db = DBwrapper.get_instance()
@@ -350,13 +360,7 @@ def users(bot, update):
 
     text = "Last 24 hours: {}".format(len(players))
 
-    if sender_is_admin(sender_id):
-        bot.sendMessage(chat_id=sender_id, text=text)
-        # TODO get users of e.g. last 24 hours
-def sender_is_admin(user_id: int) -> bool:
-    db = DBwrapper.get_instance()
-    return user_id in db.get_admins()
-
+    bot.sendMessage(chat_id=sender_id, text=text)
 
 
 start_handler = CommandHandler(get_translations_of_string("startCmd"), start_cmd)
