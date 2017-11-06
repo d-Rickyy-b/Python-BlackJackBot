@@ -8,11 +8,14 @@ __author__ = 'Rico'
 class Player(object):
     def give_card(self, card: Card):
         self.cards.append(card)
-        self.__cardvalue += card.value
 
-        # if value == 1 and self.cardvalue <= 10:
-        #     value = 11
-        #     self.give_ace()
+        if card.value == 11 and self.__cardvalue <= 10:
+            self.give_ace()
+        elif card.value == 11 and (self.__cardvalue + 11) > 21:
+            self.__cardvalue += 1
+            return
+
+        self.__cardvalue += card.value
 
     def give_ace(self):
         self.has_ace = True

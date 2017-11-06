@@ -5,7 +5,7 @@ from lang.language import translate
 
 class Card(object):
     symbols = ["♥", "♦", "♣", "♠"]
-    value_int = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+    value_int = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
 
     @property
     def symbol(self):
