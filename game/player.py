@@ -18,10 +18,10 @@ class Player(object):
 
     def remove_ace(self):
         self.has_ace = False
-        self.cardvalue -= 10
+        self.__cardvalue -= 10
 
     def has_busted(self):
-        return self.cardvalue > 21
+        return self.__cardvalue > 21
 
     def has_cards(self):
         return len(self.cards) > 0
@@ -38,7 +38,7 @@ class Player(object):
         return len(self.cards)
 
     def get_cardvalue(self):
-        return self.cardvalue
+        return self.__cardvalue
 
     @property
     def first_name(self):
@@ -62,6 +62,6 @@ class Player(object):
         self.__join_id = join_id
         self.__lang_id = lang_id
         self.deck = deck
-        self.cardvalue = 0
+        self.__cardvalue = 0
         self.has_ace = False
         self.cards = []
