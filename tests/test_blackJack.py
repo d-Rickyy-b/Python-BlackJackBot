@@ -27,18 +27,6 @@ class TestBlackJack(TestCase):
         self.blackJackGame.add_player(user_id_2, first_name, message_id)
         self.assertTrue(len(self.blackJackGame.players) == 2)
 
-    def test_get_index_by_user_id(self):
-        chat_id = -122345
-        user_id, user_id_2 = 234091, 892348
-        first_name = "Peter"
-        message_id = 12345
-
-        self.setup_blackJack_game(user_id=user_id, chat_id=chat_id, message_id=1111, first_name="John", lang_id="en")
-        self.assertEqual(self.blackJackGame.get_index_by_user_id(user_id), 0)
-
-        self.blackJackGame.add_player(user_id_2, first_name, message_id)
-        self.assertEqual(self.blackJackGame.get_index_by_user_id(user_id_2), 1)
-
     def test_get_user_by_user_id(self):
         chat_id = -122345
         user_id = 234091

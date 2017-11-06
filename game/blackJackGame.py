@@ -40,13 +40,6 @@ class BlackJackGame(object):
                 self.send_message(self.chat_id, translate("alreadyJoined", self.lang_id).format(first_name))
                 self.logger.debug("User '{}' already in player list. Or max players reached".format(first_name))
 
-    def get_index_by_user_id(self, user_id):
-        for index, user in enumerate(self.players):
-            if user.user_id == user_id:
-                return index
-
-        return None
-
     def get_user_by_user_id(self, user_id):
         for user in self.players:
             if user.user_id == user_id:
