@@ -37,7 +37,8 @@ class BlackJackGame(object):
                     reply_markup = InlineKeyboardMarkup(keyboard)
                     self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id, reply_markup=reply_markup, game_id=self.__game_id)
             else:
-                self.logger.debug("User '" + first_name + "' already in player list. Or max players reached")
+                self.send_message(self.chat_id, translate("alreadyJoined", self.lang_id).format(first_name))
+                self.logger.debug("User '{}' already in player list. Or max players reached".format(first_name))
 
     def get_index_by_user_id(self, user_id):
         for index, user in enumerate(self.players):
