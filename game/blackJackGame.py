@@ -25,7 +25,7 @@ class BlackJackGame(object):
     # Adds Player to the Game
     def add_player(self, user_id, first_name, message_id, silent=False):
         if not self.game_running:
-            if self.get_index_by_user_id(user_id) is None and len(self.players) < self.MAX_PLAYERS:
+            if self.get_user_by_user_id(user_id) is None and len(self.players) < self.MAX_PLAYERS:
                 self.logger.debug("Adding user '" + first_name + "' to players.")
                 player = Player(user_id, first_name, join_id=message_id)
                 self.players.append(player)
