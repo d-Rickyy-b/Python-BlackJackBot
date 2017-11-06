@@ -79,8 +79,7 @@ class BlackJackGame(object):
                 # give user 2 cards at beginning
                 for _ in range(2):
                     card = self.deck.pick_one_card()
-                    cardvalue = self.deck.get_card_value(card)
-                    user.give_card(card, cardvalue)
+                    user.give_card(card)
 
                 cards_string = "\n" + user.get_cards_string() + "\n"
                 if user.cardvalue == 21:
@@ -95,7 +94,7 @@ class BlackJackGame(object):
                                       message_id=user.join_id, game_id=self.__game_id)
             else:
                 card = self.deck.pick_one_card()
-                cardvalue = self.deck.get_card_value(card)
+                cardvalue = card.value
                 message = Message()
 
                 if user.has_ace and (user.cardvalue + cardvalue > 21):
@@ -104,11 +103,11 @@ class BlackJackGame(object):
                     message.add_text(translate("softHandLater", self.lang_id))
 
                 if self.game_type == self.PRIVATE_CHAT:
-                    message.add_text(translate("playerDraws1", self.lang_id).format(str(self.deck.get_card_name(card))))
+                    message.add_text(translate("playerDraws1", self.lang_id).format(str(card)))
                 else:
-                    message.add_text(translate("playerDrew", self.lang_id).format(user.first_name, str(self.deck.get_card_name(card))))
+                    message.add_text(translate("playerDrew", self.lang_id).format(user.first_name, str(card)))
 
-                user.give_card(card, cardvalue)
+                user.give_card(card)
                 message.add_text_nl(translate("cardvalue", self.lang_id).format(str(user.cardvalue)))
 
                 if user.cardvalue >= 21:
@@ -130,29 +129,29 @@ class BlackJackGame(object):
             card = None
             for i in range(2):
                 card = self.deck.pick_one_card()
-                cardvalue = self.deck.get_card_value(card)
-                self.dealer.give_card(card, cardvalue)
+                cardvalue = card.value
+                self.dealer.give_card(card)
 
             text = ""
             if self.game_type == self.PRIVATE_CHAT:
                 text += translate("gameBegins", self.lang_id) + "\n"
 
-            text += "\n*{}*\n\n{}, | -- |".format(translate("dealersCards", self.lang_id), self.deck.get_card_name(card))
+            text += "\n*{}*\n\n{}, | -- |".format(translate("dealersCards", self.lang_id), str(card))
             self.send_message(self.chat_id, text, parse_mode="Markdown", reply_markup=self.keyboard_running)
         else:
             output_text = translate("croupierDrew", self.lang_id) + "\n\n"
 
             while self.dealer.get_cardvalue() <= 16:
                 card = self.deck.pick_one_card()
-                cardvalue = self.deck.get_card_value(card)
-                self.dealer.give_card(card, cardvalue)
+                cardvalue = card.value
+                self.dealer.give_card(card)
 
             i = 0
             for card in self.dealer.cards:
                 if i == 0:
-                    output_text += self.deck.get_card_name(card)
+                    output_text += str(card)
                 else:
-                    output_text += " , " + self.deck.get_card_name(card)
+                    output_text += " , " + str(card)
                 i += 1
 
             output_text += "\n\n{} {}".format(translate("cardvalueDealer", self.lang_id), self.dealer.get_cardvalue())

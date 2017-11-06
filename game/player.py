@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
+from game.card import Card
+
 __author__ = 'Rico'
 
 
 class Player(object):
-    def give_card(self, card, value):
+    def give_card(self, card: Card):
         self.cards.append(card)
+        self.__cardvalue += card.value
 
-        if value == 1 and self.cardvalue <= 10:
-            value = 11
-            self.give_ace()
-
-        self.cardvalue += value
+        # if value == 1 and self.cardvalue <= 10:
+        #     value = 11
+        #     self.give_ace()
 
     def give_ace(self):
         self.has_ace = True
@@ -29,7 +30,7 @@ class Player(object):
     def get_cards_string(self):
         cards_string = ""
         for i, card in enumerate(self.cards):
-            cards_string += self.deck.get_card_name(card)
+            cards_string += str(card)
             if i + 1 < len(self.cards):
                 cards_string += ", "
         return cards_string
