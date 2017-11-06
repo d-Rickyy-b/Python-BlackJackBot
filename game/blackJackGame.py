@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.keyboardbutton import KeyboardButton
 from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 from telegram.replykeyboardremove import ReplyKeyboardRemove
@@ -240,7 +241,10 @@ class BlackJackGame(object):
         for user in list_busted:
             final_message += str(user.get_cardvalue()) + " - " + user.get_first_name() + "\n"
 
-        self.send_message(self.chat_id, final_message, game_id=self.__game_id)
+        keyboard = [[InlineKeyboardButton(text=translate("new_game", self.lang_id), callback_data="new_game")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        self.send_message(self.chat_id, final_message, game_id=self.__game_id, reply_markup=reply_markup)
         self.game_handler.gl_remove(self.chat_id)
 
     def get_player_overview(self, show_points: bool = False, text: str = "", i=0, dealer: bool = False) -> str:
@@ -289,7 +293,6 @@ class BlackJackGame(object):
                     self.give_player_one()
                 else:
                     self.send_message(self.chat_id, translate("notYourTurn", self.lang_id).format(first_name), game_id=self.__game_id)
-
             elif command.startswith(translate("noMore", self.lang_id)):
                 current_player = self.players[self.current_player]
                 if self.current_player >= 0 and user_id == current_player.user_id:
@@ -355,4 +358,4 @@ class BlackJackGame(object):
 
     # When game is being ended / object is destructed
     def __del__(self):
-        self.send_message(self.chat_id, translate("gameEnded", self.lang_id), reply_markup=ReplyKeyboardRemove(), game_id=self.__game_id)
+        pass

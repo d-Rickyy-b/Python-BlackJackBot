@@ -21,3 +21,13 @@ def translate(string: str, language: str) -> str:
     elif "en" in translations and string in translations["en"]:
         return translations["en"][string]
     return string
+
+
+def translate_all(string: str) -> set:
+    strings = []
+    lang_list = ["de", "en", "nl", "eo", "br", "es", "ru", "fa"]
+
+    for lang in lang_list:
+        strings.append(translate(string, lang))
+
+    return set(strings)

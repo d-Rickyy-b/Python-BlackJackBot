@@ -12,7 +12,7 @@ from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
 from game.blackJackGame import BlackJackGame
 from gamehandler import GameHandler
-from lang.language import translate
+from lang.language import translate, translate_all
 from statehandler import StateHandler
 from userstate import UserState
 
@@ -32,7 +32,6 @@ dispatcher = updater.dispatcher
 
 game_handler = GameHandler()
 tg_bot = updater.bot
-lang_list = ["de", "en", "nl", "eo", "br", "es", "ru", "fa"]
 
 
 # -----------------
@@ -58,6 +57,9 @@ def callback_eval(bot, update):
 
     elif query_data == "cancel_comment":
         cancel_cmd(bot, update)
+
+    elif query_data == "new_game":
+        start_cmd(bot, update)
 
 
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
@@ -119,15 +121,6 @@ def game_commands(bot, update):
         game.analyze_message(update)
 
 
-def get_translations_of_string(string):
-    strings = []
-
-    for lang in lang_list:
-        strings.append(translate(string, lang))
-
-    return set(strings)
-
-
 # Decorator for marking admin methods
 def admin_method(func):
     def admin_check(bot, update):
@@ -145,12 +138,14 @@ def admin_method(func):
 # User commands
 # -----------------
 def start_cmd(bot, update):
-    chat_id = update.message.chat_id
-    user_id = update.message.from_user.id
-    message_id = update.message.message_id
-    first_name = update.message.from_user.first_name
-    last_name = update.message.from_user.last_name
-    username = update.message.from_user.username
+    message = update.effective_message
+    chat_id = message.chat_id
+    eff_user = update.effective_user
+    user_id = eff_user.id
+    message_id = message.message_id
+    first_name = eff_user.first_name
+    last_name = eff_user.last_name
+    username = eff_user.username
     db = DBwrapper.get_instance()
 
     state_handler = StateHandler.get_instance()
@@ -217,6 +212,16 @@ def help_cmd(bot, update):
                 )
 
     bot.sendMessage(chat_id=chat_id, text=text)
+
+
+def join_cmd(bot, update):
+    message = update.effective_message
+    chat_id = message.chat_id
+    user = update.effective_user
+    game = game_handler.get_game_by_chatid(chat_id)
+
+    if game is not None:
+        game.add_player(user.id, user.first_name, message.message_id)
 
 
 def stats_cmd(bot, update):
@@ -392,8 +397,9 @@ def users(bot, update):
     bot.sendMessage(chat_id=sender_id, text=text)
 
 
-start_handler = CommandHandler(get_translations_of_string("startCmd"), start_cmd)
-stop_handler = CommandHandler(get_translations_of_string("stopCmd"), stop_cmd)
+start_handler = CommandHandler(translate_all("startCmd"), start_cmd)
+stop_handler = CommandHandler(translate_all("stopCmd"), stop_cmd)
+join_handler = CommandHandler(translate_all("join"), join_cmd)
 help_handler = CommandHandler('help', help_cmd)
 hide_handler = CommandHandler('hide', hide_cmd)
 stats_handler = CommandHandler('stats', stats_cmd)
@@ -410,6 +416,7 @@ join_sec = CommandHandler('join_secret', join_secret)
 
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(stop_handler)
+dispatcher.add_handler(join_handler)
 dispatcher.add_handler(help_handler)
 dispatcher.add_handler(hide_handler)
 dispatcher.add_handler(stats_handler)
