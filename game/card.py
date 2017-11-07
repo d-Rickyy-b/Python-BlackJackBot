@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from lang.language import translate
-
 
 class Card(object):
     symbols = ["♥", "♦", "♣", "♠"]
@@ -22,7 +20,6 @@ class Card(object):
     def __str__(self):
         return "|{} {}|".format(self.symbol, self.face)
 
-    def __init__(self, card_id: int, lang_id: str) -> None:
+    def __init__(self, card_id: int, value_str: list) -> None:
         self.card_id = card_id
-        self.value_str = [translate("ace", lang_id), "2", "3", "4", "5", "6", "7", "8", "9", "10",
-                          translate("jack", lang_id), translate("queen", lang_id), translate("king", lang_id)]
+        self.value_str = value_str

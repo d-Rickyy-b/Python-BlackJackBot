@@ -159,7 +159,7 @@ class TestBlackJack(TestCase):
             deck = []
 
             for card_id in list([1, 10, 9, 13, 2, 5]):
-                deck.append(Card(card_id, self.lang_id))
+                deck.append(Card(card_id, self.value_str))
 
             return deck[:]
 
@@ -168,4 +168,6 @@ class TestBlackJack(TestCase):
 
         def __init__(self, lang_id: str) -> None:
             self.lang_id = lang_id
+
+            self.value_str = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"]
             self.deck = self.create_deck()
