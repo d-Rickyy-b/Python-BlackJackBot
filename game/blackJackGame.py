@@ -24,21 +24,24 @@ class BlackJackGame(object):
 
     # Adds Player to the Game
     def add_player(self, user_id, first_name, message_id, silent=False):
-        if not self.game_running:
-            if self.get_player_by_id(user_id) is None and len(self.players) < self.MAX_PLAYERS:
-                self.logger.debug("Adding user '" + first_name + "' to players.")
-                player = Player(user_id, first_name, join_id=message_id)
-                self.players.append(player)
+        if self.game_running:
+            return
+        
+        if self.get_player_by_id(user_id) is None and len(self.players) < self.MAX_PLAYERS:
+            self.logger.debug("Adding user '" + first_name + "' to players.")
+            player = Player(user_id, first_name, join_id=message_id)
+            self.players.append(player)
 
-                if silent is False:
-                    # When the parameter 'silent' is not set, a message will be sent.
-                    # TODO When game is multiplayer then print current players?
-                    keyboard = [[InlineKeyboardButton(text=translate("start_game", self.lang_id), callback_data="start_game")]]
-                    reply_markup = InlineKeyboardMarkup(keyboard)
-                    self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id, reply_markup=reply_markup, game_id=self.__game_id)
-            else:
-                self.send_message(self.chat_id, translate("alreadyJoined", self.lang_id).format(first_name))
-                self.logger.debug("User '{}' already in player list. Or max players reached".format(first_name))
+            if silent:
+                return
+
+            # TODO When game is multiplayer then print current players?
+            keyboard = [[InlineKeyboardButton(text=translate("start_game", self.lang_id), callback_data="start_game")]]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            self.send_message(self.chat_id, translate("playerJoined", self.lang_id).format(first_name), message_id=message_id, reply_markup=reply_markup, game_id=self.__game_id)
+        else:
+            self.send_message(self.chat_id, translate("alreadyJoined", self.lang_id).format(first_name))
+            self.logger.debug("User '{}' already in player list. Or max players reached".format(first_name))
 
     def get_player_by_id(self, user_id):
         for user in self.players:
