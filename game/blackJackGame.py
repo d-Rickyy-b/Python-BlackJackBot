@@ -64,57 +64,59 @@ class BlackJackGame(object):
 
     # gives player one card
     def give_player_one(self):
-        if self.game_running:
-            user = self.players[self.current_player]
-            self.logger.debug("Giving player one card | chatID: {} | player: {}".format(self.chat_id, user.first_name))
+        if not self.game_running:
+            return
 
-            if not user.has_cards():
-                # give user 2 cards at beginning
-                for _ in range(2):
-                    card = self.deck.pick_one_card()
-                    user.give_card(card)
+        user = self.players[self.current_player]
+        self.logger.debug("Giving player one card | chatID: {} | player: {}".format(self.chat_id, user.first_name))
 
-                cards_string = "\n" + user.get_cards_string() + "\n"
-                if user.cardvalue == 21:
-                    got21_text = "\n\n" + user.first_name + " " + translate("got21", self.lang_id)
-
-                    self.send_message(self.chat_id, translate("yourCardsAre", self.lang_id).format(user.first_name, cards_string, str(user.cardvalue)) + got21_text, reply_markup=ReplyKeyboardRemove(),
-                                      game_id=self.__game_id)
-                    self.next_player()
-                else:
-                    self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(
-                        user.first_name, cards_string, str(user.cardvalue))), reply_markup=self.keyboard_running,
-                                      message_id=user.join_id, game_id=self.__game_id)
-            else:
+        if not user.has_cards():
+            # give user 2 cards at beginning
+            for _ in range(2):
                 card = self.deck.pick_one_card()
-                cardvalue = card.value
-                message = Message()
-
-                if user.has_ace and (user.cardvalue + cardvalue > 21):
-                    # user got already an ace -> soft hand
-                    user.remove_ace()
-                    message.add_text(translate("softHandLater", self.lang_id))
-
-                if self.game_type == self.PRIVATE_CHAT:
-                    message.add_text_nl(translate("playerDraws1", self.lang_id).format(card))
-                else:
-                    message.add_text_nl(translate("playerDrew", self.lang_id).format(user.first_name, card))
-
                 user.give_card(card)
-                message.add_text_nl(translate("cardvalue", self.lang_id).format(user.cardvalue))
 
-                if user.cardvalue >= 21:
-                    if user.cardvalue > 21:
-                        if self.game_type == self.GROUP_CHAT:
-                            message.add_text("\n\n" + translate("playerBusted", self.lang_id).format(user.first_name))
+            cards_string = "\n" + user.get_cards_string() + "\n"
+            if user.cardvalue == 21:
+                got21_text = "\n\n" + user.first_name + " " + translate("got21", self.lang_id)
 
-                    elif user.cardvalue == 21:
-                        message.add_text("\n\n" + user.first_name + " " + translate("got21", self.lang_id))
+                self.send_message(self.chat_id, translate("yourCardsAre", self.lang_id).format(user.first_name, cards_string, str(user.cardvalue)) + got21_text, reply_markup=ReplyKeyboardRemove(),
+                                  game_id=self.__game_id)
+                self.next_player()
+            else:
+                self.send_message(self.chat_id, str(translate("yourCardsAre", self.lang_id).format(
+                    user.first_name, cards_string, str(user.cardvalue))), reply_markup=self.keyboard_running,
+                                  message_id=user.join_id, game_id=self.__game_id)
+        else:
+            card = self.deck.pick_one_card()
+            cardvalue = card.value
+            message = Message()
 
-                    self.send_message(self.chat_id, text=message.get_text(), game_id=self.__game_id)
-                    self.next_player()
-                else:
-                    self.send_message(self.chat_id, text=message.get_text(), reply_markup=self.keyboard_running, game_id=self.__game_id)
+            if user.has_ace and (user.cardvalue + cardvalue > 21):
+                # user got already an ace -> soft hand
+                user.remove_ace()
+                message.add_text(translate("softHandLater", self.lang_id))
+
+            if self.game_type == self.PRIVATE_CHAT:
+                message.add_text_nl(translate("playerDraws1", self.lang_id).format(card))
+            else:
+                message.add_text_nl(translate("playerDrew", self.lang_id).format(user.first_name, card))
+
+            user.give_card(card)
+            message.add_text_nl(translate("cardvalue", self.lang_id).format(user.cardvalue))
+
+            if user.cardvalue >= 21:
+                if user.cardvalue > 21:
+                    if self.game_type == self.GROUP_CHAT:
+                        message.add_text("\n\n" + translate("playerBusted", self.lang_id).format(user.first_name))
+
+                elif user.cardvalue == 21:
+                    message.add_text("\n\n" + user.first_name + " " + translate("got21", self.lang_id))
+
+                self.send_message(self.chat_id, text=message.get_text(), game_id=self.__game_id)
+                self.next_player()
+            else:
+                self.send_message(self.chat_id, text=message.get_text(), reply_markup=self.keyboard_running, game_id=self.__game_id)
 
     # Gives the dealer cards
     def dealers_turn(self):
