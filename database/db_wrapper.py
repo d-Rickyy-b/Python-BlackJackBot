@@ -73,6 +73,10 @@ class DBwrapper(object):
             self.cursor.execute("SELECT gamesPlayed FROM users WHERE userID=?;", [str(user_id)])
 
             result = self.cursor.fetchone()
+
+            if not result:
+                return 0
+
             if len(result) > 0:
                 return int(result[0])
             else:
