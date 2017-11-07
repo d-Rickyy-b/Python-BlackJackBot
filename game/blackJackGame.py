@@ -241,24 +241,25 @@ class BlackJackGame(object):
         self.send_message(self.chat_id, final_message, game_id=self.__game_id, reply_markup=reply_markup)
         self.game_handler.gl_remove(self.chat_id)
 
-    def get_player_overview(self, show_points: bool = False, text: str = "", i=0, dealer: bool = False) -> str:
+    def get_player_overview(self, show_points: bool = False, dealer: bool = False) -> str:
         """Return the overview of all players in a game room"""
+        text = ""
+
         if self.game_running:
-            for user in self.players:
-                if i == self.current_player:
+            for counter, user in enumerate(self.players):
+                if counter == self.current_player:
                     text += "▶️"
                 else:
                     text += "👤"
-                if show_points is True and (i < self.current_player or self.current_player == -1):
-                    text += (user.first_name + " - [" + str(user.cardvalue) + "]\n")
+
+                if show_points is True and (counter < self.current_player or self.current_player == -1):
+                    text += "{} - [{}]\n".format(user.first_name, user.cardvalue)
                 else:
                     text += (user.first_name + "\n")
-                i += 1
             if dealer is True:
                 text += ("🎩" + translate("dealerName", self.lang_id) + " - [" + str(self.dealer.cardvalue) + "]")
-            return text
-        else:
-            return ""
+
+        return text
 
     # Messages are analyzed here. Most function calls come from here
     def analyze_message(self, update):
