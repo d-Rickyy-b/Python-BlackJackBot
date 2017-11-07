@@ -104,18 +104,19 @@ class BlackJackGame(object):
             user.give_card(card)
             message.add_text_nl(translate("cardvalue", self.lang_id).format(user.cardvalue))
 
-            if user.cardvalue >= 21:
-                if user.cardvalue > 21:
-                    if self.game_type == self.GROUP_CHAT:
-                        message.add_text("\n\n" + translate("playerBusted", self.lang_id).format(user.first_name))
-
-                elif user.cardvalue == 21:
-                    message.add_text("\n\n" + user.first_name + " " + translate("got21", self.lang_id))
-
-                self.send_message(self.chat_id, text=message.get_text(), game_id=self.__game_id)
-                self.next_player()
-            else:
+            if user.cardvalue < 21:
                 self.send_message(self.chat_id, text=message.get_text(), reply_markup=self.keyboard_running, game_id=self.__game_id)
+                return
+
+            if user.cardvalue > 21:
+                if self.game_type == self.GROUP_CHAT:
+                    message.add_text("\n\n" + translate("playerBusted", self.lang_id).format(user.first_name))
+
+            elif user.cardvalue == 21:
+                message.add_text("\n\n" + user.first_name + " " + translate("got21", self.lang_id))
+
+            self.send_message(self.chat_id, text=message.get_text(), game_id=self.__game_id)
+            self.next_player()
 
     # Gives the dealer cards
     def dealers_turn(self):
