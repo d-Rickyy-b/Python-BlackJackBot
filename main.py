@@ -175,7 +175,11 @@ def start_cmd(bot, update):
     else:
         logger.debug("Game already existing. Starting game!")
         game = game_handler.get_game_by_index(game_index)
-        game.start_game()
+
+        if game.players[0].user_id == user_id:
+            game.start_game()
+        else:
+            bot.sendMessage(chat_id, text="Only the creator can start the game")
 
 
 def stop_cmd(bot, update):
