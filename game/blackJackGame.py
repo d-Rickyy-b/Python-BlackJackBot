@@ -179,13 +179,11 @@ class BlackJackGame(object):
         list_lower_21 = []
 
         for user in self.players:
-            cv = user.cardvalue
-
-            if cv > 21:
+            if user.cardvalue > 21:
                 list_busted.append(user)
-            elif cv == 21:
+            elif user.cardvalue == 21:
                 list_21.append(user)
-            elif cv < 21:
+            elif user.cardvalue < 21:
                 list_lower_21.append(user)
 
         if self.dealer.cardvalue > 21:
