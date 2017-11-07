@@ -105,7 +105,7 @@ class TestBlackJack(TestCase):
         # Adding another player to the game
         self.blackJackGame.add_player(user_id_2, "Carl", 555666)
 
-        self.blackJackGame.deck = self.CardDeckMockup(1)
+        self.blackJackGame.deck = self.CardDeckMockup("en")
 
         self.blackJackGame.start_game()
         self.assertTrue(self.blackJackGame.game_running)
