@@ -12,7 +12,7 @@ class TestBlackJack(TestCase):
 
     def test_add_player(self):
         chat_id = self.group_chat_id
-        user_id, user_id_2 = 8912345, 111222
+        user_id, user_id_2, user_id_3 = 8912345, 111222, 1337
         first_name = "Peter"
         message_id = 12345
 
@@ -25,6 +25,11 @@ class TestBlackJack(TestCase):
 
         # check if adding an existing user a second time isn't possible
         self.blackJackGame.add_player(user_id_2, first_name, message_id)
+        self.assertTrue(len(self.blackJackGame.players) == 2)
+
+        # check if adding doesn't work if game is running
+        self.blackJackGame.start_game()
+        self.blackJackGame.add_player(user_id_3, first_name, message_id)
         self.assertTrue(len(self.blackJackGame.players) == 2)
 
     def test_get_user_by_user_id(self):
