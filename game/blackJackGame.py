@@ -166,8 +166,7 @@ class BlackJackGame(object):
             else:
                 self.send_message(self.chat_id, translate("notEnoughPlayers", self.lang_id), message_id=message_id, game_id=self.__game_id)
         else:
-            # TODO Game already running
-            pass
+            self.send_message(self.chat_id, translate("alreadyAGame", self.lang_id))
 
     def evaluation(self) -> None:
         list_21 = []
