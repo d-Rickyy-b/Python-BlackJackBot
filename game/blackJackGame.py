@@ -125,7 +125,7 @@ class BlackJackGame(object):
     def dealers_turn(self):
         if self.dealer.get_number_of_cards() < 2:
             card = None
-            for i in range(2):
+            for _ in range(2):
                 card = self.deck.pick_one_card()
                 self.dealer.give_card(card)
 
