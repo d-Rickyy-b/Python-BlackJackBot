@@ -248,8 +248,8 @@ class BlackJackGame(object):
         text = ""
 
         if not self.game_running:
-            return
-        
+            return text
+
         for counter, user in enumerate(self.players):
             if counter == self.current_player:
                 text += "▶️"
