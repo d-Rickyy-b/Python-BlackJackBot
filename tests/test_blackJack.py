@@ -31,15 +31,15 @@ class TestBlackJack(TestCase):
         chat_id = -122345
         user_id = 234091
         self.setup_blackJack_game(user_id=user_id, chat_id=chat_id, message_id=1111, first_name="John", lang_id="en")
-        self.assertEqual(self.blackJackGame.get_user_by_user_id(user_id).user_id, user_id)
-        self.assertEqual(self.blackJackGame.get_user_by_user_id(user_id).first_name, "John")
+        self.assertEqual(self.blackJackGame.get_player_by_id(user_id).user_id, user_id)
+        self.assertEqual(self.blackJackGame.get_player_by_id(user_id).first_name, "John")
 
         user_id_2 = 892348
         first_name = "Peter"
         message_id = 12345
         self.blackJackGame.add_player(user_id_2, first_name, message_id)
-        self.assertEqual(self.blackJackGame.get_user_by_user_id(user_id_2).user_id, user_id_2)
-        self.assertEqual(self.blackJackGame.get_user_by_user_id(user_id_2).first_name, first_name)
+        self.assertEqual(self.blackJackGame.get_player_by_id(user_id_2).user_id, user_id_2)
+        self.assertEqual(self.blackJackGame.get_player_by_id(user_id_2).first_name, first_name)
 
     def test_next_player(self):
         chat_id = -122345

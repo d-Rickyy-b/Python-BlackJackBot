@@ -25,7 +25,7 @@ class BlackJackGame(object):
     # Adds Player to the Game
     def add_player(self, user_id, first_name, message_id, silent=False):
         if not self.game_running:
-            if self.get_user_by_user_id(user_id) is None and len(self.players) < self.MAX_PLAYERS:
+            if self.get_player_by_id(user_id) is None and len(self.players) < self.MAX_PLAYERS:
                 self.logger.debug("Adding user '" + first_name + "' to players.")
                 player = Player(user_id, first_name, join_id=message_id)
                 self.players.append(player)
@@ -40,7 +40,7 @@ class BlackJackGame(object):
                 self.send_message(self.chat_id, translate("alreadyJoined", self.lang_id).format(first_name))
                 self.logger.debug("User '{}' already in player list. Or max players reached".format(first_name))
 
-    def get_user_by_user_id(self, user_id):
+    def get_player_by_id(self, user_id):
         for user in self.players:
             if user.user_id == user_id:
                 return user
