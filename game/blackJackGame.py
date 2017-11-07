@@ -89,10 +89,9 @@ class BlackJackGame(object):
                                   message_id=user.join_id, game_id=self.__game_id)
         else:
             card = self.deck.pick_one_card()
-            cardvalue = card.value
             message = Message()
 
-            if user.has_ace and (user.cardvalue + cardvalue > 21):
+            if user.has_ace and (user.cardvalue + card.value > 21):
                 # user got already an ace -> soft hand
                 user.remove_ace()
                 message.add_text(translate("softHandLater", self.lang_id))
