@@ -249,19 +249,21 @@ class BlackJackGame(object):
         """Return the overview of all players in a game room"""
         text = ""
 
-        if self.game_running:
-            for counter, user in enumerate(self.players):
-                if counter == self.current_player:
-                    text += "▶️"
-                else:
-                    text += "👤"
+        if not self.game_running:
+            return
+        
+        for counter, user in enumerate(self.players):
+            if counter == self.current_player:
+                text += "▶️"
+            else:
+                text += "👤"
 
-                if show_points is True and (counter < self.current_player or self.current_player == -1):
-                    text += "{} - [{}]\n".format(user.first_name, user.cardvalue)
-                else:
-                    text += (user.first_name + "\n")
-            if dealer is True:
-                text += ("🎩" + translate("dealerName", self.lang_id) + " - [" + str(self.dealer.cardvalue) + "]")
+            if show_points is True and (counter < self.current_player or self.current_player == -1):
+                text += "{} - [{}]\n".format(user.first_name, user.cardvalue)
+            else:
+                text += (user.first_name + "\n")
+        if dealer is True:
+            text += ("🎩" + translate("dealerName", self.lang_id) + " - [" + str(self.dealer.cardvalue) + "]")
 
         return text
 
