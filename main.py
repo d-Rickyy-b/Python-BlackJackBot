@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import os
 import re
+import sys
 
 from telegram import ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
@@ -127,6 +129,12 @@ def game_commands(bot, update):
 
 
 # Decorator for marking admin methods
+def stop_and_restart():
+    """Gracefully stops the Updater and replaces the current process with a new one"""
+    updater.stop()
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
+
 def admin_method(func):
     def admin_check(bot, update):
         db = DBwrapper.get_instance()
