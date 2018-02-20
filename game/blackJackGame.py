@@ -65,7 +65,6 @@ class BlackJackGame(object):
                 self.current_player = None
                 self.dealers_turn()
 
-    # gives player one card
     def give_player_one(self):
         if not self.game_running:
             return
