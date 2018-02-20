@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import sys
+from threading import Thread
 
 from telegram import ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
@@ -414,6 +415,12 @@ def users(bot, update):
     bot.sendMessage(chat_id=sender_id, text=text)
 
 
+@admin_method
+def restart(bot, update):
+    update.message.reply_text('Bot is restarting...')
+    Thread(target=stop_and_restart).start()
+
+
 start_handler = CommandHandler(translate_all("startCmd"), start_cmd)
 stop_handler = CommandHandler(translate_all("stopCmd"), stop_cmd)
 join_handler = CommandHandler(translate_all("join"), join_cmd)
@@ -425,6 +432,7 @@ comment_handler = CommandHandler('comment', comment_cmd)
 callback_handler = CallbackQueryHandler(callback_eval)
 users_handler = CommandHandler('users', users)
 answer_handler = CommandHandler('answer', answer)
+restart_handler = CommandHandler('restart', restart)
 
 game_command_handler = MessageHandler(Filters.text, game_commands)
 
@@ -442,6 +450,7 @@ dispatcher.add_handler(comment_handler)
 dispatcher.add_handler(callback_handler)
 dispatcher.add_handler(users_handler)
 dispatcher.add_handler(answer_handler)
+dispatcher.add_handler(restart_handler)
 
 dispatcher.add_handler(mp_handler)
 dispatcher.add_handler(join_sec)
