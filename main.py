@@ -129,7 +129,6 @@ def game_commands(bot, update):
         game.analyze_message(update)
 
 
-# Decorator for marking admin methods
 def stop_and_restart():
     """Gracefully stops the Updater and replaces the current process with a new one"""
     updater.stop()
@@ -137,6 +136,8 @@ def stop_and_restart():
 
 
 def admin_method(func):
+    """Decorator for marking methods as admin-only methods, so that strangers can't use them"""
+
     def admin_check(bot, update):
         db = DBwrapper.get_instance()
         user = update.message.from_user
@@ -329,6 +330,7 @@ def cancel_cmd(bot, update):
 
 
 def hide_cmd(bot, update):
+    """Hides the keyboard in the specified chat."""
     chat_id = update.message.chat_id
     reply_markup = ReplyKeyboardRemove()
     bot.sendMessage(chat_id=chat_id, text="\U0001F44D", reply_markup=reply_markup)
