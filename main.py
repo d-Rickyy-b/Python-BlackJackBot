@@ -144,6 +144,7 @@ def admin_method(func):
         if user.id in db.get_admins():
             return func(bot, update)
         else:
+            update.message.reply_text('You have not the needed permissions to do that!')
             logger.warning("User {} ({}, @{}) tried to use admin function '{}'!".format(user.id, user.first_name, user.username, func.__name__))
 
     return admin_check
@@ -189,7 +190,7 @@ def start_cmd(bot, update):
         if game.players[0].user_id == user_id:
             game.start_game()
         else:
-            bot.sendMessage(chat_id, text="Only the creator can start the game")
+            update.message.reply_text("Only the creator can start the game")
 
 
 def stop_cmd(bot, update):
@@ -230,7 +231,7 @@ def help_cmd(bot, update):
                 hide_description
                 )
 
-    bot.sendMessage(chat_id=chat_id, text=text)
+    update.message.reply_text(text)
 
 
 def join_cmd(bot, update):
@@ -244,7 +245,7 @@ def join_cmd(bot, update):
 
 
 def stats_cmd(bot, update):
-    bot.sendMessage(chat_id=update.message.chat_id, text=get_user_stats(update.message.from_user.id))
+    update.message.reply_text(get_user_stats(update.message.from_user.id))
 
 
 def language_cmd(bot, update):
