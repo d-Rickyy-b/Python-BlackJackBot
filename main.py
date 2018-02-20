@@ -32,7 +32,7 @@ if not re.match("[0-9]+:[a-zA-Z0-9\-_]+", BOT_TOKEN):
 updater = Updater(token=BOT_TOKEN)
 dispatcher = updater.dispatcher
 
-game_handler = GameHandler()
+game_handler = GameHandler().get_instance()
 tg_bot = updater.bot
 
 
