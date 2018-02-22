@@ -24,7 +24,7 @@ __author__ = 'Rico'
 BOT_TOKEN = "<your_bot_token>"
 
 logfile_dir_path = os.path.dirname(os.path.abspath(__file__))
-logfile_abs_path = os.path.join(logfile_dir_path, "bot.log")
+logfile_abs_path = os.path.join(logfile_dir_path, "logs", "bot.log")
 logfile_handler = logging.FileHandler(logfile_abs_path, 'a', 'utf-8')
 
 logger = logging.getLogger(__name__)
