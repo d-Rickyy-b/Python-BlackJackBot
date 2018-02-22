@@ -455,24 +455,14 @@ game_command_handler = MessageHandler(Filters.text, game_commands)
 mp_handler = CommandHandler('multiplayer', multiplayer)
 join_sec = CommandHandler('join_secret', join_secret)
 
-dispatcher.add_handler(start_handler)
-dispatcher.add_handler(stop_handler)
-dispatcher.add_handler(join_handler)
-dispatcher.add_handler(help_handler)
-dispatcher.add_handler(hide_handler)
-dispatcher.add_handler(stats_handler)
-dispatcher.add_handler(language_handler)
-dispatcher.add_handler(comment_handler)
-dispatcher.add_handler(callback_handler)
-dispatcher.add_handler(users_handler)
-dispatcher.add_handler(answer_handler)
-dispatcher.add_handler(restart_handler)
+handlers = [start_handler, stop_handler, join_handler, help_handler,
+            hide_handler, stats_handler, language_handler, comment_handler,
+            callback_handler, users_handler, answer_handler, restart_handler,
+            mp_handler, join_sec, game_command_handler]
 
-dispatcher.add_handler(mp_handler)
-dispatcher.add_handler(join_sec)
+for handler in handlers:
+    dispatcher.add_handler(handler)
 
-# Should always be the last handler to add -> Fallback if no command found
-dispatcher.add_handler(game_command_handler)
 dispatcher.add_error_handler(error)
 
 updater.start_polling()
