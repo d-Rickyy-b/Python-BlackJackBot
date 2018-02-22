@@ -129,6 +129,15 @@ def game_commands(bot, update):
         game.analyze_message(update)
 
 
+def error(bot, update, error):
+    """Log Errors caused by Updates."""
+    logger.warning('Update "%s" caused error "%s"', update, error)
+
+    db = DBwrapper.get_instance()
+    for admin_id in db.get_admins():
+        send_message(admin_id, "Update '{0}' caused error '{1}'".format(update, error))
+
+
 def stop_and_restart():
     """Gracefully stops the Updater and replaces the current process with a new one"""
     updater.stop()
@@ -460,6 +469,7 @@ dispatcher.add_handler(join_sec)
 
 # Should always be the last handler to add -> Fallback if no command found
 dispatcher.add_handler(game_command_handler)
+dispatcher.add_error_handler(error)
 
 updater.start_polling()
 updater.idle()
