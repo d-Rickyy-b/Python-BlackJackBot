@@ -1,31 +1,28 @@
 # -*- coding: utf-8 -*-
 
+from game.card import Card
+
 __author__ = 'Rico'
 
 
 class Player(object):
-    def give_card(self, card, value):
+    def give_card(self, card: Card):
         self.cards.append(card)
 
-        if value == 1 and self.cardvalue <= 10:
-            value = 11
+        if card.value == 11 and self.__cardvalue <= 10:
             self.give_ace()
+        elif card.value == 11 and (self.__cardvalue + 11) > 21:
+            self.__cardvalue += 1
+            return
 
-        self.cardvalue += value
-        self.number_of_cards += 1
+        self.__cardvalue += card.value
 
     def give_ace(self):
         self.has_ace = True
 
     def remove_ace(self):
         self.has_ace = False
-        self.cardvalue -= 10
-
-    def has21(self):
-        return self.cardvalue == 21
-
-    def has_busted(self):
-        return self.cardvalue > 21
+        self.__cardvalue -= 10
 
     def has_cards(self):
         return len(self.cards) > 0
@@ -33,19 +30,21 @@ class Player(object):
     def get_cards_string(self):
         cards_string = ""
         for i, card in enumerate(self.cards):
-            cards_string += self.deck.get_card_name(card)
+            cards_string += str(card)
             if i + 1 < len(self.cards):
                 cards_string += ", "
         return cards_string
 
     def get_number_of_cards(self):
-        return self.number_of_cards
+        return len(self.cards)
 
-    def get_first_name(self):
-        return self.first_name
+    @property
+    def cardvalue(self):
+        return self.__cardvalue
 
-    def get_cardvalue(self):
-        return self.cardvalue
+    @property
+    def first_name(self):
+        return self.__first_name
 
     @property
     def user_id(self):
@@ -55,16 +54,15 @@ class Player(object):
     def join_id(self):
         return self.__join_id
 
-    def get_lang_id(self):
-        return self.lang_id
+    @property
+    def lang_id(self):
+        return self.__lang_id
 
-    def __init__(self, user_id, first_name, deck, join_id, lang_id="en"):
+    def __init__(self, user_id, first_name, join_id, lang_id="en"):
         self.__user_id = user_id
-        self.first_name = first_name
+        self.__first_name = first_name
         self.__join_id = join_id
-        self.lang_id = lang_id
-        self.deck = deck
-        self.number_of_cards = 0
-        self.cardvalue = 0
+        self.__lang_id = lang_id
+        self.__cardvalue = 0
         self.has_ace = False
         self.cards = []

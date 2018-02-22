@@ -3,7 +3,8 @@
 from unittest import TestCase
 
 from database.db_wrapper import DBwrapper
-from game.blackJack import BlackJack
+from game.blackJackGame import BlackJackGame
+from game.card import Card
 
 
 class TestBlackJack(TestCase):
@@ -11,7 +12,7 @@ class TestBlackJack(TestCase):
 
     def test_add_player(self):
         chat_id = self.group_chat_id
-        user_id, user_id_2 = 8912345, 111222
+        user_id, user_id_2, user_id_3 = 8912345, 111222, 1337
         first_name = "Peter"
         message_id = 12345
 
@@ -26,31 +27,24 @@ class TestBlackJack(TestCase):
         self.blackJackGame.add_player(user_id_2, first_name, message_id)
         self.assertTrue(len(self.blackJackGame.players) == 2)
 
-    def test_get_index_by_user_id(self):
-        chat_id = -122345
-        user_id, user_id_2 = 234091, 892348
-        first_name = "Peter"
-        message_id = 12345
-
-        self.setup_blackJack_game(user_id=user_id, chat_id=chat_id, message_id=1111, first_name="John", lang_id="en")
-        self.assertEqual(self.blackJackGame.get_index_by_user_id(user_id), 0)
-
-        self.blackJackGame.add_player(user_id_2, first_name, message_id)
-        self.assertEqual(self.blackJackGame.get_index_by_user_id(user_id_2), 1)
+        # check if adding doesn't work if game is running
+        self.blackJackGame.start_game()
+        self.blackJackGame.add_player(user_id_3, first_name, message_id)
+        self.assertTrue(len(self.blackJackGame.players) == 2)
 
     def test_get_user_by_user_id(self):
         chat_id = -122345
         user_id = 234091
         self.setup_blackJack_game(user_id=user_id, chat_id=chat_id, message_id=1111, first_name="John", lang_id="en")
-        self.assertEqual(self.blackJackGame.get_user_by_user_id(user_id).user_id, user_id)
-        self.assertEqual(self.blackJackGame.get_user_by_user_id(user_id).first_name, "John")
+        self.assertEqual(self.blackJackGame.get_player_by_id(user_id).user_id, user_id)
+        self.assertEqual(self.blackJackGame.get_player_by_id(user_id).first_name, "John")
 
         user_id_2 = 892348
         first_name = "Peter"
         message_id = 12345
         self.blackJackGame.add_player(user_id_2, first_name, message_id)
-        self.assertEqual(self.blackJackGame.get_user_by_user_id(user_id_2).user_id, user_id_2)
-        self.assertEqual(self.blackJackGame.get_user_by_user_id(user_id_2).first_name, first_name)
+        self.assertEqual(self.blackJackGame.get_player_by_id(user_id_2).user_id, user_id_2)
+        self.assertEqual(self.blackJackGame.get_player_by_id(user_id_2).first_name, first_name)
 
     def test_next_player(self):
         chat_id = -122345
@@ -111,7 +105,7 @@ class TestBlackJack(TestCase):
         # Adding another player to the game
         self.blackJackGame.add_player(user_id_2, "Carl", 555666)
 
-        self.blackJackGame.deck = self.CardDeckMockup(1)
+        self.blackJackGame.deck = self.CardDeckMockup("en")
 
         self.blackJackGame.start_game()
         self.assertTrue(self.blackJackGame.game_running)
@@ -151,7 +145,7 @@ class TestBlackJack(TestCase):
         pass
 
     def setup_blackJack_game(self, user_id, chat_id, message_id, first_name, lang_id):
-        self.blackJackGame = BlackJack(chat_id, user_id, lang_id, first_name, self.GameHandlerMockup, message_id, self.send_message_mockup)
+        self.blackJackGame = BlackJackGame(chat_id, user_id, lang_id, first_name, self.GameHandlerMockup, message_id, self.send_message_mockup)
 
     def setup_multiplayer_game(self, user_id, chat_id, message_id, first_name, lang_id, user_id_2, first_name_2, message_id_2=111):
         self.setup_blackJack_game(user_id, chat_id, message_id, first_name, lang_id)
@@ -166,29 +160,19 @@ class TestBlackJack(TestCase):
             print("gl_remove called")
 
     class CardDeckMockup(object):
-        symbols = ["♥", "♦", "♣", "♠"]
-        valueInt = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+        def create_deck(self) -> list:
+            deck = []
 
-        @staticmethod
-        def create_deck():
-            deck = list([1, 7, 9, 13, 2, 5])
+            for card_id in list([1, 10, 9, 13, 2, 5]):
+                deck.append(Card(card_id, self.value_str))
+
             return deck[:]
 
-        def pick_one_card(self):
-            card = self.deck[0]
-            self.deck.pop(0)
-            return card
+        def pick_one_card(self) -> Card:
+            return self.deck.pop(0)
 
-        def get_card_name(self, card):
-            symbol = self.symbols[card // 13]
-            value = self.value_str[card % 13]
-            card_name = "|" + symbol + " " + value + "|"
-            return card_name
+        def __init__(self, lang_id: str) -> None:
+            self.lang_id = lang_id
 
-        def get_card_value(self, card):
-            return self.valueInt[card % 13]
-
-        def __init__(self, lang_id):
+            self.value_str = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"]
             self.deck = self.create_deck()
-            self.value_str = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-                              "jack", "queen", "king"]

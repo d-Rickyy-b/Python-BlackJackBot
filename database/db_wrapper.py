@@ -17,14 +17,15 @@ class DBwrapper(object):
                 print("File '" + database_path + "' does not exist! Trying to create one.")
                 try:
                     self.create_database(database_path)
-                except:
+                except Exception:
                     print("An error has occurred while creating the database!")
 
             self.connection = sqlite3.connect(database_path)
             self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
             self.cursor = self.connection.cursor()
 
-        def create_database(self, database_path: str) -> None:
+        @staticmethod
+        def create_database(database_path: str) -> None:
             # Create database file and add admin and users table to the database
             open(database_path, 'a').close()
 
@@ -62,9 +63,9 @@ class DBwrapper(object):
                 return ()
 
         def get_recent_players(self):
-            oneDayInSecs = 60 * 60 * 24
-            currentTime = int(time())
-            self.cursor.execute("SELECT userID FROM users WHERE lastPlayed>=?;", [currentTime - oneDayInSecs])
+            one_day_in_secs = 60 * 60 * 24
+            current_time = int(time())
+            self.cursor.execute("SELECT userID FROM users WHERE lastPlayed>=?;", [current_time - one_day_in_secs])
 
             return self.cursor.fetchall()
 
@@ -72,6 +73,10 @@ class DBwrapper(object):
             self.cursor.execute("SELECT gamesPlayed FROM users WHERE userID=?;", [str(user_id)])
 
             result = self.cursor.fetchone()
+
+            if not result:
+                return 0
+
             if len(result) > 0:
                 return int(result[0])
             else:
