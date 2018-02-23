@@ -463,3 +463,4 @@ dispatcher.add_error_handler(error)
 
 updater.start_polling()
 updater.idle()
+logger.info("Bot started")
