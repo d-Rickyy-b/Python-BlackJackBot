@@ -310,7 +310,6 @@ def comment_cmd(bot, update, args):
                                 "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name,
                                                                                        last_name, username,
                                                                                        lang_id))
-            logger.debug("Set {}'s state to IDLE!".format(user_id))
             user.set_state(UserState.IDLE)
         else:
             # The user just wrote "/comment" -> Ask him to send a message
