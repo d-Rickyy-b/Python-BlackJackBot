@@ -23,8 +23,12 @@ __author__ = 'Rico'
 
 BOT_TOKEN = "<your_bot_token>"
 
+logfile_dir_path = os.path.dirname(os.path.abspath(__file__))
+logfile_abs_path = os.path.join(logfile_dir_path, "logs", "bot.log")
+logfile_handler = logging.FileHandler(logfile_abs_path, 'a', 'utf-8')
+
 logger = logging.getLogger(__name__)
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG, handlers=[logfile_handler])
 
 if not re.match("[0-9]+:[a-zA-Z0-9\-_]+", BOT_TOKEN):
     logging.error("Bot token not correct - please check.")
@@ -127,6 +131,15 @@ def game_commands(bot, update):
     if game is not None:
         logger.debug("Game already existing. Forwarding text '{}' to game".format(text))
         game.analyze_message(update)
+
+
+def error(bot, update, error):
+    """Log Errors caused by Updates."""
+    logger.warning('Update "%s" caused error "%s"', update, error)
+
+    db = DBwrapper.get_instance()
+    for admin_id in db.get_admins():
+        send_message(admin_id, "Update '{0}' caused error '{1}'".format(update, error))
 
 
 def stop_and_restart():
@@ -442,24 +455,15 @@ game_command_handler = MessageHandler(Filters.text, game_commands)
 mp_handler = CommandHandler('multiplayer', multiplayer)
 join_sec = CommandHandler('join_secret', join_secret)
 
-dispatcher.add_handler(start_handler)
-dispatcher.add_handler(stop_handler)
-dispatcher.add_handler(join_handler)
-dispatcher.add_handler(help_handler)
-dispatcher.add_handler(hide_handler)
-dispatcher.add_handler(stats_handler)
-dispatcher.add_handler(language_handler)
-dispatcher.add_handler(comment_handler)
-dispatcher.add_handler(callback_handler)
-dispatcher.add_handler(users_handler)
-dispatcher.add_handler(answer_handler)
-dispatcher.add_handler(restart_handler)
+handlers = [start_handler, stop_handler, join_handler, help_handler,
+            hide_handler, stats_handler, language_handler, comment_handler,
+            callback_handler, users_handler, answer_handler, restart_handler,
+            mp_handler, join_sec, game_command_handler]
 
-dispatcher.add_handler(mp_handler)
-dispatcher.add_handler(join_sec)
+for handler in handlers:
+    dispatcher.add_handler(handler)
 
-# Should always be the last handler to add -> Fallback if no command found
-dispatcher.add_handler(game_command_handler)
+dispatcher.add_error_handler(error)
 
 updater.start_polling()
 updater.idle()
