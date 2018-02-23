@@ -135,6 +135,9 @@ def game_commands(bot, update):
 
 def error(bot, update, error):
     """Log Errors caused by Updates."""
+    if update is None:
+        return
+    
     logger.warning('Update "%s" caused error "%s"', update, error)
 
     db = DBwrapper.get_instance()
