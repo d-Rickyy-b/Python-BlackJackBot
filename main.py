@@ -219,8 +219,6 @@ def stop_cmd(bot, update):
 
 def help_cmd(bot, update):
     # Explains commands to user
-
-    chat_id = update.message.chat_id
     db = DBwrapper.get_instance()
     lang_id = db.get_lang_id(update.message.from_user.id)
 
