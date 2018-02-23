@@ -340,9 +340,7 @@ def cancel_cmd(bot, update):
 
 def hide_cmd(bot, update):
     """Hides the keyboard in the specified chat."""
-    chat_id = update.message.chat_id
-    reply_markup = ReplyKeyboardRemove()
-    bot.sendMessage(chat_id=chat_id, text="\U0001F44D", reply_markup=reply_markup)
+    update.message.reply_text("\U0001F44D", reply_markup=ReplyKeyboardRemove())
 
 
 def mentions_cmd(bot, update):
