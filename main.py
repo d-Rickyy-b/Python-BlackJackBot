@@ -203,7 +203,7 @@ def start_cmd(bot, update):
         if game.players[0].user_id == user_id:
             game.start_game()
         else:
-            update.message.reply_text("Only the creator can start the game")
+            message.reply_text("Only the creator ({}) can start the game".format(game.players[0].first_name))
 
 
 def stop_cmd(bot, update):
