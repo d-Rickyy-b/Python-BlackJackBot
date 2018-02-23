@@ -287,7 +287,7 @@ def language_cmd(bot, update):
                         reply_markup=lang_keyboard, message_id=update.message.message_id)
 
 
-def comment_cmd(bot, update):
+def comment_cmd(bot, update, args):
     user_id = update.message.from_user.id
     chat_id = update.message.chat_id
     first_name = update.message.from_user.first_name
@@ -295,15 +295,13 @@ def comment_cmd(bot, update):
     username = update.message.from_user.username
     db = DBwrapper.get_instance()
     lang_id = db.get_lang_id(user_id)
-    text = update.message.text
-    params = text.split()
 
     state_handler = StateHandler.get_instance()
     user = state_handler.get_user(user_id)
 
     if user.get_state() == UserState.IDLE:
-        if len(params) > 1:
-            text = " ".join(params[1:])
+        if len(args) > 1:
+            text = " ".join(args)
             logger.debug("New comment! {}!".format(user_id))
 
             bot.sendMessage(chat_id=chat_id, text=translate("userComment", lang_id))
@@ -444,7 +442,7 @@ help_handler = CommandHandler('help', help_cmd)
 hide_handler = CommandHandler('hide', hide_cmd)
 stats_handler = CommandHandler('stats', stats_cmd)
 language_handler = CommandHandler('language', language_cmd)
-comment_handler = CommandHandler('comment', comment_cmd)
+comment_handler = CommandHandler('comment', comment_cmd, pass_args=True)
 callback_handler = CallbackQueryHandler(callback_eval)
 users_handler = CommandHandler('users', users)
 answer_handler = CommandHandler('answer', answer)
