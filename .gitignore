@@ -95,3 +95,6 @@ ENV/
 __pycache__
 *.db
 .vs
+
+# Keep logrotated files out of git
+logs/*.log*
