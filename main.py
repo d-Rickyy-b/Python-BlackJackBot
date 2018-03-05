@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import logging
+import logging.handlers
 import os
 import re
 import sys
@@ -23,12 +23,16 @@ __author__ = 'Rico'
 
 BOT_TOKEN = "<your_bot_token>"
 
-logfile_dir_path = os.path.dirname(os.path.abspath(__file__))
-logfile_abs_path = os.path.join(logfile_dir_path, "logs", "bot.log")
-logfile_handler = logging.FileHandler(logfile_abs_path, 'a', 'utf-8')
+logdir_path = os.path.dirname(os.path.abspath(__file__))
+logfile_path = os.path.join(logdir_path, "logs", "bot.log")
+
+if not os.path.exists(os.path.join(logdir_path, "logs")):
+    os.makedirs(os.path.join(logdir_path, "logs"))
+
+logfile_handler = logging.handlers.WatchedFileHandler(logfile_path, 'a', 'utf-8')
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG, handlers=[logfile_handler])
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO, handlers=[logfile_handler])
 
 if not re.match("[0-9]+:[a-zA-Z0-9\-_]+", BOT_TOKEN):
     logging.error("Bot token not correct - please check.")
@@ -463,3 +467,4 @@ dispatcher.add_error_handler(error)
 
 updater.start_polling()
 updater.idle()
+logger.info("Bot started")
