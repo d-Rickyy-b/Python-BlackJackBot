@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import logging
+import logging.handlers
 import os
 import re
 import sys
@@ -25,7 +25,11 @@ BOT_TOKEN = "<your_bot_token>"
 
 logfile_dir_path = os.path.dirname(os.path.abspath(__file__))
 logfile_abs_path = os.path.join(logfile_dir_path, "logs", "bot.log")
-logfile_handler = logging.FileHandler(logfile_abs_path, 'a', 'utf-8')
+
+if not os.path.exists(os.path.join(logfile_dir_path, "logs")):
+    os.makedirs(os.path.join(logfile_dir_path, "logs"))
+
+logfile_handler = logging.handlers.WatchedFileHandler(logfile_abs_path, 'a', 'utf-8')
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG, handlers=[logfile_handler])
