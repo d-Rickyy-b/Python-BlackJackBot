@@ -42,7 +42,6 @@ updater = Updater(token=BOT_TOKEN)
 dispatcher = updater.dispatcher
 
 game_handler = GameHandler().get_instance()
-tg_bot = updater.bot
 
 
 # -----------------
@@ -79,8 +78,8 @@ def callback_eval(bot, update):
 
 
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
-    tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode,
-                       reply_markup=reply_markup)
+    updater.bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode,
+                            reply_markup=reply_markup)
 
 
 def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
