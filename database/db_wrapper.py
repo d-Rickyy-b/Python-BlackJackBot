@@ -57,10 +57,11 @@ class DBwrapper(object):
             self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
             result = self.cursor.fetchone()
-            if len(result) > 0:
-                return result
-            else:
-                return ()
+            if result:
+                if len(result) > 0:
+                    return result
+            
+            return ()
 
         def get_recent_players(self):
             one_day_in_secs = 60 * 60 * 24
