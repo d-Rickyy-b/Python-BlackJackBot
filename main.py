@@ -11,6 +11,7 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageH
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 
+from config import BOT_TOKEN
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
 from game.blackJackGame import BlackJackGame
@@ -20,8 +21,6 @@ from statehandler import StateHandler
 from userstate import UserState
 
 __author__ = 'Rico'
-
-BOT_TOKEN = "<your_bot_token>"
 
 logdir_path = os.path.dirname(os.path.abspath(__file__))
 logfile_path = os.path.join(logdir_path, "logs", "bot.log")
