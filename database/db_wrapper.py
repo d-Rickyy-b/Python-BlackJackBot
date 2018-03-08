@@ -60,8 +60,8 @@ class DBwrapper(object):
             if result:
                 if len(result) > 0:
                     return result
-                else:
-                return ()
+            
+            return ()
 
         def get_recent_players(self):
             one_day_in_secs = 60 * 60 * 24
