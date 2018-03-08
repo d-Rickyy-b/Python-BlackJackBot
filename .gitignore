@@ -98,3 +98,4 @@ __pycache__
 
 # Keep logrotated files out of git
 logs/*.log*
+.config.py
