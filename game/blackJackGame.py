@@ -286,14 +286,18 @@ class BlackJackGame(object):
                 self.start_game()
         if self.game_running:
             if command.startswith(translate("oneMore", self.lang_id)):
-                current_player = self.players[self.current_player]
-                if self.current_player >= 0 and user_id == current_player.user_id:
+                if self.current_player is None or self.current_player < 0:
+                    return
+
+                if user_id == self.players[self.current_player].user_id:
                     self.give_player_one()
                 else:
                     self.send_message(self.chat_id, translate("notYourTurn", self.lang_id).format(first_name), game_id=self.__game_id)
             elif command.startswith(translate("noMore", self.lang_id)):
-                current_player = self.players[self.current_player]
-                if self.current_player >= 0 and user_id == current_player.user_id:
+                if self.current_player is None or self.current_player < 0:
+                    return
+
+                if user_id == self.players[self.current_player].user_id:
                     self.logger.debug("User doesn't want another card")
                     self.next_player()
             elif command.startswith(translate("stopCmd", self.lang_id)):
