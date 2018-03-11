@@ -298,6 +298,7 @@ class BlackJackGame(object):
                     self.next_player()
             elif command.startswith(translate("stopCmd", self.lang_id)):
                 if user_id == self.players[0].user_id:
+                    self.send_message(self.chat_id, translate("gameEnded", self.lang_id), game_id=self.__game_id)
                     self.game_handler.gl_remove(self.chat_id)
 
     @property
