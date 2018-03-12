@@ -16,4 +16,9 @@ script:
 
 notifications:
   email: false
-  
+
+deploy:
+  provider: script
+  script: curl https://rico-j.de/travis/deploy-bj.sh
+  on:
+    branch: master
