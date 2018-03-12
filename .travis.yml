@@ -2,6 +2,7 @@ language: python
 sudo: require
 python:
   - "3.4"
+  - "3.6"
 # command to install dependencies
 install:
   - pip install python-telegram-bot --upgrade
@@ -16,4 +17,9 @@ script:
 
 notifications:
   email: false
-  
+
+deploy:
+  provider: script
+  script: curl https://rico-j.de/travis/deploy-bj.sh
+  on:
+    branch: master
