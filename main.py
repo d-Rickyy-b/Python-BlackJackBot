@@ -11,6 +11,7 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageH
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 
+from config import BOT_TOKEN
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
 from game.blackJackGame import BlackJackGame
@@ -21,8 +22,6 @@ from userstate import UserState
 
 __author__ = 'Rico'
 
-BOT_TOKEN = "<your_bot_token>"
-
 logdir_path = os.path.dirname(os.path.abspath(__file__))
 logfile_path = os.path.join(logdir_path, "logs", "bot.log")
 
@@ -32,7 +31,8 @@ if not os.path.exists(os.path.join(logdir_path, "logs")):
 logfile_handler = logging.handlers.WatchedFileHandler(logfile_path, 'a', 'utf-8')
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO, handlers=[logfile_handler])
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO,
+                    handlers=[logfile_handler])
 
 if not re.match("[0-9]+:[a-zA-Z0-9\-_]+", BOT_TOKEN):
     logging.error("Bot token not correct - please check.")
@@ -42,7 +42,6 @@ updater = Updater(token=BOT_TOKEN)
 dispatcher = updater.dispatcher
 
 game_handler = GameHandler().get_instance()
-tg_bot = updater.bot
 
 
 # -----------------
@@ -79,8 +78,8 @@ def callback_eval(bot, update):
 
 
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
-    tg_bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode,
-                       reply_markup=reply_markup)
+    updater.bot.sendMessage(chat_id=chat_id, text=text, reply_to_message_id=message_id, parse_mode=parse_mode,
+                            reply_markup=reply_markup)
 
 
 def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
@@ -141,7 +140,7 @@ def error(bot, update, error):
     """Log Errors caused by Updates."""
     if update is None:
         return
-    
+
     logger.warning('Update "%s" caused error "%s"', update, error)
 
     db = DBwrapper.get_instance()
@@ -165,7 +164,9 @@ def admin_method(func):
             return func(bot, update)
         else:
             update.message.reply_text('You have not the needed permissions to do that!')
-            logger.warning("User {} ({}, @{}) tried to use admin function '{}'!".format(user.id, user.first_name, user.username, func.__name__))
+            logger.warning(
+                "User {} ({}, @{}) tried to use admin function '{}'!".format(user.id, user.first_name, user.username,
+                                                                             func.__name__))
 
     return admin_check
 
@@ -466,5 +467,5 @@ for handler in handlers:
 dispatcher.add_error_handler(error)
 
 updater.start_polling()
-updater.idle()
 logger.info("Bot started")
+updater.idle()
