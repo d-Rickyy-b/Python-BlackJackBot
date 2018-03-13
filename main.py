@@ -95,8 +95,8 @@ def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_marku
 
 
 def game_commands(bot, update):
-    text = update.message.text
-    chat_id = update.message.chat_id
+    text = update.effective_message.text
+    chat_id = update.effective_message.chat_id
     user = update.effective_user
     user_id = user.id
     first_name = user.first_name
