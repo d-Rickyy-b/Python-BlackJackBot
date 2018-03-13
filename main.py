@@ -48,6 +48,7 @@ game_handler = GameHandler().get_instance()
 # Internal methods
 # -----------------
 def change_language(bot, update, lang_id):
+    logger.info("Language changed to '{}' for user {}".format(lang_id, update.effective_user.id))
     bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("langChanged", lang_id),
                         message_id=update.callback_query.message.message_id, reply_markup=None)
     db = DBwrapper.get_instance()
@@ -94,8 +95,11 @@ def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_marku
 
 
 def game_commands(bot, update):
-    text = update.message.text
-    chat_id = update.message.chat_id
+    if update.message is None:
+        logger.warning("game_commands error happened again! Update: {}".format(update))
+
+    text = update.effective_message.text
+    chat_id = update.effective_message.chat_id
     user = update.effective_user
     user_id = user.id
     first_name = user.first_name
@@ -467,5 +471,5 @@ for handler in handlers:
 dispatcher.add_error_handler(error)
 
 updater.start_polling()
-logger.info("Bot started")
+logger.info("Bot started as @{}".format(updater.bot.username))
 updater.idle()

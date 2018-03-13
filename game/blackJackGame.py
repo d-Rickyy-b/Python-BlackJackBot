@@ -150,7 +150,7 @@ class BlackJackGame(object):
                 i += 1
 
             output_text += "\n\n{} {}".format(translate("cardvalueDealer", self.lang_id), self.dealer.cardvalue)
-            self.send_message(self.chat_id, output_text, parse_mode="Markdown", reply_markup=self.keyboard_running)
+            self.send_message(self.chat_id, output_text, parse_mode="Markdown", reply_markup=ReplyKeyboardRemove())
             self.evaluation()
 
     def start_game(self, message_id: int = None) -> None:
