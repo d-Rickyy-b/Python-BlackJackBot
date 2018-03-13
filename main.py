@@ -95,6 +95,9 @@ def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_marku
 
 
 def game_commands(bot, update):
+    if update.message is None:
+        logger.warning("game_commands error happened again! Update: {}".format(update))
+
     text = update.effective_message.text
     chat_id = update.effective_message.chat_id
     user = update.effective_user
