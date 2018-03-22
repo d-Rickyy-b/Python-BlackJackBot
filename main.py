@@ -11,6 +11,7 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageH
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 
+import own_filters
 from config import BOT_TOKEN
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
@@ -395,6 +396,11 @@ def join_secret(bot, update):
     # TODO send message that user joined
 
 
+def leave_chat(bot, update):
+    logger.info("Leave channel")
+    bot.leaveChat(update.effective_message.chat.id)
+
+
 # -----------------
 # Admin commands
 # -----------------
@@ -442,6 +448,7 @@ def restart(bot, update):
     Thread(target=stop_and_restart).start()
 
 
+channel_handler = MessageHandler(own_filters.ChannelFilter, leave_chat)
 start_handler = CommandHandler(translate_all("startCmd"), start_cmd)
 stop_handler = CommandHandler(translate_all("stopCmd"), stop_cmd)
 join_handler = CommandHandler(translate_all("join"), join_cmd)
@@ -460,7 +467,7 @@ game_command_handler = MessageHandler(Filters.text, game_commands)
 mp_handler = CommandHandler('multiplayer', multiplayer)
 join_sec = CommandHandler('join_secret', join_secret)
 
-handlers = [start_handler, stop_handler, join_handler, help_handler,
+handlers = [channel_handler, start_handler, stop_handler, join_handler, help_handler,
             hide_handler, stats_handler, language_handler, comment_handler,
             callback_handler, users_handler, answer_handler, restart_handler,
             mp_handler, join_sec, game_command_handler]
