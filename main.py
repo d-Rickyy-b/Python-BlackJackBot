@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import json
 import logging.handlers
 import os
 import re
@@ -149,7 +149,7 @@ def error(bot, update, error):
 
     db = DBwrapper.get_instance()
     for admin_id in db.get_admins():
-        send_message(admin_id, "Update '{0}' caused error '{1}'".format(update, error))
+        send_message(admin_id, "Update '{0}' caused error '{1}'".format(json.dumps(update.to_dict(), indent=2), error))
 
 
 def stop_and_restart():
