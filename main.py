@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import json
 import logging.handlers
 import os
 import re
@@ -12,7 +12,7 @@ from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 
 import own_filters
-from config import BOT_TOKEN
+from config import BOT_TOKEN, USE_WEBHOOK, WEBHOOK_PORT, WEBHOOK_URL, CERTPATH
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
 from game.blackJackGame import BlackJackGame
@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO,
                     handlers=[logfile_handler])
 
-if not re.match("[0-9]+:[a-zA-Z0-9\-_]+", BOT_TOKEN):
+if not re.match(r"[0-9]+:[a-zA-Z0-9\-_]+", BOT_TOKEN):
     logging.error("Bot token not correct - please check.")
     exit(1)
 
@@ -150,7 +150,7 @@ def error(bot, update, error):
 
     db = DBwrapper.get_instance()
     for admin_id in db.get_admins():
-        send_message(admin_id, "Update '{0}' caused error '{1}'".format(update, error))
+        send_message(admin_id, "Update '{0}' caused error '{1}'".format(json.dumps(update.to_dict(), indent=2), error))
 
 
 def stop_and_restart():
@@ -477,6 +477,11 @@ for handler in handlers:
 
 dispatcher.add_error_handler(error)
 
-updater.start_polling()
+if USE_WEBHOOK:
+    updater.start_webhook(listen="127.0.0.1", port=WEBHOOK_PORT, url_path=BOT_TOKEN, cert=CERTPATH, webhook_url=WEBHOOK_URL)
+    updater.bot.set_webhook(WEBHOOK_URL)
+else:
+    updater.start_polling()
+
 logger.info("Bot started as @{}".format(updater.bot.username))
 updater.idle()
