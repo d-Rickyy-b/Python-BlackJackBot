@@ -12,7 +12,7 @@ from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 
 import own_filters
-from config import BOT_TOKEN
+from config import BOT_TOKEN, USE_WEBHOOK, WEBHOOK_PORT, WEBHOOK_URL, CERTPATH
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
 from game.blackJackGame import BlackJackGame
@@ -477,6 +477,11 @@ for handler in handlers:
 
 dispatcher.add_error_handler(error)
 
-updater.start_polling()
+if USE_WEBHOOK:
+    updater.start_webhook(listen="127.0.0.1", port=WEBHOOK_PORT, url_path=BOT_TOKEN, cert=CERTPATH, webhook_url=WEBHOOK_URL)
+    updater.bot.set_webhook(WEBHOOK_URL)
+else:
+    updater.start_polling()
+
 logger.info("Bot started as @{}".format(updater.bot.username))
 updater.idle()
