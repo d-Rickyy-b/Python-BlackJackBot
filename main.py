@@ -480,8 +480,10 @@ dispatcher.add_error_handler(error)
 if USE_WEBHOOK:
     updater.start_webhook(listen="127.0.0.1", port=WEBHOOK_PORT, url_path=BOT_TOKEN, cert=CERTPATH, webhook_url=WEBHOOK_URL)
     updater.bot.set_webhook(WEBHOOK_URL)
+    logger.info("Started webhook server!")
 else:
     updater.start_polling()
+    logger.info("Started polling!")
 
 logger.info("Bot started as @{}".format(updater.bot.username))
 updater.idle()
