@@ -16,7 +16,7 @@ from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
 from game.blackJackGame import BlackJackGame
 from gamehandler import GameHandler
-from lang.language import translate, translate_all
+from lang.language import translate
 from statehandler import StateHandler
 from userstate import UserState
 
