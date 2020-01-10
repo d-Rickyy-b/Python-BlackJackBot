@@ -338,9 +338,7 @@ def comment_cmd(update, context):
 
 def cancel_cmd(update, context):
     user_id = update.effective_user.id
-    message_id = update.effective_message.message_id
-    callback_query_id = update.callback_query.id
-    chat_id = update.effective_chat.id
+    cbq = update.callback_query
 
     state_handler = StateHandler.get_instance()
     user = state_handler.get_user(user_id)
