@@ -39,7 +39,7 @@ if not re.match(r"[0-9]+:[a-zA-Z0-9\-_]+", BOT_TOKEN):
     logging.error("Bot token not correct - please check.")
     exit(1)
 
-updater = Updater(token=BOT_TOKEN)
+updater = Updater(token=BOT_TOKEN, use_context=True)
 dispatcher = updater.dispatcher
 
 game_handler = GameHandler().get_instance()
@@ -56,7 +56,8 @@ def change_language(bot, update, lang_id):
     db.insert("languageID", lang_id, update.callback_query.from_user.id)
 
 
-def callback_eval(bot, update):
+def callback_eval(update, context):
+    bot = context.bot
     query_data = update.callback_query.data
 
     # For changing the language:
@@ -65,18 +66,18 @@ def callback_eval(bot, update):
         change_language(bot=bot, update=update, lang_id=lang_id)
 
     elif query_data == "com_ch_lang":
-        language_cmd(bot, update)
+        language_cmd(update, context)
 
     elif query_data == "cancel_comment":
-        cancel_cmd(bot, update)
+        cancel_cmd(update, context)
 
     elif query_data == "new_game" or query_data == "start_game":
         bot.answerCallbackQuery(callback_query_id=update.callback_query.id)
-        start_cmd(bot, update)
+        start_cmd(update, context)
 
     elif query_data == "join_game":
         bot.answerCallbackQuery(callback_query_id=update.callback_query.id)
-        join_cmd(bot, update)
+        join_cmd(update, context)
 
 
 def send_message(chat_id, text, message_id=None, parse_mode=None, reply_markup=None, game_id=None):
@@ -95,7 +96,8 @@ def send_mp_message(chat_id, text, message_id=None, parse_mode=None, reply_marku
         print("Game is None")
 
 
-def game_commands(bot, update):
+def game_commands(update, context):
+    bot = context.bot
     if update.message is None:
         logger.warning("game_commands error happened again! Update: {}".format(update))
 
@@ -114,7 +116,7 @@ def game_commands(bot, update):
 
     if user.get_state() == UserState.COMMENTING:
         # User wants to comment!
-        bot.sendMessage(chat_id, text=translate("userComment", lang_id))
+        update.message.reply_text(text=translate("userComment", lang_id))
         for admin_id in db.get_admins():
             admin_message = "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name, last_name,
                                                                                    username, lang_id)
@@ -129,7 +131,7 @@ def game_commands(bot, update):
 
         if chat_id > 0:
             # ask user for language if it's a private chat:
-            language_cmd(bot, update)
+            language_cmd(update, context)
 
         return
 
@@ -141,8 +143,9 @@ def game_commands(bot, update):
         game.analyze_message(update)
 
 
-def error(bot, update, error):
+def error_callback(update, context):
     """Log Errors caused by Updates."""
+    error = context.error
     if update is None:
         return
 
@@ -162,11 +165,11 @@ def stop_and_restart():
 def admin_method(func):
     """Decorator for marking methods as admin-only methods, so that strangers can't use them"""
 
-    def admin_check(bot, update):
+    def admin_check(update, context):
         db = DBwrapper.get_instance()
         user = update.message.from_user
         if user.id in db.get_admins():
-            return func(bot, update)
+            return func(update, context)
         else:
             update.message.reply_text('You have not the needed permissions to do that!')
             logger.warning(
@@ -179,7 +182,7 @@ def admin_method(func):
 # -----------------
 # User commands
 # -----------------
-def start_cmd(bot, update):
+def start_cmd(update, context):
     message = update.effective_message
     chat_id = message.chat_id
     eff_user = update.effective_user
@@ -198,7 +201,7 @@ def start_cmd(bot, update):
         db.add_user(user_id, "en", first_name, last_name, username)
         if chat_id > 0:
             # ask user for language:
-            language_cmd(bot, update)
+            language_cmd(update, context)
             return
 
     # check if user already has got a game (in the same chat):
@@ -219,7 +222,7 @@ def start_cmd(bot, update):
             message.reply_text("Only the creator ({}) can start the game".format(game.players[0].first_name))
 
 
-def stop_cmd(bot, update):
+def stop_cmd(update, context):
     user_id = update.message.from_user.id
     state_handler = StateHandler.get_instance()
     user = state_handler.get_user(user_id)
@@ -230,7 +233,7 @@ def stop_cmd(bot, update):
     game_handler.gl_remove(chat_id)
 
 
-def help_cmd(bot, update):
+def help_cmd(update, context):
     # Explains commands to user
     db = DBwrapper.get_instance()
     lang_id = db.get_lang_id(update.message.from_user.id)
@@ -258,21 +261,20 @@ def help_cmd(bot, update):
     update.message.reply_text(text)
 
 
-def join_cmd(bot, update):
+def join_cmd(update, context):
     message = update.effective_message
-    chat_id = message.chat_id
     user = update.effective_user
-    game = game_handler.get_game_by_chatid(chat_id)
+    game = game_handler.get_game_by_chatid(message.chat_id)
 
     if game is not None:
         game.add_player(user.id, user.first_name, message.message_id)
 
 
-def stats_cmd(bot, update):
+def stats_cmd(update, context):
     update.message.reply_text(get_user_stats(update.message.from_user.id))
 
 
-def language_cmd(bot, update):
+def language_cmd(update, context):
     lang_de_button = InlineKeyboardButton(text="Deutsch \U0001F1E9\U0001F1EA", callback_data="ch_lang_de")
     lang_en_button = InlineKeyboardButton(text="English \U0001F1FA\U0001F1F8", callback_data="ch_lang_en")
     lang_nl_button = InlineKeyboardButton(text="Nederlands \U0001F1F3\U0001F1F1", callback_data="ch_lang_nl")
@@ -298,7 +300,9 @@ def language_cmd(bot, update):
                         reply_markup=lang_keyboard, message_id=update.message.message_id)
 
 
-def comment_cmd(bot, update, args):
+def comment_cmd(update, context):
+    bot = context.bot
+    args = context.args
     user_id = update.message.from_user.id
     chat_id = update.message.chat_id
     first_name = update.message.from_user.first_name
@@ -315,7 +319,7 @@ def comment_cmd(bot, update, args):
             text = " ".join(args)
             logger.debug("New comment! {}!".format(user_id))
 
-            bot.sendMessage(chat_id=chat_id, text=translate("userComment", lang_id))
+            update.message.reply_text(text=translate("userComment", lang_id))
             for admin_id in db.get_admins():
                 bot.sendMessage(admin_id,
                                 "New comment:\n\n{}\n\n{} | {} | {} | @{} | {}".format(text, user_id, first_name,
@@ -329,11 +333,11 @@ def comment_cmd(bot, update, args):
             keyboard = [[InlineKeyboardButton(text=translate("cancel", lang_id), callback_data="cancel_comment")]]
             reply_markup = InlineKeyboardMarkup(keyboard)
 
-            bot.sendMessage(chat_id=chat_id, text=translate("sendCommentNow", lang_id), reply_markup=reply_markup)
+            update.message.reply_text(text=translate("sendCommentNow", lang_id), reply_markup=reply_markup)
             user.set_state(UserState.COMMENTING)
 
 
-def cancel_cmd(bot, update):
+def cancel_cmd(update, context):
     user_id = update.effective_user.id
     message_id = update.effective_message.message_id
     callback_query_id = update.callback_query.id
@@ -347,24 +351,25 @@ def cancel_cmd(bot, update):
         lang_id = db.get_lang_id(user_id)
 
         user.set_state(UserState.IDLE)
-        bot.editMessageText(chat_id=chat_id, message_id=message_id, text=translate("cancelledMessage", lang_id))
-        bot.answerCallbackQuery(callback_query_id=callback_query_id, text=translate("cancelledMessage", lang_id))
+        cbq.edit_message_text(text=translate("cancelledMessage", lang_id))
+        cbq.answer(text=translate("cancelledMessage", lang_id))
 
 
-def hide_cmd(bot, update):
+def hide_cmd(update, context):
     """Hides the keyboard in the specified chat."""
     update.message.reply_text("\U0001F44D", reply_markup=ReplyKeyboardRemove())
 
 
-def mentions_cmd(bot, update):
+def mentions_cmd(update, context):
     # TODO mention users which helped (translations, etc.)
     pass
 
 
-def multiplayer(bot, update):
+def multiplayer(update, context):
     chat_id = update.message.chat_id
     user_id = update.message.from_user.id
     message_id = update.message.message_id
+    msg = update.message
     first_name = update.message.from_user.first_name
     # last_name = update.message.from_user.last_name
     # username = update.message.from_user.username
@@ -378,12 +383,12 @@ def multiplayer(bot, update):
         bj = BlackJackGame(chat_id, user_id, lang_id, first_name, game_handler, message_id, send_mp_message,
                            multiplayer=True, game_id=game_id)
         game_handler.add_game(bj)
-        bot.sendMessage(chat_id, "Your game_id: {}".format(bj.game_id))
+        msg.reply_text("Your game_id: {}".format(bj.game_id))
     else:
         logger.debug("Game already existing")
 
 
-def join_secret(bot, update):
+def join_secret(update, context):
     user_id = update.message.from_user.id
     message_id = update.message.message_id
     first_name = update.message.from_user.first_name
@@ -396,62 +401,62 @@ def join_secret(bot, update):
     # TODO send message that user joined
 
 
-def leave_chat(bot, update):
+def leave_chat(update, context):
     logger.info("Leave channel")
-    bot.leaveChat(update.effective_message.chat.id)
+    context.bot.leaveChat(update.effective_message.chat.id)
 
 
 # -----------------
 # Admin commands
 # -----------------
 @admin_method
-def answer(bot, update):
-    sender_id = update.message.from_user.id
+def answer(update, context):
+    msg = update.message
     reply_to_message = update.message.reply_to_message
+    sender_id = update.message.from_user.id
     text = str(update.message.text[8:])
     db = DBwrapper.get_instance()
 
     if reply_to_message is None:
-        bot.sendMessage(sender_id, text="⚠ You need to reply to the user's comment!")
+        msg.reply_text(text="⚠ You need to reply to the user's comment!")
         return
 
     try:
         last_line = reply_to_message.text.split("\n")
         ll_list = last_line[-1].split(" | ")
-        user_id = ll_list[0]
+        receiver_id = ll_list[0]
     except ValueError:
         return
 
-    if not re.match("[0-9]+", user_id):
-        bot.sendMessage(sender_id, "⚠ The user_id is not valid. Are you sure you replied to a user comment?")
+    if not re.match("[0-9]+", receiver_id):
+        msg.reply_text("⚠ The user_id is not valid. Are you sure you replied to a user comment?")
         return
 
-    answer_text = "{}\n\n{}".format(translate("answerFromDev", db.get_lang_id(user_id)), text)
-    bot.sendMessage(chat_id=user_id, text=answer_text)
-    bot.sendMessage(chat_id=sender_id, text="Message sent!")
+    answer_text = "{}\n\n{}".format(translate("answerFromDev", db.get_lang_id(receiver_id)), text)
+    context.bot.sendMessage(chat_id=receiver_id, text=answer_text)
+    msg.reply_text(text="Message sent!")
 
 
 @admin_method
-def users(bot, update):
-    sender_id = update.message.from_user.id
+def users(update, context):
     db = DBwrapper.get_instance()
     players = db.get_recent_players()
 
     text = "Last 24 hours: {}".format(len(players))
 
-    bot.sendMessage(chat_id=sender_id, text=text)
+    update.message.reply_text(text=text)
 
 
 @admin_method
-def restart(bot, update):
+def restart(update, context):
     update.message.reply_text('Bot is restarting...')
     Thread(target=stop_and_restart).start()
 
 
-channel_handler = MessageHandler(own_filters.ChannelFilter, leave_chat)
-start_handler = CommandHandler(translate_all("startCmd"), start_cmd)
-stop_handler = CommandHandler(translate_all("stopCmd"), stop_cmd)
-join_handler = CommandHandler(translate_all("join"), join_cmd)
+channel_handler = MessageHandler(Filters.update.channel_posts, leave_chat)
+start_handler = CommandHandler("start", start_cmd)
+stop_handler = CommandHandler("stop", stop_cmd)
+join_handler = CommandHandler("join", join_cmd)
 help_handler = CommandHandler('help', help_cmd)
 hide_handler = CommandHandler('hide', hide_cmd)
 stats_handler = CommandHandler('stats', stats_cmd)
@@ -475,7 +480,7 @@ handlers = [channel_handler, start_handler, stop_handler, join_handler, help_han
 for handler in handlers:
     dispatcher.add_handler(handler)
 
-dispatcher.add_error_handler(error)
+dispatcher.add_error_handler(error_callback)
 
 if USE_WEBHOOK:
     updater.start_webhook(listen="127.0.0.1", port=WEBHOOK_PORT, url_path=BOT_TOKEN, cert=CERTPATH, webhook_url=WEBHOOK_URL)
