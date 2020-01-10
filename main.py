@@ -11,7 +11,7 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageH
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 
-from config import BOT_TOKEN, USE_WEBHOOK, WEBHOOK_PORT, WEBHOOK_URL, CERTPATH
+import config
 from database.db_wrapper import DBwrapper
 from database.statistics import get_user_stats
 from game.blackJackGame import BlackJackGame
@@ -34,11 +34,11 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO,
                     handlers=[logfile_handler])
 
-if not re.match(r"[0-9]+:[a-zA-Z0-9\-_]+", BOT_TOKEN):
+if not re.match(r"[0-9]+:[a-zA-Z0-9\-_]+", config.BOT_TOKEN):
     logging.error("Bot token not correct - please check.")
     exit(1)
 
-updater = Updater(token=BOT_TOKEN, use_context=True)
+updater = Updater(token=config.BOT_TOKEN, use_context=True)
 dispatcher = updater.dispatcher
 
 game_handler = GameHandler().get_instance()
@@ -481,9 +481,9 @@ for handler in handlers:
 
 dispatcher.add_error_handler(error_callback)
 
-if USE_WEBHOOK:
-    updater.start_webhook(listen="127.0.0.1", port=WEBHOOK_PORT, url_path=BOT_TOKEN, cert=CERTPATH, webhook_url=WEBHOOK_URL)
-    updater.bot.set_webhook(WEBHOOK_URL)
+if config.USE_WEBHOOK:
+    updater.start_webhook(listen="127.0.0.1", port=config.WEBHOOK_PORT, url_path=config.BOT_TOKEN, cert=config.CERTPATH, webhook_url=config.WEBHOOK_URL)
+    updater.bot.set_webhook(config.WEBHOOK_URL)
     logger.info("Started webhook server!")
 else:
     updater.start_polling()
