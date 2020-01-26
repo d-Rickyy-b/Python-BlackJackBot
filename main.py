@@ -7,6 +7,8 @@ import sys
 from threading import Thread
 
 from telegram import ReplyKeyboardRemove
+from telegram.error import (TelegramError, Unauthorized, BadRequest,
+                            TimedOut, ChatMigrated, NetworkError)
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
@@ -145,10 +147,26 @@ def game_commands(update, context):
 def error_callback(update, context):
     """Log Errors caused by Updates."""
     error = context.error
-    if update is None:
+    logger.error('Update "%s" caused error "%s"', update, error)
+    try:
+        raise error
+    except Unauthorized as e:
+        logger.error(e.message)  # remove update.message.chat_id from conversation list
+        logger.error(update)
+        # TODO the unauthorized error indicates that a user blocked the bot.
         return
-
-    logger.warning('Update "%s" caused error "%s"', update, error)
+    except BadRequest as e:
+        logger.error(e.message)  # handle malformed requests
+        return
+    except TimedOut:
+        pass  # connection issues are ignored for now
+        return
+    except NetworkError as e:
+        logger.error(e.message)  # handle other connection problems
+    except ChatMigrated as e:
+        logger.error(e.message)  # the chat_id of a group has changed, use e.new_chat_id instead
+    except TelegramError as e:
+        logger.error(e.message)  # handle all other telegram related errors
 
     db = DBwrapper.get_instance()
     for admin_id in db.get_admins():
@@ -170,7 +188,7 @@ def admin_method(func):
         if user.id in db.get_admins():
             return func(update, context)
         else:
-            update.message.reply_text('You have not the needed permissions to do that!')
+            update.message.reply_text('You have not the required permissions to do that!')
             logger.warning(
                 "User {} ({}, @{}) tried to use admin function '{}'!".format(user.id, user.first_name, user.username,
                                                                              func.__name__))
