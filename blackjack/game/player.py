@@ -66,12 +66,7 @@ class Player(object):
         return len(self.cards) > 0
 
     def get_cards_string(self):
-        cards_string = ""
-        for i, card in enumerate(self.cards):
-            cards_string += str(card)
-            if i + 1 < len(self.cards):
-                cards_string += ", "
-        return cards_string
+        return ', '.join(str(card) for card in self.cards)
 
     def get_number_of_cards(self):
         return len(self.cards)
