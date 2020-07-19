@@ -76,11 +76,11 @@ class BlackJackGame(object):
         player = self.get_current_player()
         card = self.deck.pick_one_card()
 
-        try:
-            player.give_card(card)
-        except PlayerBustedException:
+        player.give_card(card)
+
+        if player.cardvalue > 21:
             self.logger.debug("While giving user {} the card {}, they busted.".format(player.first_name, card))
-            raise
+            raise PlayerBustedException
 
     def next_player(self):
         """
