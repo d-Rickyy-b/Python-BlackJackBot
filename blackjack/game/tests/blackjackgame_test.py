@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 import unittest
+from unittest.mock import Mock
 
+from blackjack.errors import GameAlreadyRunningException, PlayerAlreadyExistingException, MaxPlayersReachedException, NotEnoughPlayersException, \
+    GameNotRunningException
 from blackjack.game import BlackJackGame
-from blackjack.errors import GameAlreadyRunningException, PlayerAlreadyExistingException, MaxPlayersReachedException, NotEnoughPlayersException
 
 
 class BlackJackGameTest(unittest.TestCase):
 
     def setUp(self):
         self.game = BlackJackGame()
+
+    @staticmethod
+    def _generate_mock_deck(value=1):
+        deck = Mock()
+        deck.pick_one_card.return_value = 1
+        return deck
 
     def test_creation(self):
         """
@@ -151,6 +159,36 @@ class BlackJackGameTest(unittest.TestCase):
         self.game.next_player()
         self.assertEqual(1, self.game._current_player)
         self.assertEqual(222, self.game.get_current_player().user_id)
+
+    def test_draw_card(self):
+        """
+        Check if drawing cards works as intended
+        :return:
+        """
+        self.game.deck = self._generate_mock_deck()
+        self.game.add_player(user_id=111, first_name="Player 111", message_id=1)
+        self.game.add_player(user_id=222, first_name="Player 222", message_id=1)
+
+        self.game.start()
+
+        # We have 2 cards from the init
+        self.assertEqual(2, len(self.game.players[0].cards))
+        self.game.draw_card()
+
+        # Now we should have 3 cards after drawing one
+        self.assertEqual(3, len(self.game.players[0].cards))
+
+        # And it should have a value of 1
+        self.assertEqual(1, self.game.players[0].cards[2])
+
+    def test_draw_card_game_not_running(self):
+        """
+        Check if it's possible to draw cards even though the game did not start yet
+        :return:
+        """
+        self.assertFalse(self.game.running)
+        with self.assertRaises(GameNotRunningException):
+            self.game.draw_card()
 
     def test_dealers_turn(self):
         """
