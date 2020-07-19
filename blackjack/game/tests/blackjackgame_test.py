@@ -45,12 +45,19 @@ class BlackJackGameTest(unittest.TestCase):
         Check if adding new players works
         :return:
         """
-        # Get amount of current players
+        self.assertEqual(0, len(self.game.players))
+        self.game.add_player(user_id=15, first_name="Player 15", message_id=1)
+        self.assertEqual(15, self.game.players[0].user_id)
+        self.assertEqual("Player 15", self.game.players[0].first_name)
+        self.assertEqual(1, self.game.players[0].join_id)
 
-        # add new player
+        self.assertEqual(1, len(self.game.players))
+        self.game.add_player(user_id=125, first_name="Player 125", message_id=1)
+        self.assertEqual(2, len(self.game.players))
 
-        # assert that new count is old count + 1
-        pass
+        # Make sure that inserting players with the same name works just fine
+        self.game.add_player(user_id=126, first_name="Player 125", message_id=1)
+        self.assertEqual(3, len(self.game.players))
 
     def test_add_player_existing(self):
         """
@@ -60,8 +67,12 @@ class BlackJackGameTest(unittest.TestCase):
         self.assertEqual(0, len(self.game.players))
 
         self.game.add_player(user_id=15, first_name="Player " + str(15), message_id=1)
+        self.assertEqual(1, len(self.game.players))
+
         with self.assertRaises(PlayerAlreadyExistingException):
             self.game.add_player(user_id=15, first_name="Player " + str(15), message_id=1)
+
+        self.assertEqual(1, len(self.game.players))
 
     def test_add_player_max(self):
         """
@@ -75,17 +86,26 @@ class BlackJackGameTest(unittest.TestCase):
         with self.assertRaises(MaxPlayersReachedException):
             self.game.add_player(user_id=9999, first_name="Player 9999", message_id=1)
 
+        self.assertEqual(self.game.MAX_PLAYERS, len(self.game.players))
+
     def test_add_player_game_started(self):
         """
         Check that it's no longer possible to add players as soon as the game is running
         :return:
         """
-        # Get amount of current players
+        self.assertEqual(0, len(self.game.players))
 
-        # add new player
+        self.game.add_player(user_id=15, first_name="Player " + str(15), message_id=1)
+        self.assertEqual(1, len(self.game.players))
 
-        # assert that new count == old count
-        pass
+        self.game.add_player(user_id=125, first_name="Player 125", message_id=1)
+        self.assertEqual(2, len(self.game.players))
+
+        self.game.start()
+
+        with self.assertRaises(GameAlreadyRunningException):
+            self.game.add_player(user_id=111, first_name="Player 111", message_id=1)
+        self.assertEqual(2, len(self.game.players))
 
     def test_next_player(self):
         pass
