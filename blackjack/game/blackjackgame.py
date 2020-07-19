@@ -29,7 +29,7 @@ class BlackJackGame(object):
         self.running = True
 
         # Give every player and the dealer 2 cards
-        for player in self.players:
+        for player in self.players * 2:
             card = self.deck.pick_one_card()
             player.give_card(card)
 
