@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest
 
 from blackjack.game import BlackJackGame
@@ -109,6 +110,23 @@ class BlackJackGameTest(unittest.TestCase):
 
     def test_next_player(self):
         pass
+
+    def test_dealers_turn(self):
+        """
+        Check that the dealer always draws cards until the card value > 16
+        """
+
+        self.assertEqual(0, self.game.dealer.cardvalue)
+        self.game.dealers_turn()
+        self.assertGreater(self.game.dealer.cardvalue, 16)
+
+    def test_dealers_turn_random(self):
+        """
+        Check that the dealer always draws cards until the card value > 16
+        """
+        self.assertEqual(0, self.game.dealer.cardvalue)
+        self.game.dealers_turn()
+        self.assertGreater(self.game.dealer.cardvalue, 16)
 
 
 if __name__ == '__main__':

@@ -91,3 +91,9 @@ class BlackJackGame(object):
             self.logger.debug("Dealer's turn")
             self._current_player = -1
             #self.dealers_turn()
+
+    def dealers_turn(self):
+        while self.dealer.cardvalue <= 16:
+            card = self.deck.pick_one_card()
+            self.dealer.give_card(card)
+
