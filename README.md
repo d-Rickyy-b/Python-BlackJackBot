@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.com/d-Rickyy-b/Python-BlackJackBot.svg?branch=master)](https://travis-ci.com/d-Rickyy-b/Python-BlackJackBot) [![Code Health](https://landscape.io/github/d-Rickyy-b/Python-BlackJackBot/master/landscape.svg?style=flat)](https://landscape.io/github/d-Rickyy-b/Python-BlackJackBot/master)
+[![Build Status](https://travis-ci.com/d-Rickyy-b/Python-BlackJackBot.svg?branch=master)](https://travis-ci.com/d-Rickyy-b/Python-BlackJackBot)
+[![Coverage Status](https://coveralls.io/repos/github/d-Rickyy-b/Python-BlackJackBot/badge.svg?branch=rebuild)](https://coveralls.io/github/d-Rickyy-b/Python-BlackJackBot?branch=rebuild)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/12996d68fc0f436085221ac6b1f525f9)](https://www.codacy.com/manual/d-Rickyy-b/Python-BlackJackBot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=d-Rickyy-b/Python-BlackJackBot&amp;utm_campaign=Badge_Grade)
 
 # Python-BlackJackBot
 
