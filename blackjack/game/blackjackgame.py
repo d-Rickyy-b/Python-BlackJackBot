@@ -76,6 +76,7 @@ class BlackJackGame(object):
             player.give_card(card)
         except PlayerBustedException:
             self.logger.debug("While giving user {} the card {}, they busted.".format(player.first_name, card))
+            raise
 
     def next_player(self):
         """
