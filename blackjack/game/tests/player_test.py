@@ -187,6 +187,23 @@ class PlayerTest(unittest.TestCase):
         # self.player.give_card()
         # print(self.player.get_cards_string())
 
+    def test_get_number_of_cards(self):
+        """
+        Check if the number of cards is calculated correctly
+        :return:
+        """
+        self.assertEqual(0, self.player.get_number_of_cards())
+
+        self.player.give_card(self._generate_mock_card(10))
+        self.assertEqual(10, self.player.cardvalue)
+
+        self.assertEqual(1, self.player.get_number_of_cards())
+
+        self.player.give_card(self._generate_mock_card(9))
+        self.assertEqual(19, self.player.cardvalue)
+
+        self.assertEqual(2, self.player.get_number_of_cards())
+
 
 if __name__ == '__main__':
     unittest.main()
