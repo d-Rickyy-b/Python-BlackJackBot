@@ -1,10 +1,13 @@
 import unittest
 
+from blackjack.game import BlackJackGame
+from blackjack.errors import GameAlreadyRunningException, PlayerAlreadyExistingException, MaxPlayersReachedException
+
 
 class BlackJackGameTest(unittest.TestCase):
 
     def setUp(self) -> None:
-        pass
+        self.game = BlackJackGame()
 
     def tearDown(self) -> None:
         pass
@@ -14,14 +17,28 @@ class BlackJackGameTest(unittest.TestCase):
         Check if creating an instance holds all necessary values
         :return:
         """
-        pass
+        self.assertFalse(self.game.running)
+        self.assertEqual([], self.game.players)
+        self.assertEqual(0, self.game._current_player)
 
     def test_start(self):
         """
         Check if starting the game changes the state and initializes the values of certain variables
         :return:
         """
-        pass
+        self.game.start()
+        self.assertTrue(self.game.running)
+
+    def test_start_twice(self):
+        """
+        Check that starting twice doesn't work and raises an exception
+        :return:
+        """
+        self.game.start()
+        self.assertTrue(self.game.running)
+
+        with self.assertRaises(GameAlreadyRunningException):
+            self.game.start()
 
     def test_add_player(self):
         """
@@ -40,12 +57,23 @@ class BlackJackGameTest(unittest.TestCase):
         Check if adding existing players works as intended
         :return:
         """
-        # Get amount of current players
+        self.assertEqual(0, len(self.game.players))
 
-        # add existing player
+        self.game.add_player(user_id=15, first_name="Player " + str(15), message_id=1)
+        with self.assertRaises(PlayerAlreadyExistingException):
+            self.game.add_player(user_id=15, first_name="Player " + str(15), message_id=1)
 
-        # assert that new count == old count
-        pass
+    def test_add_player_max(self):
+        """
+        Check if adding players when MAX_PLAYERS is reached raises an exception
+        :return:
+        """
+        for i in range(self.game.MAX_PLAYERS):
+            self.game.add_player(user_id=i, first_name="Player " + str(i), message_id=1)
+        self.assertEqual(self.game.MAX_PLAYERS, len(self.game.players))
+
+        with self.assertRaises(MaxPlayersReachedException):
+            self.game.add_player(user_id=9999, first_name="Player 9999", message_id=1)
 
     def test_add_player_game_started(self):
         """
@@ -61,9 +89,6 @@ class BlackJackGameTest(unittest.TestCase):
 
     def test_next_player(self):
         pass
-
-    def test_something(self):
-        self.assertEqual(True, False)
 
 
 if __name__ == '__main__':
