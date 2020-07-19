@@ -2,7 +2,7 @@
 
 from random import shuffle
 
-from game.card import Card
+from .card import Card
 from lang.language import translate
 
 __author__ = 'Rico'

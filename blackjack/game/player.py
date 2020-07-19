@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from game.card import Card
+from .card import Card
 
 __author__ = 'Rico'
 
 
 class Player(object):
 
-    def __init__(self, user_id, first_name, join_id, lang_id="en"):
+    def __init__(self, user_id, first_name, join_id=None, lang_id="en"):
         self.user_id = user_id
         self.first_name = first_name
-        self.join_id = join_id
+        self.join_id = join_id  # TODO check if still needed
         self.lang_id = lang_id
         self.has_ace = False
         self.cards = []
