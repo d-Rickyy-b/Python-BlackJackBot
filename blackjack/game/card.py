@@ -5,9 +5,13 @@ class Card(object):
     symbols = ["♥", "♦", "♣", "♠"]
     value_int = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
 
-    def __init__(self, card_id: int, value_str: list) -> None:
+    def __init__(self, card_id, value_str):
+
         self.card_id = card_id
         self.value_str = value_str
+
+    def is_ace(self):
+        return self.value == 11
 
     @property
     def symbol(self):
