@@ -1,19 +1,22 @@
 language: python
 sudo: require
 python:
-  - "3.4"
   - "3.6"
+  - "3.7"
+  - "3.8"
 # command to install dependencies
 install:
-  - pip install python-telegram-bot --upgrade
+  - pip install -r requirements.txt
+  - pip install coveralls
 
 # command to run tests
 script:
-  - pwd
   - python -m compileall ./
+  - coverage run --omit='*/virtualenv/*,*/site-packages/*' -m unittest discover -s . -v -p "*_test.py"
 
-#  pychecker doesn't work as expected for me. Until now i'm going with just syntax checking all the files.
-#  - pychecker ./*.py
+# create coverage for one python version
+after_success:
+  - test $TRAVIS_PYTHON_VERSION == "3.8" && coveralls
 
 notifications:
   email: false
