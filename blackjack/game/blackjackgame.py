@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from blackjack.errors import PlayerBustedException, GameAlreadyRunningException, GameNotRunningException, MaxPlayersReachedException, PlayerAlreadyExistingException
+from blackjack.errors import PlayerBustedException, GameAlreadyRunningException, GameNotRunningException, MaxPlayersReachedException, \
+    PlayerAlreadyExistingException, NotEnoughPlayersException
 from blackjack.game import Player, Dealer, Deck, GameType
 
 
@@ -84,7 +85,7 @@ class BlackJackGame(object):
         :return:
         """
         if not self.running:
-            return
+            raise GameNotRunningException("The game must be started before it's the next player's turn")
 
         if self._current_player != -1 and self._current_player < (len(self.players) - 1):
             pass
@@ -94,6 +95,9 @@ class BlackJackGame(object):
             #self.dealers_turn()
 
     def dealers_turn(self):
+        if not self.running:
+            raise GameNotRunningException("The game must be started before it's the dealer's turn")
+
         while self.dealer.cardvalue <= 16:
             card = self.deck.pick_one_card()
             self.dealer.give_card(card)
