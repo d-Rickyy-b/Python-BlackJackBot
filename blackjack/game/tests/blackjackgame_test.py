@@ -182,7 +182,7 @@ class BlackJackGameTest(unittest.TestCase):
         self.assertEqual(3, len(self.game.players[0].cards))
 
         # And it should have a value of 1
-        self.assertEqual(1, self.game.players[0].cards[2])
+        self.assertEqual(1, self.game.players[0].cards[2].value)
 
     def test_draw_card_game_not_running(self):
         """
