@@ -6,14 +6,14 @@
 
 This is the code for my Telegram Bot with which you can play the game Black Jack. You can find it here: https://telegram.me/BlackJackBot
 
-The main file, which needs to be executed is 'main.py'.
-You need to put your API-Token in the right place in the main file.
+The main file, which needs to be executed is 'main.py'. Please create a copy of the config.sample.py, name it config.py and enter the config data (e.g. bot
+ token).
 
-## Other Software
+## Setup
 
 The bot uses the [python-telegram-bot](https://python-telegram-bot.org/) framework to make Telegram API calls. You can install it like that:
 
-``pip install python-telegram-bot``
+``pip install -r requirements.txt``
 
 ## Database
 
