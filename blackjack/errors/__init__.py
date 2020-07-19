@@ -5,5 +5,7 @@ from .gamealreadyrunningexception import GameAlreadyRunningException
 from .playeralreadyexistingexception import PlayerAlreadyExistingException
 from .gamenotrunningexception import GameNotRunningException
 from .maxplayersreachedexception import MaxPlayersReachedException
+from .notenoughplayersexception import NotEnoughPlayersException
 
-__all__ = ['PlayerBustedException', 'GameAlreadyRunningException', 'PlayerAlreadyExistingException', 'MaxPlayersReachedException', 'GameNotRunningException']
+__all__ = ['PlayerBustedException', 'GameAlreadyRunningException', 'PlayerAlreadyExistingException', 'MaxPlayersReachedException', 'GameNotRunningException',
+           'NotEnoughPlayersException']
