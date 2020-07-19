@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import Mock
 
 from blackjack.errors import GameAlreadyRunningException, PlayerAlreadyExistingException, MaxPlayersReachedException, NotEnoughPlayersException, \
-    GameNotRunningException
+    GameNotRunningException, PlayerBustedException
 from blackjack.game import BlackJackGame
 
 
@@ -15,7 +15,10 @@ class BlackJackGameTest(unittest.TestCase):
     @staticmethod
     def _generate_mock_deck(value=1):
         deck = Mock()
-        deck.pick_one_card.return_value = 1
+        card = Mock()
+        card.value = value
+        card.is_ace.return_value = (value == 11)
+        deck.pick_one_card.return_value = card
         return deck
 
     def test_creation(self):
@@ -189,6 +192,27 @@ class BlackJackGameTest(unittest.TestCase):
         self.assertFalse(self.game.running)
         with self.assertRaises(GameNotRunningException):
             self.game.draw_card()
+
+    def test_draw_card_player_busted(self):
+        self.game.deck = self._generate_mock_deck(value=10)
+        self.game.add_player(user_id=111, first_name="Player 111", message_id=1)
+        self.game.add_player(user_id=222, first_name="Player 222", message_id=1)
+
+        self.game.start()
+
+        # We have 2 cards from the init
+        self.assertEqual(2, len(self.game.players[0].cards))
+        self.assertEqual(20, self.game.players[0].cardvalue)
+
+        with self.assertRaises(PlayerBustedException):
+            self.game.draw_card()
+
+        # Now we should have 3 cards after drawing one
+        self.assertEqual(3, len(self.game.players[0].cards))
+
+        # And it should have a value of 10
+        self.assertEqual(10, self.game.players[0].cards[2].value)
+        self.assertEqual(30, self.game.players[0].cardvalue)
 
     def test_dealers_turn(self):
         """
