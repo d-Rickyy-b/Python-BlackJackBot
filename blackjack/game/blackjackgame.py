@@ -27,10 +27,13 @@ class BlackJackGame(object):
         if self.running:
             raise GameAlreadyRunningException
 
+        if len(self.players) < 1:
+            raise NotEnoughPlayersException
+
         self.running = True
 
         # Give every player and the dealer 2 cards
-        for player in self.players * 2:
+        for player in (self.players + [self.dealer]) * 2:
             card = self.deck.pick_one_card()
             player.give_card(card)
 
@@ -88,11 +91,11 @@ class BlackJackGame(object):
             raise GameNotRunningException("The game must be started before it's the next player's turn")
 
         if self._current_player != -1 and self._current_player < (len(self.players) - 1):
-            pass
+            self._current_player += 1
         else:
             self.logger.debug("Dealer's turn")
             self._current_player = -1
-            #self.dealers_turn()
+            self.dealers_turn()
 
     def dealers_turn(self):
         if not self.running:
