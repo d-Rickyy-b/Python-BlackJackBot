@@ -1,7 +1,7 @@
 import unittest
 
-from game.card import Card
-from game.deck import CardDeck
+from blackjack.game.card import Card
+from blackjack.game.deck import Deck
 
 
 class DeckTest(unittest.TestCase):
@@ -11,25 +11,25 @@ class DeckTest(unittest.TestCase):
         Check that the _deck is properly created
         :return:
         """
-        self.deck = CardDeck()
+        self.deck = Deck()
         self.assertEqual("en", self.deck.lang_id)
-        self.assertEqual(52, len(self.deck.deck))
+        self.assertEqual(52, len(self.deck._deck))
 
     def test_shuffle(self):
         """
         Check that shuffeling actually changes order of cards
         :return:
         """
-        self.deck = CardDeck()
-        d1 = self.deck.deck.copy()
+        self.deck = Deck()
+        d1 = self.deck._deck.copy()
 
-        d2 = self.deck.deck.copy()
+        d2 = self.deck._deck.copy()
         # We check that our two decks we copied are the same
         # This is to proof that the assertNotEqual later on works correctly
         self.assertEqual(d1, d2)
 
         self.deck._shuffle()
-        d3 = self.deck.deck.copy()
+        d3 = self.deck._deck.copy()
 
         # Just check that we did not lose any cards through shuffeling
         self.assertEqual(52, len(d1))
@@ -46,24 +46,24 @@ class DeckTest(unittest.TestCase):
         Check if the set up method creates a new sorted _deck of cards
         :return:
         """
-        self.deck = CardDeck()
+        self.deck = Deck()
         self.deck._set_up_deck()
 
         # Check if the _deck is sorted (linear ascending numbers)
         for counter in range(52):
-            self.assertEqual(counter, self.deck.deck[counter].card_id)
+            self.assertEqual(counter, self.deck._deck[counter].card_id)
 
     def test_draw(self):
         """
         Check if drawing cards works as intended
         :return:
         """
-        self.deck = CardDeck()
-        self.assertEqual(52, len(self.deck.deck))
+        self.deck = Deck()
+        self.assertEqual(52, len(self.deck._deck))
 
         card = self.deck.pick_one_card()
 
-        self.assertEqual(51, len(self.deck.deck))
+        self.assertEqual(51, len(self.deck._deck))
         self.assertEqual(Card, type(card))
 
     def test_draw_empty(self):
