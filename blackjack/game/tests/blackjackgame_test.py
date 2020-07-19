@@ -151,7 +151,45 @@ class BlackJackGameTest(unittest.TestCase):
         self.game.next_player()
         self.assertEqual(1, self.game._current_player)
 
+    def test_next_player_game_not_running(self):
+        """
+        Check if one can move to the next player although the game is not running yet
+        :return:
+        """
+        self.game.add_player(user_id=111, first_name="Player 111", message_id=1)
+        self.game.add_player(user_id=222, first_name="Player 222", message_id=1)
+
+        self.assertEqual(0, self.game._current_player)
+        with self.assertRaises(GameNotRunningException):
+            self.game.next_player()
+
+        self.assertEqual(0, self.game._current_player)
+
+    def test_next_player_dealer(self):
+        """
+        Check if using the next_player function while there are no more players leads to the dealer's turn
+        :return:
+        """
+        self.game.add_player(user_id=111, first_name="Player 111", message_id=1)
+        self.game.add_player(user_id=222, first_name="Player 222", message_id=1)
+
+        dealers_turn = Mock()
+        self.game.dealers_turn = dealers_turn
+
+        self.game.start()
+
+        self.assertEqual(0, self.game._current_player)
+        self.game.next_player()
+        self.assertEqual(1, self.game._current_player)
+        self.game.next_player()
+        self.assertEqual(-1, self.game._current_player)
+        dealers_turn.assert_called()
+
     def test_get_current_player(self):
+        """
+        Check if we receive the correct player from get_current_player()
+        :return:
+        """
         self.game.add_player(user_id=111, first_name="Player 111", message_id=1)
         self.game.add_player(user_id=222, first_name="Player 222", message_id=1)
 
@@ -194,6 +232,10 @@ class BlackJackGameTest(unittest.TestCase):
             self.game.draw_card()
 
     def test_draw_card_player_busted(self):
+        """
+        Check if we receive an exception when a player busted while drawing a card
+        :return:
+        """
         self.game.deck = self._generate_mock_deck(value=10)
         self.game.add_player(user_id=111, first_name="Player 111", message_id=1)
         self.game.add_player(user_id=222, first_name="Player 222", message_id=1)
@@ -236,6 +278,17 @@ class BlackJackGameTest(unittest.TestCase):
         self.assertEqual(2, len(self.game.dealer.cards))
         self.game.dealers_turn()
         self.assertGreater(self.game.dealer.cardvalue, 16)
+
+    def test_dealers_turn_game_not_running(self):
+        """
+        Check that the dealer can't take turn when the game is not running yet
+        """
+        self.game.add_player(user_id=111, first_name="Player 111", message_id=1)
+
+        with self.assertRaises(GameNotRunningException):
+            self.game.dealers_turn()
+
+        self.assertEqual(0, self.game.dealer.cardvalue)
 
 
 if __name__ == '__main__':
