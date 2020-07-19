@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from blackjack.errors import PlayerBustedException, GameAlreadyRunningException, MaxPlayersReachedException, PlayerAlreadyExistingException
+from blackjack.errors import PlayerBustedException, GameAlreadyRunningException, GameNotRunningException, MaxPlayersReachedException, PlayerAlreadyExistingException
 from blackjack.game import Player, Dealer, Deck, GameType
 
 
@@ -67,7 +67,7 @@ class BlackJackGame(object):
         :return:
         """
         if not self.running:
-            return
+            raise GameNotRunningException("The game must be started before you can draw cards")
 
         player = self.get_current_player()
         card = self.deck.pick_one_card()
