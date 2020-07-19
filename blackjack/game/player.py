@@ -8,6 +8,9 @@ __author__ = 'Rico'
 class Player(object):
 
     def __init__(self, user_id, first_name, join_id=None, lang_id="en"):
+        """
+
+        """
         self.user_id = user_id
         self.first_name = first_name
         self.join_id = join_id  # TODO check if still needed
