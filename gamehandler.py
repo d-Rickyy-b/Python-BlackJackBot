@@ -4,7 +4,7 @@ import random
 import string
 from typing import Optional
 
-from game.blackJackGame import BlackJackGame
+from game.blackJackGame_old import BlackJackGame
 
 __author__ = 'Rico'
 

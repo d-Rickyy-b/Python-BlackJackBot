@@ -7,10 +7,10 @@ from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 from telegram.replykeyboardremove import ReplyKeyboardRemove
 
 from database.statistics import add_game_played, set_game_won
-from game.dealer import Dealer
-from game.deck import CardDeck
-from game.message import Message
-from game.player import Player
+from game.dealer_old import Dealer
+from game.deck_old import CardDeck
+from game.message_old import Message
+from game.player_old import Player
 from lang.language import translate
 
 __author__ = 'Rico'
@@ -92,10 +92,10 @@ class BlackJackGame(object):
         else:
             card = self.deck.pick_one_card()
             message = Message()
-
+            #TODO this should not be handled here!!
             if user.has_ace and (user.cardvalue + card.value > 21):
                 # user got already an ace -> soft hand
-                user.remove_ace()
+                #user.remove_ace()
                 message.add_text(translate("softHandLater", self.lang_id))
 
             if self.game_type == self.PRIVATE_CHAT:
@@ -117,7 +117,7 @@ class BlackJackGame(object):
             elif user.cardvalue == 21:
                 message.add_text("\n\n" + user.first_name + " " + translate("got21", self.lang_id))
 
-            self.send_message(self.chat_id, text=message.get_text(), game_id=self.__game_id)
+            self.send_message(self.chat_id, text=message.get_text(), game_id=self.__game_id, reply_markup=ReplyKeyboardRemove())
             self.next_player()
 
     # Gives the dealer cards
@@ -173,17 +173,17 @@ class BlackJackGame(object):
             self.send_message(self.chat_id, translate("notEnoughPlayers", self.lang_id), message_id=message_id, game_id=self.__game_id)
 
     def evaluation(self) -> None:
-        list_21 = []
-        list_busted = []
-        list_lower_21 = []
+        list_21 = [player for player in self.players if player.cardvalue == 21]
+        list_busted = [player for player in self.players if player.cardvalue > 21]
+        list_lower_21 = [player for player in self.players if player.cardvalue < 21]
 
-        for user in self.players:
-            if user.cardvalue > 21:
-                list_busted.append(user)
-            elif user.cardvalue == 21:
-                list_21.append(user)
-            elif user.cardvalue < 21:
-                list_lower_21.append(user)
+        # for user in self.players:
+        #     if user.cardvalue > 21:
+        #         list_busted.append(user)
+        #     elif user.cardvalue == 21:
+        #         list_21.append(user)
+        #     elif user.cardvalue < 21:
+        #         list_lower_21.append(user)
 
         if self.dealer.cardvalue > 21:
             list_busted.append(self.dealer)
@@ -329,7 +329,7 @@ class BlackJackGame(object):
         self.deck = CardDeck(lang_id)
         # TODO language of the cards & dealer cannot be changed
         # TODO especially with new multiplayer important!
-        self.dealer = Dealer(translate("dealerName", lang_id), self.deck)
+        self.dealer = Dealer(translate("dealerName", lang_id))
         self.game_running = False
         self.current_player = 0
         self.game_handler = game_handler
@@ -361,7 +361,3 @@ class BlackJackGame(object):
         else:
             self.start_game()
             # start game and send message to private chat
-
-    # When game is being ended / object is destructed
-    def __del__(self):
-        pass

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from game.card import Card
+from game.card_old import Card
 
 __author__ = 'Rico'
 
