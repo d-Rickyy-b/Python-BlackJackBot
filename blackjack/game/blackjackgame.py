@@ -18,6 +18,37 @@ class BlackJackGame(object):
         self.deck = Deck(lang_id)
         self.type = gametype or GameType.SINGLEPLAYER
         self.dealer = Dealer("Dealer")
+        self.__on_start_handlers = []
+        self.__on_stop_handlers = []
+
+    def register_on_start_handler(self, func):
+        """
+        Registers a callback function as on_start_handler.
+        :param func: Function reference that will be called when the game is starting. It receives a reference to the game as parameter.
+        :return:
+        """
+        self.__on_start_handlers.append(func)
+
+    def register_on_stop_handler(self, func):
+        """
+        Registers a callback function as on_stop_handler.
+        :param func: Function reference that will be called when the game is stopping. It receives a reference to the game as parameter.
+        :return:
+        """
+        self.__on_stop_handlers.append(func)
+
+    # noinspection PyBroadException
+    def _run_handlers(self, handlers):
+        """
+        Call all handlers of the passed 'handlers' list
+        :param handlers: List of handlers (e.g. __on_start_handlers, __on_stop_handlers)
+        :return:
+        """
+        for handler in handlers:
+            try:
+                handler(self)
+            except Exception:
+                self.logger.error("Couldn't run handler '{}'".format(handler))
 
     def start(self):
         """
@@ -36,6 +67,8 @@ class BlackJackGame(object):
         for player in (self.players + [self.dealer]) * 2:
             card = self.deck.pick_one_card()
             player.give_card(card)
+
+        self._run_handlers(self.__on_start_handlers)
 
     def get_current_player(self):
         return self.players[self._current_player]
