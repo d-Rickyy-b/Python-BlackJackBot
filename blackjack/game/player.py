@@ -71,7 +71,8 @@ class Player(object):
     def get_cards_string(self):
         return ', '.join(str(card) for card in self.cards)
 
-    def get_number_of_cards(self):
+    @property
+    def amount_of_cards(self):
         return len(self.cards)
 
     def __repr__(self):
