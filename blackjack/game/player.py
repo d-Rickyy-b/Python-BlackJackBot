@@ -11,15 +11,15 @@ class Player(object):
         """
 
         """
+        self._cards = []
         self.user_id = user_id
         self.first_name = first_name
         self.join_id = join_id  # TODO check if still needed
         self.lang_id = lang_id
         self.has_ace = False
-        self.cards = []
 
     def give_card(self, card: Card):
-        self.cards.append(card)
+        self._cards.append(card)
 
     @property
     def cardvalue(self):
@@ -30,7 +30,7 @@ class Player(object):
         value = 0
         ace_counter = 0
 
-        for card in self.cards:
+        for card in self._cards:
             if card.is_ace():
                 # if we encounter an ace, we don't calculate it yet
                 ace_counter += 1
@@ -66,14 +66,14 @@ class Player(object):
         raise ValueError
 
     def has_cards(self):
-        return len(self.cards) > 0
+        return self.amount_of_cards > 0
 
     def get_cards_string(self):
-        return ', '.join(str(card) for card in self.cards)
+        return ', '.join(str(card) for card in self._cards)
 
     @property
     def amount_of_cards(self):
-        return len(self.cards)
+        return len(self._cards)
 
     def __repr__(self):
         return "Player: {}, '{}'".format(self.user_id, self.first_name)

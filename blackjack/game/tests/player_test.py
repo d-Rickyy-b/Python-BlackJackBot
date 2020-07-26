@@ -29,13 +29,13 @@ class PlayerTest(unittest.TestCase):
         :return:
         """
         self.player.give_card(self._generate_mock_card(10))
-        self.assertEqual(1, len(self.player.cards))
+        self.assertEqual(1, len(self.player._cards))
 
         self.player.give_card(self._generate_mock_card(11))
-        self.assertEqual(2, len(self.player.cards))
+        self.assertEqual(2, len(self.player._cards))
 
         self.player.give_card(self._generate_mock_card(10))
-        self.assertEqual(3, len(self.player.cards))
+        self.assertEqual(3, len(self.player._cards))
 
     def test_set_cardvalue(self):
         """
