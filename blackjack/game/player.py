@@ -80,5 +80,8 @@ class Player(object):
     def amount_of_cards(self):
         return len(self._cards)
 
+    def has_blackjack(self):
+        return self.cardvalue == 21 and self.amount_of_cards == 2
+
     def __repr__(self):
         return "Player: {}, '{}'".format(self.user_id, self.first_name)
