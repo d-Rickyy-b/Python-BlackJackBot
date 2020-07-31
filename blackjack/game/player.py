@@ -23,6 +23,10 @@ class Player(object):
         self._cards.append(card)
 
     @property
+    def busted(self):
+        return self.cardvalue > 21
+
+    @property
     def cardvalue(self):
         """
         Calculate the current value of the cards on the hand
