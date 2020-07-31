@@ -26,7 +26,7 @@ class Card(object):
         return self.value_str[self.card_id % 13]
 
     def __str__(self):
-        return "|{} {}|".format(self.symbol, self.face)
+        return "{} {}".format(self.symbol, self.face)
 
     def __repr__(self):
         return self.__str__()
