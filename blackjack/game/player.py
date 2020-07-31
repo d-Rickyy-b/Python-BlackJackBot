@@ -12,6 +12,8 @@ class Player(object):
 
         """
         self._cards = []
+        self.turn_over = False
+
         self.user_id = user_id
         self.first_name = first_name
         self.lang_id = lang_id
