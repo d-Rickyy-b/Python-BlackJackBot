@@ -70,9 +70,6 @@ class Player(object):
 
         raise ValueError
 
-    def has_cards(self):
-        return self.amount_of_cards > 0
-
     def get_cards_string(self):
         return '  •  '.join(str(card) for card in self._cards)
 
