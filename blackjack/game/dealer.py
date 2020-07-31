@@ -8,3 +8,8 @@ class Dealer(Player):
 
     def __init__(self, first_name):
         super().__init__(user_id=-1, first_name=first_name)
+
+    def get_cards_string(self):
+        if not self.turn_over:
+            return "{}  •  [❔]". format(str(self._cards[0]))
+        return super().get_cards_string()
