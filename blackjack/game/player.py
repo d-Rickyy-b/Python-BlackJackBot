@@ -11,6 +11,7 @@ class Player(object):
         """
 
         """
+        self.is_dealer = False
         self._cards = []
         self.turn_over = False
 
