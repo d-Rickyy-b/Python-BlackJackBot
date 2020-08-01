@@ -2,8 +2,6 @@
 
 from .card import Card
 
-__author__ = 'Rico'
-
 
 class Player(object):
 
@@ -18,7 +16,6 @@ class Player(object):
         self.user_id = user_id
         self.first_name = first_name
         self.lang_id = lang_id
-        self.has_ace = False
 
     def give_card(self, card: Card):
         self._cards.append(card)
