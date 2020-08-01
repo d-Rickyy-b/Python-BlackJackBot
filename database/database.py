@@ -67,7 +67,7 @@ class Database(object):
         connection.commit()
         connection.close()
 
-    def get_user(self, user_id: int) -> tuple:
+    def get_user(self, user_id):
         self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
         result = self.cursor.fetchone()
@@ -84,7 +84,7 @@ class Database(object):
 
         return self.cursor.fetchall()
 
-    def get_played_games(self, user_id: int) -> int:
+    def get_played_games(self, user_id):
         self.cursor.execute("SELECT gamesPlayed FROM users WHERE userID=?;", [str(user_id)])
 
         result = self.cursor.fetchone()
@@ -97,11 +97,11 @@ class Database(object):
         else:
             return 0
 
-    def get_all_users(self) -> list:
+    def get_all_users(self):
         self.cursor.execute("SELECT rowid, * FROM users;")
         return self.cursor.fetchall()
 
-    def get_admins(self) -> list:
+    def get_admins(self):
         self.cursor.execute("SELECT userID from admins;")
         admins = self.cursor.fetchall()
         admin_list = []
@@ -109,7 +109,7 @@ class Database(object):
             admin_list.append(admin[0])
         return admin_list
 
-    def get_lang_id(self, user_id: int) -> str:
+    def get_lang_id(self, user_id):
         self.cursor.execute("SELECT languageID FROM users WHERE userID=?;", [str(user_id)])
         result = self.cursor.fetchone()
         if result:
@@ -117,19 +117,19 @@ class Database(object):
         else:
             return "en"
 
-    def add_user(self, user_id: int, lang_id: str, first_name: str, last_name: str, username: str) -> None:
+    def add_user(self, user_id, lang_id, first_name, last_name, username):
         try:
             self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, 0, 0, 0, 0);", (str(user_id), lang_id, first_name, last_name, username))
             self.connection.commit()
         except sqlite3.IntegrityError:
             pass
 
-    def insert(self, column_name: str, value: str, user_id: int) -> None:
+    def insert(self, column_name, value, user_id):
         self.cursor.execute("UPDATE users SET " + column_name + "= ? WHERE userID = ?;",
                             [value, str(user_id)])
         self.connection.commit()
 
-    def is_user_saved(self, user_id: int) -> bool:
+    def is_user_saved(self, user_id):
         self.cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
 
         result = self.cursor.fetchall()
@@ -138,7 +138,7 @@ class Database(object):
         else:
             return False
 
-    def user_data_changed(self, user_id: int, first_name: str, last_name: str, username: str) -> bool:
+    def user_data_changed(self, user_id, first_name, last_name, username):
         self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
         result = self.cursor.fetchone()
@@ -151,13 +151,13 @@ class Database(object):
         else:
             return True
 
-    def update_user_data(self, user_id: int, first_name: str, last_name: str, username: str) -> None:
+    def update_user_data(self, user_id, first_name, last_name, username):
         self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", (first_name, last_name, username, str(user_id)))
         self.connection.commit()
 
-    def reset_stats(self, user_id: int) -> None:
+    def reset_stats(self, user_id):
         self.cursor.execute("UPDATE users SET gamesPlayed='0', gamesWon='0', gamesTie='0', lastPlayed='0' WHERE userID=?;", [str(user_id)])
         self.connection.commit()
 
-    def close_conn(self) -> None:
+    def close_conn(self):
         self.connection.close()
