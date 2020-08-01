@@ -9,7 +9,7 @@ from blackjack.game import Player, Dealer, Deck, GameType
 class BlackJackGame(object):
     MAX_PLAYERS = 5
 
-    def __init__(self, gametype=None, lang_id="en"):
+    def __init__(self, gametype=None, game_id=None, lang_id="en"):
         self.logger = logging.getLogger(__name__)
         self.players = []
         self._current_player = 0
@@ -20,6 +20,7 @@ class BlackJackGame(object):
         self.dealer = Dealer("Dealer")
         self.__on_start_handlers = []
         self.__on_stop_handlers = []
+        self.id = game_id
 
     def register_on_start_handler(self, func):
         """
