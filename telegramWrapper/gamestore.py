@@ -15,7 +15,8 @@ class GameStore(object):
 
     def __init__(self):
         if not self._initialized:
-            self._chat_list = {}
+            self._chat_dict = {}
+            self._game_dict = {}
             self.logger = logging.getLogger(__name__)
             self._initialized = True
 
@@ -33,7 +34,8 @@ class GameStore(object):
 
         self.logger.info("Adding game with id {}".format(game.id))
         game.register_on_stop_handler(self._game_stopped_callback)
-        self._chat_list[chat_id] = game
+        self._chat_dict[chat_id] = game
+        self._game_dict[game.id] = chat_id
 
     def get_game(self, chat_id):
         """
@@ -41,14 +43,13 @@ class GameStore(object):
         :param chat_id:
         :return:
         """
-        # TODO currently players can only have a single game! This should get fixed
-        game = self._chat_list.get(chat_id)
+        game = self._chat_dict.get(chat_id)
         if game is None:
             raise NoActiveGameException
         return game
 
     def has_game(self, chat_id):
-        return chat_id in self._chat_list
+        return chat_id in self._chat_dict
 
     def remove_game(self, chat_id):
         """
@@ -56,10 +57,12 @@ class GameStore(object):
         :param chat_id:
         :return:
         """
-        self.logger.debug("Removing game for {}".format(chat_id))
         if chat_id == -1:
             return
-        self._chat_list.pop(chat_id)
+
+        game = self._chat_dict.pop(chat_id)
+        self._game_dict.pop(game.id)
+        self.logger.debug("Removing game for {} ({})".format(chat_id, game.id))
 
     def _game_stopped_callback(self, game):
         """
@@ -68,7 +71,6 @@ class GameStore(object):
         :return:
         """
         #TODO how to solve this?
-        for user in game.players:
-            self.remove_game(user.user_id)
+        self.remove_game(self._game_dict[game.id])
 
-        self.logger.debug("Current games: {}".format(len(self._chat_list)))
+        self.logger.debug("Current games: {}".format(len(self._chat_dict)))
