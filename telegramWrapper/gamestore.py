@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from .errors.noactivegameexception import NoActiveGameException
 import logging
+from random import randint
 
 
 class GameStore(object):
@@ -18,10 +19,19 @@ class GameStore(object):
             self.logger = logging.getLogger(__name__)
             self._initialized = True
 
+    @staticmethod
+    def _generate_id():
+        return randint(1000000,9999999)
+
     def add_game(self, chat_id, game):
         if self.has_game(chat_id):
             raise Exception
 
+        game.id = self._generate_id()
+        while self._game_dict.get(game.id, None):
+            game.id = self._generate_id()
+
+        self.logger.info("Adding game with id {}".format(game.id))
         game.register_on_stop_handler(self._game_stopped_callback)
         self._chat_list[chat_id] = game
 
