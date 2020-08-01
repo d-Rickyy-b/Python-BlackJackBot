@@ -130,8 +130,7 @@ class Database(object):
             return
 
     def insert(self, column_name, value, user_id):
-        self.cursor.execute("UPDATE users SET " + column_name + "= ? WHERE userID = ?;",
-                            [value, str(user_id)])
+        self.cursor.execute("UPDATE users SET " + column_name + "= ? WHERE userID = ?;", [value, str(user_id)])
         self.connection.commit()
 
     def is_user_saved(self, user_id):
@@ -157,7 +156,7 @@ class Database(object):
             return True
 
     def update_user_data(self, user_id, first_name, last_name, username):
-        self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", (first_name, last_name, username, str(user_id)))
+        self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", [first_name, last_name, username, str(user_id)])
         self.connection.commit()
 
     def reset_stats(self, user_id):
