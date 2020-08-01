@@ -118,11 +118,16 @@ class Database(object):
             return "en"
 
     def add_user(self, user_id, lang_id, first_name, last_name, username):
+        if self.is_user_saved(user_id):
+            return
+        self._add_user(user_id, lang_id, first_name, last_name, username)
+
+    def _add_user(self, user_id, lang_id, first_name, last_name, username):
         try:
-            self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, 0, 0, 0, 0);", (str(user_id), lang_id, first_name, last_name, username))
+            self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, 0, 0, 0, 0);", [str(user_id), lang_id, first_name, last_name, username])
             self.connection.commit()
         except sqlite3.IntegrityError:
-            pass
+            return
 
     def insert(self, column_name, value, user_id):
         self.cursor.execute("UPDATE users SET " + column_name + "= ? WHERE userID = ?;",
