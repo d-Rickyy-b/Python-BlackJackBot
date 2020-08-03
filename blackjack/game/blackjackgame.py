@@ -52,9 +52,9 @@ class BlackJackGame(object):
             except Exception as e:
                 self.logger.error("Couldn't run handler '{}' - The following exception occurred: ''".format(handler, e))
 
-    def start(self):
+    def start(self, user_id):
         """
-        Sets up the player's and the dealer's hands
+        Sets up the players' and the dealer's hands
         :return:
         """
         if self.running:
