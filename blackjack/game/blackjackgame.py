@@ -148,3 +148,58 @@ class BlackJackGame(object):
             card = self.deck.pick_one_card()
             self.dealer.give_card(card)
 
+    @staticmethod
+    def _sort_list(player_list):
+        return sorted(player_list, key=lambda x: x.cardvalue, reverse=True)
+
+    def evaluation(self):
+        """
+        Check which player won and which lost. Also calculate profits if applicable
+        :return:
+        """
+        list_busted = [player for player in self.players if player.busted]
+        list_not_busted = [player for player in self.players if player.cardvalue <= 21]
+
+        list_won = []
+        list_tie = []
+        list_lost = []
+
+        if self.dealer.busted:
+            for player in list_not_busted:
+                # TODO set game won in statistics
+                if player.has_blackjack():
+                    # BlackJack pays 3:2 -> return bet + 1.5 x bet
+                    player.pay(factor=2.5)
+                else:
+                    player.pay(factor=2)
+                list_won.append(player)
+
+        elif self.dealer.has_blackjack():
+            # Dealer has a black jack
+            for player in list_not_busted:
+                if player.has_blackjack():
+                    # TODO set game tie in statistics
+                    player.pay(1)
+                    list_tie.append(player)
+                else:
+                    list_lost.append(player)
+        elif self.dealer.cardvalue <= 21:
+            for player in list_not_busted:
+                if player.cardvalue > self.dealer.cardvalue:
+                    # TODO set game won in statistics
+                    player.pay(2)
+                    list_won.append(player)
+                elif player.cardvalue == self.dealer.cardvalue:
+                    # TODO set game tie in statistics
+                    player.pay(1)
+                    list_tie.append(player)
+                elif player.cardvalue < self.dealer.cardvalue:
+                    list_lost.append(player)
+
+        list_lost.extend(list_busted)
+
+        list_won = self._sort_list(list_won)
+        list_tie = self._sort_list(list_tie)
+        list_lost = self._sort_list(list_lost)
+
+        return list_won, list_tie, list_lost
