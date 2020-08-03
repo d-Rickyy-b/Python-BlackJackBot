@@ -2,7 +2,7 @@
 import logging
 
 from blackjack.errors import PlayerBustedException, GameAlreadyRunningException, GameNotRunningException, MaxPlayersReachedException, \
-    PlayerAlreadyExistingException, NotEnoughPlayersException
+    PlayerAlreadyExistingException, NotEnoughPlayersException, InsufficientPermissionsException, NoPlayersLeftException
 from blackjack.game import Player, Dealer, Deck, GameType
 
 
