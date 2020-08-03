@@ -60,7 +60,8 @@ class BlackJackGame(object):
         if self.running:
             raise GameAlreadyRunningException
 
-        if len(self.players) < 1:
+        if (self.type == GameType.SINGLEPLAYER and len(self.players) < 1) or \
+                (self.type in [GameType.MULTIPLAYER_DIRECT, GameType.MULTIPLAYER_GROUP] and len(self.players) < 2):
             raise NotEnoughPlayersException
 
         self.running = True
