@@ -64,6 +64,9 @@ class BlackJackGame(object):
                 (self.type in [GameType.MULTIPLAYER_DIRECT, GameType.MULTIPLAYER_GROUP] and len(self.players) < 2):
             raise NotEnoughPlayersException
 
+        if user_id != self.players[0].user_id:
+            raise InsufficientPermissionsException
+
         self.running = True
 
         # Give every player and the dealer 2 cards
