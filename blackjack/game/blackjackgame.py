@@ -148,6 +148,9 @@ class BlackJackGame(object):
             card = self.deck.pick_one_card()
             self.dealer.give_card(card)
 
+        self.dealer.turn_over = True
+        self.running = False
+
     @staticmethod
     def _sort_list(player_list):
         return sorted(player_list, key=lambda x: x.cardvalue, reverse=True)
