@@ -91,20 +91,18 @@ class BlackJackGame(object):
         Add a new player to the game as long as it didn't start yet
         :param user_id: The user_id of the player
         :param first_name: The player's first_name
-        :param message_id: The id of the message where the user joined
         :return:
         """
         if self.running:
             raise GameAlreadyRunningException("Not adding player, the game is already on!")
 
-        if len(self.players) >= self.MAX_PLAYERS:
-            raise MaxPlayersReachedException
-
         if user_id in [player.user_id for player in self.players]:
             raise PlayerAlreadyExistingException
 
-        # TODO Check if join_id is still needed
-        player = Player(user_id, first_name, join_id=message_id)
+        if len(self.players) >= self.MAX_PLAYERS:
+            raise MaxPlayersReachedException
+
+        player = Player(user_id, first_name)
         self.logger.debug("Adding new player: {}!".format(player))
         self.players.append(player)
 
