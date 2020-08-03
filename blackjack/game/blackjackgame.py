@@ -90,7 +90,7 @@ class BlackJackGame(object):
     def get_current_player(self):
         return self.players[self._current_player]
 
-    def add_player(self, user_id, first_name, message_id):
+    def add_player(self, user_id, first_name):
         """
         Add a new player to the game as long as it didn't start yet
         :param user_id: The user_id of the player
