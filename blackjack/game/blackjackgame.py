@@ -133,12 +133,14 @@ class BlackJackGame(object):
         if not self.running:
             raise GameNotRunningException("The game must be started before it's the next player's turn")
 
-        if self._current_player != -1 and self._current_player < (len(self.players) - 1):
-            self._current_player += 1
-        else:
-            self.logger.debug("Dealer's turn")
+        if self._current_player >= len(self.players) - 1:
+            self.logger.debug("Next player is dealer!")
             self._current_player = -1
             self.dealers_turn()
+            raise NoPlayersLeftException
+
+        self.get_current_player().turn_over = True
+        self._current_player += 1
 
     def dealers_turn(self):
         if not self.running:
