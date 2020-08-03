@@ -72,6 +72,17 @@ class BlackJackGame(object):
 
         self._run_handlers(self.__on_start_handlers)
 
+    def stop(self, user_id):
+        """
+        Stops the game, if the user has sufficient permissions
+        :param user_id: The user_id of the user requesting to stop the game
+        :return:
+        """
+        if user_id != -1 and user_id != self.players[0].user_id:
+            raise InsufficientPermissionsException
+        self.running = False
+        self._run_handlers(self.__on_stop_handlers)
+
     def get_current_player(self):
         return self.players[self._current_player]
 
