@@ -110,6 +110,10 @@ class BlackJackGame(object):
         self.logger.debug("Adding new player: {}!".format(player))
         self.players.append(player)
 
+        if self.type == GameType.SINGLEPLAYER:
+            self.logger.debug("Starting game now, because it's a singleplayer game")
+            self.start(user_id)
+
     def draw_card(self):
         """
         Draw one card and add it to the player's hand
