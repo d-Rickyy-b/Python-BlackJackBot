@@ -86,9 +86,6 @@ class BlackJackGame(object):
     def get_current_player(self):
         return self.players[self._current_player]
 
-    def get_next_player(self):
-        return self.players[self._current_player + 1]
-
     def add_player(self, user_id, first_name, message_id):
         """
         Add a new player to the game as long as it didn't start yet
