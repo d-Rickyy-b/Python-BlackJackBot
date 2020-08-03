@@ -11,16 +11,17 @@ class BlackJackGame(object):
 
     def __init__(self, gametype=None, game_id=None, lang_id="en"):
         self.logger = logging.getLogger(__name__)
-        self.players = []
-        self._current_player = 0
-        self.running = False
-        self.lang_id = lang_id
-        self.deck = Deck(lang_id)
-        self.type = gametype or GameType.SINGLEPLAYER
-        self.dealer = Dealer("Dealer")
         self.__on_start_handlers = []
         self.__on_stop_handlers = []
+        self._current_player = 0
+        self.players = []
+        self.running = False
+        self.deck = Deck(lang_id)
+        self.dealer = Dealer("Dealer")
+
+        self.type = gametype or GameType.SINGLEPLAYER
         self.id = game_id
+        self.lang_id = lang_id
 
     def register_on_start_handler(self, func):
         """
