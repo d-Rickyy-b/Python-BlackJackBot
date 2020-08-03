@@ -203,3 +203,6 @@ class BlackJackGame(object):
         list_lost = self._sort_list(list_lost)
 
         return list_won, list_tie, list_lost
+
+    def get_player_list(self):
+        return "\n".join(["👤{}".format(p.first_name) for p in self.players])
