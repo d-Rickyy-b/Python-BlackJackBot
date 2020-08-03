@@ -49,8 +49,8 @@ class BlackJackGame(object):
         for handler in handlers:
             try:
                 handler(self)
-            except Exception:
-                self.logger.error("Couldn't run handler '{}'".format(handler))
+            except Exception as e:
+                self.logger.error("Couldn't run handler '{}' - The following exception occurred: ''".format(handler, e))
 
     def start(self):
         """
