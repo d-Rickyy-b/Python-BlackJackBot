@@ -9,16 +9,12 @@ import config
 from blackjack.errors import GameAlreadyRunningException, PlayerBustedException, InsufficientPermissionsException, MaxPlayersReachedException, \
     PlayerAlreadyExistingException, NotEnoughPlayersException, NoPlayersLeftException
 from blackjack.game import BlackJackGame, GameType
+from blackjackbot.bot.commands.util import html_mention, get_game_keyboard, get_join_keyboard, generate_evaluation_string, get_start_keyboard, \
+    remove_inline_keyboard
+from blackjackbot.bot.commands.util.commands import translate, stats_cmd, language_cmd
+from blackjackbot.errors import NoActiveGameException
+from blackjackbot.gamestore import GameStore
 from database import Database
-from telegramWrapper.errors import NoActiveGameException
-from telegramWrapper.gamestore import GameStore
-from telegramWrapper.util import html_mention, get_game_keyboard, get_join_keyboard, generate_evaluation_string, get_start_keyboard
-from telegramWrapper.utilcommands import stats_cmd, language_cmd, translate
-
-# Game settings:
-# help
-# hide
-# send comment
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
@@ -33,7 +29,7 @@ def needs_active_game(func):
         try:
             game = GameStore().get_game(chat.id)
         except NoActiveGameException:
-            _remove_inline_keyboard(update, context)
+            remove_inline_keyboard(update, context)
             update.effective_message.reply_text("You don't have any game!")
             return
 
@@ -52,18 +48,12 @@ def _players_turn(update, context):
 
     logger.info("Player's turn: {}".format(player))
 
-    # TODO make sure that only current user can draw cards
-    # TODO if player has 21, move to next player
     if player.has_blackjack():
-
         text = (translate("your_cards_are") + "\n\n✅ Congratulations, you got a BlackJack!").format(user_mention, player.cardvalue, player.get_cards_string())
-        #text = "Congratulations {}, your Cards are:\n\n{}\n\nYou got a BlackJack!".format(user_mention, player.get_cards_string())
         update.effective_message.reply_text(text=text, parse_mode="HTML", reply_markup=None)
         _next_player(update, context)
     elif player.cardvalue == 21:
-
         text = (translate("your_cards_are") + "\n\n✅ Congratulations, you got exactly 21!").format(user_mention, player.cardvalue, player.get_cards_string())
-        #text = "Congratulations {}, your Cards are:\n\n{}\n\nYou got exactly 21!".format(user_mention, player.get_cards_string())
         update.effective_message.reply_text(text=text, parse_mode="HTML", reply_markup=None)
         _next_player(update, context)
     else:
@@ -84,7 +74,7 @@ def _next_player(update, context):
             update.callback_query.answer("It's not your turn, {}!".format(user.first_name))
             return
         if update.callback_query and not game.get_current_player().has_21():
-            _remove_inline_keyboard(update, context)
+            remove_inline_keyboard(update, context)
 
         game.next_player()
     except NoPlayersLeftException:
@@ -129,11 +119,6 @@ def _create_game(update, context):
         update.effective_message.reply_text(text=text, reply_markup=get_join_keyboard())
 
 
-def _remove_inline_keyboard(update, context):
-    if update.effective_message.from_user.id == context.bot.id:
-        update.effective_message.edit_reply_markup(reply_markup=None)
-
-
 def start_cmd(update, context):
     """Handles messages contianing the /start command. Starts a game for a specific user"""
     user = update.effective_user
@@ -161,7 +146,7 @@ def start_callback(update, context):
         game = GameStore().get_game(update.effective_chat.id)
     except NoActiveGameException:
         update.callback_query.answer("There is no created game!")
-        _remove_inline_keyboard(update, context)
+        remove_inline_keyboard(update, context)
         return
 
     try:
@@ -222,7 +207,7 @@ def join_callback(update, context):
         if len(game.players) >= game.MAX_PLAYERS:
             update.effective_message.edit_reply_markup(reply_markup=get_start_keyboard())
     except GameAlreadyRunningException:
-        _remove_inline_keyboard(update, context)
+        remove_inline_keyboard(update, context)
         update.callback_query.answer("The game has already begun.")
     except MaxPlayersReachedException:
         update.effective_message.edit_reply_markup(reply_markup=get_start_keyboard())
@@ -257,11 +242,6 @@ def hit_callback(update, context):
 @needs_active_game
 def stand_callback(update, context):
     _next_player(update, context)
-
-
-def newgame_callback(update, context):
-    _remove_inline_keyboard(update, context)
-    start_cmd(update, context)
 
 
 updater = Updater(token=config.BOT_TOKEN, use_context=True)
