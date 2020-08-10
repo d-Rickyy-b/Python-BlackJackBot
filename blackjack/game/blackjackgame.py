@@ -130,6 +130,8 @@ class BlackJackGame(object):
         if player.cardvalue > 21:
             self.logger.debug("While giving user {} the card {}, they busted.".format(player.first_name, card))
             raise errors.PlayerBustedException
+        if player.cardvalue == 21:
+            raise errors.PlayerGot21Exception
 
     def next_player(self):
         """
