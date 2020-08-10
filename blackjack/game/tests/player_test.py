@@ -201,6 +201,14 @@ class PlayerTest(unittest.TestCase):
 
         self.assertEqual(2, self.player.amount_of_cards)
 
+    def test_amount_of_cards_write(self):
+        """
+        Assure that we can't write to the variable
+        :return:
+        """
+        with self.assertRaises(AttributeError):
+            self.player.amount_of_cards = 2
+
 
 if __name__ == '__main__':
     unittest.main()
