@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from blackjack.errors import PlayerBustedException, GameAlreadyRunningException, GameNotRunningException, MaxPlayersReachedException, \
-    PlayerAlreadyExistingException, NotEnoughPlayersException, InsufficientPermissionsException, NoPlayersLeftException
+
+import blackjack.errors as errors
 from blackjack.game import Player, Dealer, Deck, GameType
 
 
@@ -58,14 +58,14 @@ class BlackJackGame(object):
         :return:
         """
         if self.running:
-            raise GameAlreadyRunningException
+            raise errors.GameAlreadyRunningException
 
         if (self.type == GameType.SINGLEPLAYER and len(self.players) < 1) or \
                 (self.type in [GameType.MULTIPLAYER_DIRECT, GameType.MULTIPLAYER_GROUP] and len(self.players) < 2):
-            raise NotEnoughPlayersException
+            raise errors.NotEnoughPlayersException
 
         if user_id != self.players[0].user_id:
-            raise InsufficientPermissionsException
+            raise errors.InsufficientPermissionsException
 
         self.running = True
 
@@ -83,7 +83,7 @@ class BlackJackGame(object):
         :return:
         """
         if user_id != -1 and user_id != self.players[0].user_id:
-            raise InsufficientPermissionsException
+            raise errors.InsufficientPermissionsException
         self.running = False
         self._run_handlers(self.__on_stop_handlers)
 
@@ -98,13 +98,13 @@ class BlackJackGame(object):
         :return:
         """
         if self.running:
-            raise GameAlreadyRunningException("Not adding player, the game is already on!")
+            raise errors.GameAlreadyRunningException("Not adding player, the game is already on!")
 
         if user_id in [player.user_id for player in self.players]:
-            raise PlayerAlreadyExistingException
+            raise errors.PlayerAlreadyExistingException
 
         if len(self.players) >= self.MAX_PLAYERS:
-            raise MaxPlayersReachedException
+            raise errors.MaxPlayersReachedException
 
         player = Player(user_id, first_name)
         self.logger.debug("Adding new player: {}!".format(player))
@@ -120,7 +120,7 @@ class BlackJackGame(object):
         :return:
         """
         if not self.running:
-            raise GameNotRunningException("The game must be started before you can draw cards")
+            raise errors.GameNotRunningException("The game must be started before you can draw cards")
 
         player = self.get_current_player()
         card = self.deck.pick_one_card()
@@ -129,7 +129,7 @@ class BlackJackGame(object):
 
         if player.cardvalue > 21:
             self.logger.debug("While giving user {} the card {}, they busted.".format(player.first_name, card))
-            raise PlayerBustedException
+            raise errors.PlayerBustedException
 
     def next_player(self):
         """
@@ -137,20 +137,20 @@ class BlackJackGame(object):
         :return:
         """
         if not self.running:
-            raise GameNotRunningException("The game must be started before it's the next player's turn")
+            raise errors.GameNotRunningException("The game must be started before it's the next player's turn")
 
         if self._current_player >= len(self.players) - 1:
             self.logger.debug("Next player is dealer!")
             self._current_player = -1
             self.dealers_turn()
-            raise NoPlayersLeftException
+            raise errors.NoPlayersLeftException
 
         self.get_current_player().turn_over = True
         self._current_player += 1
 
     def dealers_turn(self):
         if not self.running:
-            raise GameNotRunningException("The game must be started before it's the dealer's turn")
+            raise errors.GameNotRunningException("The game must be started before it's the dealer's turn")
 
         while self.dealer.cardvalue <= 16:
             card = self.deck.pick_one_card()
