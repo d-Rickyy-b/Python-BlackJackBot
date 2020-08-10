@@ -159,10 +159,6 @@ class BlackJackGame(object):
         self.dealer.turn_over = True
         self.running = False
 
-    @staticmethod
-    def _sort_list(player_list):
-        return sorted(player_list, key=lambda x: x.cardvalue, reverse=True)
-
     def evaluation(self):
         """
         Check which player won and which lost. Also calculate profits if applicable
@@ -204,9 +200,9 @@ class BlackJackGame(object):
 
         list_lost.extend(list_busted)
 
-        list_won = self._sort_list(list_won)
-        list_tie = self._sort_list(list_tie)
-        list_lost = self._sort_list(list_lost)
+        list_won = sorted(list_won, key=lambda player: player.cardvalue, reverse=True)
+        list_tie = sorted(list_tie, key=lambda player: player.cardvalue, reverse=True)
+        list_lost = sorted(list_lost, key=lambda player: player.cardvalue, reverse=True)
 
         return list_won, list_tie, list_lost
 
