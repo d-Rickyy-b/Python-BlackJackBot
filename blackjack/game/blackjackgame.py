@@ -177,7 +177,6 @@ class BlackJackGame(object):
 
         if self.dealer.busted:
             for player in list_not_busted:
-                # TODO set game won in statistics
                 if player.has_blackjack():
                     # BlackJack pays 3:2 -> return bet + 1.5 x bet
                     player.pay(factor=2.5)
@@ -186,10 +185,8 @@ class BlackJackGame(object):
                 list_won.append(player)
 
         elif self.dealer.has_blackjack():
-            # Dealer has a black jack
             for player in list_not_busted:
                 if player.has_blackjack():
-                    # TODO set game tie in statistics
                     player.pay(1)
                     list_tie.append(player)
                 else:
@@ -197,11 +194,9 @@ class BlackJackGame(object):
         elif self.dealer.cardvalue <= 21:
             for player in list_not_busted:
                 if player.cardvalue > self.dealer.cardvalue:
-                    # TODO set game won in statistics
                     player.pay(2)
                     list_won.append(player)
                 elif player.cardvalue == self.dealer.cardvalue:
-                    # TODO set game tie in statistics
                     player.pay(1)
                     list_tie.append(player)
                 elif player.cardvalue < self.dealer.cardvalue:
