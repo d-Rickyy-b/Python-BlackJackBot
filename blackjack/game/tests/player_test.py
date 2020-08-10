@@ -7,7 +7,7 @@ from blackjack.game import Player
 class PlayerTest(unittest.TestCase):
 
     def setUp(self):
-        self.player = Player(1, "Test", 1)
+        self.player = Player(1, "Test")
 
     @staticmethod
     def _generate_mock_card(value):
@@ -20,7 +20,6 @@ class PlayerTest(unittest.TestCase):
         self.assertEqual(0, self.player.cardvalue)
         self.assertEqual(1, self.player.user_id)
         self.assertEqual("Test", self.player.first_name)
-        self.assertEqual(1, self.player.join_id)
         self.assertEqual("en", self.player.lang_id)
 
     def test_give_card(self):
