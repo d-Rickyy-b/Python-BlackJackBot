@@ -165,7 +165,7 @@ class BlackJackGame(object):
         :return:
         """
         list_busted = [player for player in self.players if player.busted]
-        list_not_busted = [player for player in self.players if player.cardvalue <= 21]
+        list_not_busted = [player for player in self.players if not player.busted]
 
         list_won = []
         list_tie = []
