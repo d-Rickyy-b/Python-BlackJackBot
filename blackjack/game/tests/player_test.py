@@ -194,12 +194,10 @@ class PlayerTest(unittest.TestCase):
         self.assertEqual(0, self.player.amount_of_cards)
 
         self.player.give_card(self._generate_mock_card(10))
-        self.assertEqual(10, self.player.cardvalue)
 
         self.assertEqual(1, self.player.amount_of_cards)
 
         self.player.give_card(self._generate_mock_card(9))
-        self.assertEqual(19, self.player.cardvalue)
 
         self.assertEqual(2, self.player.amount_of_cards)
 
