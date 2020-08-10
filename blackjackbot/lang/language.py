@@ -6,8 +6,6 @@ import re
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(dir_path, "strings")
-
-
 languages = {}
 
 
@@ -43,7 +41,6 @@ def get_available_languages():
 
 def translate(string, lang_code="en"):
     """Returns the translation in a specific language for a specific string"""
-    print(string, lang_code)
     lang = languages.get(lang_code, None)
 
     if lang is None:
