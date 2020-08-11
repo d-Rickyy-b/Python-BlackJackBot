@@ -11,6 +11,8 @@ class Player(object):
         """
         self.is_dealer = False
         self._cards = []
+        self.bet = 0
+        self.win = 0
         self.turn_over = False
 
         self.user_id = user_id
@@ -80,6 +82,9 @@ class Player(object):
 
     def has_21(self):
         return self.cardvalue == 21
+
+    def pay(self, factor):
+        self.win = self.bet * factor
 
     def __repr__(self):
         return "Player: {}, '{}'".format(self.user_id, self.first_name)
