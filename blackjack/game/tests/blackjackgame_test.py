@@ -10,7 +10,7 @@ from blackjack.game import BlackJackGame, GameType
 class BlackJackGameTest(unittest.TestCase):
 
     def setUp(self):
-        self.game = BlackJackGame(gametype=GameType.MULTIPLAYER_GROUP)
+        self.game = BlackJackGame(gametype=BlackJackGame.Type.MULTIPLAYER_GROUP)
 
     @staticmethod
     def _generate_mock_deck(value=1):
@@ -52,7 +52,7 @@ class BlackJackGameTest(unittest.TestCase):
         Check that starting twice doesn't work and raises an exception
         :return:
         """
-        self.game.type = GameType.SINGLEPLAYER
+        self.game.type = BlackJackGame.Type.SINGLEPLAYER
         self.assertFalse(self.game.running)
         self.game.add_player(user_id=111, first_name="Player 111")
         self.assertTrue(self.game.running)
@@ -267,7 +267,7 @@ class BlackJackGameTest(unittest.TestCase):
         """
         Check that the dealer always draws cards until the card value > 16
         """
-        self.game.type = GameType.SINGLEPLAYER
+        self.game.type = BlackJackGame.Type.SINGLEPLAYER
 
         # TODO generate specific Card Deck for a better test
         self.game.add_player(user_id=111, first_name="Player 111")
@@ -280,7 +280,7 @@ class BlackJackGameTest(unittest.TestCase):
         """
         Check that the dealer always draws cards until the card value > 16
         """
-        self.game.type = GameType.SINGLEPLAYER
+        self.game.type = BlackJackGame.Type.SINGLEPLAYER
         self.game.add_player(user_id=111, first_name="Player 111")
 
         self.assertEqual(2, len(self.game.dealer._cards))

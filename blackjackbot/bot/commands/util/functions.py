@@ -2,7 +2,7 @@
 """Utility functions for performing chat related tasks"""
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
-from blackjack.game import GameType
+from blackjack.game import BlackJackGame
 
 
 def remove_inline_keyboard(update, context):
@@ -85,7 +85,7 @@ def _generate_evaluation_string_sp(game):
 
 
 def generate_evaluation_string(game):
-    if game.type == GameType.SINGLEPLAYER:
+    if game.type == BlackJackGame.Type.SINGLEPLAYER:
         return _generate_evaluation_string_sp(game)
     else:
         return _generate_evaluation_string_mp(game)

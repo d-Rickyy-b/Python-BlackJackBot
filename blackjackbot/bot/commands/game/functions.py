@@ -5,7 +5,7 @@ import logging
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from blackjack.errors import NoPlayersLeftException
-from blackjack.game import BlackJackGame, GameType
+from blackjack.game import BlackJackGame
 from blackjackbot.bot.commands.util import remove_inline_keyboard, html_mention, get_game_keyboard, get_join_keyboard, generate_evaluation_string
 from blackjackbot.bot.commands.util.commands import translate
 from blackjackbot.errors import NoActiveGameException
@@ -95,9 +95,9 @@ def create_game(update, context):
 
     # Create either a singleplayer or multiplayer game
     if chat.type == "private":
-        game_type = GameType.SINGLEPLAYER
+        game_type = BlackJackGame.Type.SINGLEPLAYER
     elif chat.type == "group" or chat.type == "supergroup":
-        game_type = GameType.MULTIPLAYER_GROUP
+        game_type = BlackJackGame.Type.MULTIPLAYER_GROUP
     else:
         logger.error("Chat type '{}' not supported!".format(chat.type))
         return
@@ -107,7 +107,7 @@ def create_game(update, context):
     GameStore().add_game(chat.id, game)
 
     # TODO currently the game starts instantly - this should change with multiplayer rooms
-    if game.type == GameType.SINGLEPLAYER:
+    if game.type == BlackJackGame.Type.SINGLEPLAYER:
         update.effective_message.reply_text(translate("game_starts_now").format("", game.dealer.get_cards_string()))
         players_turn(update, context)
     else:

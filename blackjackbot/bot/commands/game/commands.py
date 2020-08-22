@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import blackjack.errors as errors
-from blackjack.game import GameType
+from blackjack.game import BlackJackGame
 from blackjackbot.bot.commands.util import html_mention, get_game_keyboard, get_join_keyboard, get_start_keyboard, remove_inline_keyboard
 from blackjackbot.bot.commands.util.commands import translate
 from blackjackbot.errors import NoActiveGameException
@@ -49,7 +49,7 @@ def start_callback(update, context):
         update.callback_query.answer(translate("mp_only_creator_start_callback").format(user.first_name))
         return
 
-    if game.type != GameType.SINGLEPLAYER:
+    if game.type != BlackJackGame.Type.SINGLEPLAYER:
         players_are = translate("mp_players_are")
         for player in game.players:
             players_are += "👤{}\n".format(player.first_name)

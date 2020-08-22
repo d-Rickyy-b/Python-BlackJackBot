@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-
+from enum import Enum
 import blackjack.errors as errors
 from blackjack.game import Player, Dealer, Deck, GameType
 
@@ -19,9 +19,15 @@ class BlackJackGame(object):
         self.deck = Deck(lang_id)
         self.dealer = Dealer("Dealer")
 
-        self.type = gametype or GameType.SINGLEPLAYER
+        self.type = gametype or BlackJackGame.Type.SINGLEPLAYER
         self.id = game_id
         self.lang_id = lang_id
+
+    class Type(Enum):
+        """Enum describing the type of a game"""
+        SINGLEPLAYER = 1
+        MULTIPLAYER_GROUP = 2
+        MULTIPLAYER_DIRECT = 3
 
     def register_on_start_handler(self, func):
         """
@@ -60,8 +66,8 @@ class BlackJackGame(object):
         if self.running:
             raise errors.GameAlreadyRunningException
 
-        if (self.type == GameType.SINGLEPLAYER and len(self.players) < 1) or \
-                (self.type in [GameType.MULTIPLAYER_DIRECT, GameType.MULTIPLAYER_GROUP] and len(self.players) < 2):
+        if (self.type == BlackJackGame.Type.SINGLEPLAYER and len(self.players) < 1) or \
+                (self.type in [BlackJackGame.Type.MULTIPLAYER_DIRECT, BlackJackGame.Type.MULTIPLAYER_GROUP] and len(self.players) < 2):
             raise errors.NotEnoughPlayersException
 
         if user_id != self.players[0].user_id:
@@ -110,7 +116,7 @@ class BlackJackGame(object):
         self.logger.debug("Adding new player: {}!".format(player))
         self.players.append(player)
 
-        if self.type == GameType.SINGLEPLAYER:
+        if self.type == BlackJackGame.Type.SINGLEPLAYER:
             self.logger.debug("Starting game now, because it's a singleplayer game")
             self.start(user_id)
 
