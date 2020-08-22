@@ -18,7 +18,7 @@ def reload_strings():
             if not match:
                 continue
 
-            with open(entry.path) as json_file:
+            with open(entry.path, encoding="utf-8") as json_file:
                 data = json.load(json_file)
                 lang_code = match.group(1)
                 languages[lang_code] = data
