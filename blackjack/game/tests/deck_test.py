@@ -8,7 +8,7 @@ class DeckTest(unittest.TestCase):
 
     def test_creation(self):
         """
-        Check that the _deck is properly created
+        Check that the deck is properly created
         :return:
         """
         self.deck = Deck()
@@ -36,20 +36,20 @@ class DeckTest(unittest.TestCase):
         self.assertEqual(52, len(d2))
         self.assertEqual(52, len(d3))
 
-        # Our first and third _deck should now differ
-        # There is a veeeeeery tiny rest probability that after shuffeling the _deck is exactly the same as before
+        # Our first and third deck should now differ
+        # There is a veeeeeery tiny rest probability that after shuffeling the deck is exactly the same as before
         # But we are ignoring that here!
         self.assertNotEqual(d1, d3)
 
     def test_set_up_deck(self):
         """
-        Check if the set up method creates a new sorted _deck of cards
+        Check if the set up method creates a new sorted deck of cards
         :return:
         """
         self.deck = Deck()
         self.deck._set_up_deck()
 
-        # Check if the _deck is sorted (linear ascending numbers)
+        # Check if the deck is sorted (linear ascending numbers)
         for counter in range(52):
             self.assertEqual(counter, self.deck._deck[counter].card_id)
 
@@ -68,7 +68,7 @@ class DeckTest(unittest.TestCase):
 
     def test_draw_empty(self):
         """
-        Check if drawing works as intended when the _deck is empty
+        Check if drawing works as intended when the deck is empty
         :return:
         """
         pass
