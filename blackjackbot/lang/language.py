@@ -3,7 +3,9 @@
 import json
 import os
 import re
+import logging
 
+logger = logging.getLogger(__name__)
 dir_path = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(dir_path, "strings")
 languages = {}
@@ -56,6 +58,7 @@ def translate(string, lang_code="en"):
 
         if lang_code != "en":
             return translate(string, "en")
+        logger.warning("Missing string '{}'!".format(string))
         return "STRING_NOT_AVAILABLE"
 
     return translated_string
