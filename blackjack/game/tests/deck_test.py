@@ -13,7 +13,7 @@ class DeckTest(unittest.TestCase):
         """
         self.deck = Deck()
         self.assertEqual("en", self.deck.lang_id)
-        self.assertEqual(52, len(self.deck._deck))
+        self.assertEqual(52, len(self.deck._cards))
 
     def test_shuffle(self):
         """
@@ -21,15 +21,15 @@ class DeckTest(unittest.TestCase):
         :return:
         """
         self.deck = Deck()
-        d1 = self.deck._deck.copy()
+        d1 = self.deck._cards.copy()
 
-        d2 = self.deck._deck.copy()
+        d2 = self.deck._cards.copy()
         # We check that our two decks we copied are the same
         # This is to proof that the assertNotEqual later on works correctly
         self.assertEqual(d1, d2)
 
         self.deck._shuffle()
-        d3 = self.deck._deck.copy()
+        d3 = self.deck._cards.copy()
 
         # Just check that we did not lose any cards through shuffeling
         self.assertEqual(52, len(d1))
@@ -51,7 +51,7 @@ class DeckTest(unittest.TestCase):
 
         # Check if the deck is sorted (linear ascending numbers)
         for counter in range(52):
-            self.assertEqual(counter, self.deck._deck[counter].card_id)
+            self.assertEqual(counter, self.deck._cards[counter].card_id)
 
     def test_draw(self):
         """
@@ -59,11 +59,11 @@ class DeckTest(unittest.TestCase):
         :return:
         """
         self.deck = Deck()
-        self.assertEqual(52, len(self.deck._deck))
+        self.assertEqual(52, len(self.deck._cards))
 
         card = self.deck.pick_one_card()
 
-        self.assertEqual(51, len(self.deck._deck))
+        self.assertEqual(51, len(self.deck._cards))
         self.assertEqual(Card, type(card))
 
     def test_draw_empty(self):
