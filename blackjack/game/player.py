@@ -68,7 +68,7 @@ class Player(object):
         if len(bigger_21) >= 1:
             return bigger_21[0]
 
-        raise ValueError
+        raise ValueError("Can't calculate a value from those cards: {}".format(self._cards))
 
 
     @property
