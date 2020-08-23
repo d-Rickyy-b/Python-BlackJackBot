@@ -75,7 +75,7 @@ def translate(string, lang_code="en"):
         if lang_code != "en":
             return translate(string, "en")
         logger.warning("Missing string '{}'!".format(string))
-        return "STRING_NOT_AVAILABLE"
+        return "STRING_NOT_AVAILABLE ('{}')".format(string)
 
     return translated_string
 
