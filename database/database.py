@@ -117,6 +117,10 @@ class Database(object):
         else:
             return "en"
 
+    def set_lang_id(self, user_id, lang_id):
+        self.cursor.execute("UPDATE users SET languageID = ? WHERE userID = ?;", [lang_id, user_id])
+        self.connection.commit()
+
     def add_user(self, user_id, lang_id, first_name, last_name, username):
         if self.is_user_saved(user_id):
             return
