@@ -70,6 +70,9 @@ class Player(object):
 
         raise ValueError("Can't calculate a value from those cards: {}".format(self._cards))
 
+    @property
+    def cards(self):
+        return self._cards
 
     @property
     def amount_of_cards(self):
