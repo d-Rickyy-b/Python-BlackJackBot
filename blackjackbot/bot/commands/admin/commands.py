@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from blackjackbot.lang import translate
+from blackjackbot.lang import translate, reload_strings
 from database import Database
 
 
@@ -31,8 +31,9 @@ def notify_admins(text, context):
         context.bot.sendMessage(admin_id, text=text)
 
 
+@admin_method
 def reload_languages_cmd(update, context):
-    pass
+    reload_strings()
 
 
 @admin_method
