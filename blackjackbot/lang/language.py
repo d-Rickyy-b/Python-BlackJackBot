@@ -14,7 +14,7 @@ languages = {}
 class Translator(object):
 
     def __init__(self, lang_id):
-        self.lang_id = lang_id
+        self.lang_id = lang_id or "en"
 
     def translate(self, string):
         return translate(string, self.lang_id)
