@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 
 
 def language_cmd(update, context):
+    """
+    Handler for /language commands
+    """
     buttons = []
 
     for lang in get_available_languages():
@@ -19,27 +22,22 @@ def language_cmd(update, context):
         buttons.append(InlineKeyboardButton(text=display_name, callback_data="lang_{}".format(lang_code)))
 
     lang_keyboard = InlineKeyboardMarkup(build_menu(buttons, n_cols=3))
-    db = Database()
 
-    lang_id = db.get_lang_id(update.effective_chat.id)
-
-    if update.callback_query:
-        # TODO maybe text user in private instead of group!
-        context.bot.editMessageText(chat_id=update.callback_query.message.chat_id, text=translate("select_lang", lang_id),
-                                    reply_markup=lang_keyboard, message_id=update.callback_query.message.message_id)
-    else:
-        update.message.reply_text(text=translate("select_lang", lang_id), reply_markup=lang_keyboard)
+    lang_id = Database().get_lang_id(update.effective_chat.id)
+    update.message.reply_text(text=translate("select_lang", lang_id), reply_markup=lang_keyboard)
 
 
 def language_callback(update, context):
-    db = Database()
-    message = update.effective_message
+    """
+    Callback function to handle inline buttons of the /language menu for changing the language
+    """
     query_data = update.callback_query.data
     lang_id = re.search(r"^lang_([a-z]{2}(?:-[a-z]{2})?)$", query_data).group(1)
-    
-    logger.info("Language changed to '{}' for user {}".format(lang_id, update.effective_user.id))
+
+    # Inform user about language change
     lang = get_language_info(lang_id)
     lang_changed_text = translate("lang_changed", lang_id).format(lang.get("display_name"))
-
     update.effective_message.edit_text(text=lang_changed_text, reply_markup=None)
-    db.set_lang_id(lang_id=lang_id, chat_id=update.effective_chat.id)
+
+    Database().set_lang_id(lang_id=lang_id, chat_id=update.effective_chat.id)
+    logger.debug("Language changed to '{}' for user {}".format(lang_id, update.effective_user.id))
