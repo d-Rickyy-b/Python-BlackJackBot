@@ -39,3 +39,13 @@ def reload_languages_cmd(update, context):
 @admin_method
 def answer_comment_cmd(upate, context):
     pass
+
+
+@admin_method
+def users_cmd(update, context):
+    db = Database()
+    players = db.get_recent_players()
+
+    text = "Last 24 hours: {}".format(len(players))
+
+    update.message.reply_text(text=text)
