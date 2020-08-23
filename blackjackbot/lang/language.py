@@ -49,28 +49,43 @@ def reload_strings():
 
 def get_available_languages():
     """Return a list of available languages"""
+    if len(languages) == 0:
+        reload_strings()
     langs = []
 
     for key, value in languages.items():
-        lang_name = value.get("language_name", "N/A")
-        lang_flag = value.get("language_flag", "N/A")
-        display_name = "{} {}".format(lang_name, lang_flag)
-
-        lang = {"lang_code": value.get("lang_code", "N/A"), "name": value.get("language_name", "N/A"), "display_name": display_name}
-        langs.append(lang)
+        langs.append(get_language_info(key))
 
     return langs
 
 
-def translate(string, lang_code="en"):
-    """Returns the translation in a specific language for a specific string"""
-    lang = languages.get(lang_code, None)
+def get_language_info(lang_code):
+    """Returns information such as the lang_code, the language's name and the display name (with flag) for a certain language"""
+    lang = get_language(lang_code)
+    lang_name = lang.get("language_name", "N/A")
+    lang_flag = lang.get("language_flag", "N/A")
+    display_name = "{} {}".format(lang_name, lang_flag)
 
+    return {"lang_code": lang.get("lang_code", "N/A"), "name": lang.get("language_name", "N/A"), "display_name": display_name}
+
+
+def get_language(lang_code):
+    """Returns the translation dict for a certain language if it exists. If not, return the English translations"""
+    if len(languages) == 0:
+        reload_strings()
+
+    lang = languages.get(lang_code, None)
     if lang is None:
         if "_" in lang_code:
-            return translate(string, lang_code.split("_")[0])
+            return get_language(lang_code.split("_")[0])
 
-        lang = languages["en"]
+        return languages["en"]
+    return lang
+
+
+def translate(string, lang_code="en"):
+    """Returns the translation in a specific language for a specific string"""
+    lang = get_language(lang_code)
 
     translated_string = lang.get(string, None)
 
@@ -83,6 +98,3 @@ def translate(string, lang_code="en"):
         return "STRING_NOT_AVAILABLE ('{}')".format(string)
 
     return translated_string
-
-
-reload_strings()
