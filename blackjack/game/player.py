@@ -7,7 +7,10 @@ class Player(object):
 
     def __init__(self, user_id, first_name, lang_id="en"):
         """
-
+        Player representation
+        :param user_id: A unique ID for the player
+        :param first_name: The name of the player
+        :param lang_id: The ID of the language of the player. Defaults to "en"
         """
         self.is_dealer = False
         self._cards = []

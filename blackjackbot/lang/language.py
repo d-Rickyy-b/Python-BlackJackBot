@@ -28,7 +28,7 @@ class Translator(object):
 
 
 def reload_strings():
-    """Reads the translation files into a dict"""
+    """Reads the translation files into a dict. Overwrites the dict if already present"""
     with os.scandir(file_path) as entries:
         for entry in entries:
             match = re.search(r"^translations_([a-z]{2}(-[a-z]{2})?)\.json$", entry.name)

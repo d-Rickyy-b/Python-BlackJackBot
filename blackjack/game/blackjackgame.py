@@ -7,6 +7,7 @@ from blackjack.game import Player, Dealer, Deck
 
 
 class BlackJackGame(object):
+    """Representation of a game of Black Jack - The equivalent of a Black Jack casino table."""
     MAX_PLAYERS = 5
 
     def __init__(self, gametype=None, game_id=None, lang_id="en"):
