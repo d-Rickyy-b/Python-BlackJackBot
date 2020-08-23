@@ -5,13 +5,17 @@ from blackjackbot.bot.commands import start_cmd, stop_cmd, stats_cmd, language_c
     hit_callback, stand_callback, join_callback, start_callback, newgame_callback, language_callback, \
     reload_languages_cmd, users_cmd
 
+# User commands
 start_command_handler = CommandHandler("start", start_cmd)
 stop_command_handler = CommandHandler("stop", stop_cmd)
 language_command_handler = CommandHandler("language", language_cmd)
 stats_command_handler = CommandHandler("stats", stats_cmd)
+
+# Admin methods
 reload_lang_command_handler = CommandHandler("reload_lang", reload_languages_cmd)
 users_command_handler = CommandHandler("users", users_cmd)
 
+# Callback handlers
 hit_callback_handler = CallbackQueryHandler(hit_callback, pattern=r"^hit$")
 stand_callback_handler = CallbackQueryHandler(stand_callback, pattern=r"^stand$")
 join_callback_handler = CallbackQueryHandler(join_callback, pattern=r"^join$")
