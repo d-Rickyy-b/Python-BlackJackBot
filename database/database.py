@@ -23,10 +23,10 @@ class Database(object):
 
             if not os.path.exists(database_path):
                 self.logger.debug("File '{}' does not exist! Trying to create one.".format(database_path))
-                try:
-                    self.create_database(database_path)
-                except Exception:
-                    self.logger.error("An error has occurred while creating the database!")
+            try:
+                self.create_database(database_path)
+            except Exception:
+                self.logger.error("An error has occurred while creating the database!")
 
             self.connection = sqlite3.connect(database_path)
             self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
@@ -47,13 +47,13 @@ class Database(object):
         connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
         cursor = connection.cursor()
 
-        cursor.execute("CREATE TABLE 'admins' "
+        cursor.execute("CREATE TABLE IF NOT EXISTS 'admins' "
                        "('userID' INTEGER NOT NULL,"
                        "'first_name' TEXT,"
                        "'username' TEXT,"
                        "PRIMARY KEY('userID'));")
 
-        cursor.execute("CREATE TABLE 'users'"
+        cursor.execute("CREATE TABLE IF NOT EXISTS 'users'"
                        "('userID' INTEGER NOT NULL,"
                        "'languageID' TEXT,"
                        "'first_name' TEXT,"
