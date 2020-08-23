@@ -70,8 +70,6 @@ class Player(object):
 
         raise ValueError
 
-    def get_cards_string(self):
-        return '  •  '.join(str(card) for card in self._cards)
 
     @property
     def amount_of_cards(self):

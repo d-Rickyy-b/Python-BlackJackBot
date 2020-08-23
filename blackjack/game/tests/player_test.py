@@ -179,13 +179,6 @@ class PlayerTest(unittest.TestCase):
         self.player.give_card(self._generate_mock_card(5))
         self.assertEqual(24, self.player.cardvalue)
 
-    def test_get_cards_string(self):
-        pass
-        # mock = self._generate_mock_card(8)
-        # mock.__str__.return_value = ""
-        # self.player.give_card()
-        # print(self.player.get_cards_string())
-
     def test_amount_of_cards(self):
         """
         Check if the number of cards is calculated correctly
