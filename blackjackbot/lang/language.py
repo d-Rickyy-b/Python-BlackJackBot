@@ -37,7 +37,12 @@ def reload_strings():
                 continue
 
             with open(entry.path, encoding="utf-8") as json_file:
-                data = json.load(json_file)
+                try:
+                    data = json.load(json_file)
+                except json.JSONDecodeError:
+                    logger.error("Can't open translation file '{}'".format(entry.path))
+                    continue
+
                 lang_code = match.group(1)
                 languages[lang_code] = data
 
