@@ -17,7 +17,7 @@ stand_callback_handler = CallbackQueryHandler(stand_callback, pattern=r"^stand$"
 join_callback_handler = CallbackQueryHandler(join_callback, pattern=r"^join$")
 start_callback_handler = CallbackQueryHandler(start_callback, pattern=r"^start$")
 newgame_callback_handler = CallbackQueryHandler(newgame_callback, pattern=r"^newgame$")
-language_callback_handler = CallbackQueryHandler(language_callback, pattern=r"lang_[a-zA-Z\_]+")
+language_callback_handler = CallbackQueryHandler(language_callback, pattern=r"^lang_([a-z]{2}(?:-[a-z]{2})?)$")
 
 handlers = [start_command_handler, stop_command_handler, join_callback_handler, hit_callback_handler, stand_callback_handler, start_callback_handler,
             language_command_handler, stats_command_handler, newgame_callback_handler, reload_lang_command_handler, language_callback_handler,

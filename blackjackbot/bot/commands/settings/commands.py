@@ -35,7 +35,7 @@ def language_callback(update, context):
     db = Database()
     message = update.effective_message
     query_data = update.callback_query.data
-    lang_id = re.search(r"^lang_([a-z]{2}(?:-[a-z]{2})?)", query_data).group(1)
+    lang_id = re.search(r"^lang_([a-z]{2}(?:-[a-z]{2})?)$", query_data).group(1)
     
     logger.info("Language changed to '{}' for user {}".format(lang_id, update.effective_user.id))
     lang = get_language_info(lang_id)
