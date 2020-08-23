@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 from blackjack.errors import GameAlreadyRunningException, PlayerAlreadyExistingException, MaxPlayersReachedException, NotEnoughPlayersException, \
     GameNotRunningException, PlayerBustedException, NoPlayersLeftException
-from blackjack.game import BlackJackGame, GameType
+from blackjack.game import BlackJackGame
 
 
 class BlackJackGameTest(unittest.TestCase):

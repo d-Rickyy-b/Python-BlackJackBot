@@ -3,7 +3,7 @@ import logging
 
 from enum import Enum
 import blackjack.errors as errors
-from blackjack.game import Player, Dealer, Deck, GameType
+from blackjack.game import Player, Dealer, Deck
 
 
 class BlackJackGame(object):
