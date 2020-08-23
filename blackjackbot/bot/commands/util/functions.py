@@ -54,10 +54,10 @@ def _generate_evaluation_string_sp(game):
     if len(list_won) == 1:
         if game.dealer.busted:
             # Dealer busted, you won
-            message += "🔰 Congrats! The dealer busted, hence you win this round."
+            message += "🏆 Congrats! The dealer busted, hence you win this round."
         else:
             # Closer to 21
-            message += "🔰 Congrats! You are closer to 21 and win this round."
+            message += "🏆 Congrats! You are closer to 21 and win this round."
 
         message += "\n"
         message += join_str.format(player.first_name, player.cardvalue)
