@@ -23,10 +23,11 @@ def html_mention(user_id, first_name):
     return '<a href="tg://user?id={}">{}</a>'.format(user_id, first_name)
 
 
-def _generate_evaluation_string_mp(game, translator):
+def _generate_evaluation_string_mp(game, lang_id):
     list_won, list_tie, list_losses = game.evaluation()
     message = ""
     join_str = "{} - {}"
+    translator = Translator(lang_id)
 
     # TODO maybe only display categories with users in it
     if len(list_won) > 0:
@@ -45,12 +46,13 @@ def _generate_evaluation_string_mp(game, translator):
     return message
 
 
-def _generate_evaluation_string_sp(game, translator):
+def _generate_evaluation_string_sp(game, lang_id):
     list_won, list_tie, list_losses = game.evaluation()
     message = ""
     player_str = ""
     join_str = "\n{} - {}"
     player = game.players[0]
+    translator = Translator(lang_id)
 
     if len(list_won) == 1:
         if game.dealer.busted:
@@ -85,11 +87,11 @@ def _generate_evaluation_string_sp(game, translator):
     return message
 
 
-def generate_evaluation_string(game, translator):
+def generate_evaluation_string(game, lang_id):
     if game.type == BlackJackGame.Type.SINGLEPLAYER:
-        return _generate_evaluation_string_sp(game, translator)
+        return _generate_evaluation_string_sp(game, lang_id)
     else:
-        return _generate_evaluation_string_mp(game, translator)
+        return _generate_evaluation_string_mp(game, lang_id)
 
 
 def get_game_keyboard(lang_id=None):

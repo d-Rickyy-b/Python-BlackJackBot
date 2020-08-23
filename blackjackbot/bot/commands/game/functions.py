@@ -85,8 +85,8 @@ def next_player(update, context):
     except NoPlayersLeftException:
         # TODO merge messages
         update.effective_message.reply_text("<b>Dealer: {}</b>\n\n{}".format(game.dealer.cardvalue, get_cards_string(game.dealer, "en")), parse_mode="HTML")
-        evaluation_string = generate_evaluation_string(game, translator)
         get_join_keyboard()
+        evaluation_string = generate_evaluation_string(game, lang_id)
 
         newgame_button = InlineKeyboardButton(text="New game", callback_data="newgame")
         keyboard = InlineKeyboardMarkup(inline_keyboard=[[newgame_button]])
