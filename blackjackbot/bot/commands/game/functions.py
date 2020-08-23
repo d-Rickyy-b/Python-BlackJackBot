@@ -84,7 +84,7 @@ def next_player(update, context):
         game.next_player()
     except NoPlayersLeftException:
         # TODO merge messages
-        update.effective_message.reply_text("<b>Dealer: {}</b>\n\n{}".format(game.dealer.cardvalue, get_cards_string(game.dealer, "en")), parse_mode="HTML")
+        update.effective_message.reply_text("<b>Dealer: {}</b>\n\n{}".format(game.dealer.cardvalue, get_cards_string(game.dealer, lang_id)), parse_mode="HTML")
         evaluation_string = generate_evaluation_string(game, lang_id)
         get_join_keyboard(lang_id)
 
@@ -119,7 +119,7 @@ def create_game(update, context):
 
     # TODO currently the game starts instantly - this should change with multiplayer rooms
     if game.type == BlackJackGame.Type.SINGLEPLAYER:
-        update.effective_message.reply_text(translator("game_starts_now").format("", get_cards_string(game.dealer, "en")))
+        update.effective_message.reply_text(translator("game_starts_now").format("", get_cards_string(game.dealer, lang_id)))
         players_turn(update, context)
     else:
         text = translator("mp_request_join").format(game.get_player_list())

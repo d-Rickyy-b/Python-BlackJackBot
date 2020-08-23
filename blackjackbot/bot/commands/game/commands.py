@@ -64,7 +64,7 @@ def start_callback(update, context):
     else:
         players_are = ""
 
-    update.effective_message.edit_text(translator("game_starts_now").format(players_are, get_cards_string(game.dealer, "en")))
+    update.effective_message.edit_text(translator("game_starts_now").format(players_are, get_cards_string(game.dealer, lang_id)))
     players_turn(update, context)
 
 
