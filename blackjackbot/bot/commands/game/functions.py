@@ -7,9 +7,9 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from blackjack.errors import NoPlayersLeftException
 from blackjack.game import BlackJackGame
 from blackjackbot.bot.commands.util import remove_inline_keyboard, html_mention, get_game_keyboard, get_join_keyboard, generate_evaluation_string
-from blackjackbot.bot.commands.util.commands import translate
 from blackjackbot.errors import NoActiveGameException
 from blackjackbot.gamestore import GameStore
+from blackjackbot.lang import translate
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)

@@ -3,7 +3,7 @@
 import blackjack.errors as errors
 from blackjack.game import BlackJackGame
 from blackjackbot.bot.commands.util import html_mention, get_game_keyboard, get_join_keyboard, get_start_keyboard, remove_inline_keyboard
-from blackjackbot.bot.commands.util.commands import translate
+from blackjackbot.lang import translate, Translator
 from blackjackbot.errors import NoActiveGameException
 from blackjackbot.gamestore import GameStore
 from database import Database
