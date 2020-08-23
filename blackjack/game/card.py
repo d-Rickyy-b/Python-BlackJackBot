@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
+from enum import Enum
 
 
 class Card(object):
+
+    class Type(Enum):
+        NUMBER = "card_number"
+        JACK = "card_jack"
+        QUEEN = "card_queen"
+        KING = "card_king"
+        ACE = "card_ace"
+
     symbols = ["♥", "♦", "♣", "♠"]
-    value_int = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+    value_str = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
 
-    def __init__(self, card_id, value_str):
-
+    def __init__(self, card_id):
         self.card_id = card_id
-        self.value_str = value_str
 
     def is_ace(self):
         return self.value == 11
@@ -19,11 +26,27 @@ class Card(object):
 
     @property
     def value(self):
-        return self.value_int[self.card_id % 13]
+        values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11]
+        return values[self.card_id % 13]
 
     @property
     def face(self):
         return self.value_str[self.card_id % 13]
+
+    @property
+    def type(self):
+        if (self.card_id % 13) in range(0, 9):
+            return Card.Type.NUMBER
+        elif (self.card_id % 13) == 9:
+            return Card.Type.JACK
+        elif (self.card_id % 13) == 10:
+            return Card.Type.QUEEN
+        elif (self.card_id % 13) == 11:
+            return Card.Type.KING
+        elif (self.card_id % 13) == 12:
+            return Card.Type.ACE
+        else:
+            raise ValueError("card_id '{}' can't be mapped to card type!".format(self.card_id))
 
     def __str__(self):
         return "{} {}".format(self.symbol, self.face)
