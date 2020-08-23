@@ -64,6 +64,11 @@ class Database(object):
                        "'gamesTie' INTEGER,"
                        "'lastPlayed' INTEGER,"
                        "PRIMARY KEY('userID'));")
+
+        cursor.execute("CREATE TABLE IF NOT EXISTS 'chats'"
+                       "('chat_id' INTEGER NOT NULL,"
+                       "'lang_id' TEXT,"
+                       "PRIMARY KEY('chat_id'));")
         connection.commit()
         connection.close()
 
@@ -109,16 +114,19 @@ class Database(object):
             admin_list.append(admin[0])
         return admin_list
 
-    def get_lang_id(self, user_id):
-        self.cursor.execute("SELECT languageID FROM users WHERE userID=?;", [str(user_id)])
+    def get_lang_id(self, chat_id):
+        self.cursor.execute("SELECT lang_id FROM chats WHERE chat_id=?;", [str(chat_id)])
         result = self.cursor.fetchone()
         if result:
             return result[0]
         else:
             return "en"
 
-    def set_lang_id(self, user_id, lang_id):
-        self.cursor.execute("UPDATE users SET languageID = ? WHERE userID = ?;", [lang_id, user_id])
+    def set_lang_id(self, chat_id, lang_id):
+        try:
+            self.cursor.execute("INSERT INTO chats (chat_id, lang_id) VALUES(?, ?);", [chat_id, lang_id])
+        except sqlite3.IntegrityError:
+            self.cursor.execute("UPDATE chats SET lang_id = ? WHERE chat_id = ?;", [lang_id, chat_id])
         self.connection.commit()
 
     def add_user(self, user_id, lang_id, first_name, last_name, username):
