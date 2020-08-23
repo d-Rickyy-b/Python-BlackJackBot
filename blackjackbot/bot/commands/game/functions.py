@@ -9,7 +9,9 @@ from blackjack.game import BlackJackGame
 from blackjackbot.bot.commands.util import remove_inline_keyboard, html_mention, get_game_keyboard, get_join_keyboard, generate_evaluation_string
 from blackjackbot.errors import NoActiveGameException
 from blackjackbot.gamestore import GameStore
-from blackjackbot.lang import translate
+from blackjackbot.lang import Translator
+from blackjackbot.util import get_cards_string
+from database import Database
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
@@ -20,12 +22,14 @@ def needs_active_game(func):
     @functools.wraps(func)
     def wrapper(update, context, *args, **kwargs):
         chat = update.effective_chat
+        lang_id = Database().get_lang_id(chat.id)
+        translator = Translator(lang_id=lang_id)
 
         try:
             game = GameStore().get_game(chat.id)
         except NoActiveGameException:
             remove_inline_keyboard(update, context)
-            update.effective_message.reply_text("You don't have any game!")
+            update.effective_message.reply_text(translator("mp_no_created_game_callback"))
             return
 
         return func(update, context)
@@ -41,32 +45,37 @@ def players_turn(update, context):
     player = game.get_current_player()
     user_mention = html_mention(user_id=player.user_id, first_name=player.first_name)
 
+    lang_id = Database().get_lang_id(chat.id)
+    translator = Translator(lang_id=lang_id)
+
     logger.info("Player's turn: {}".format(player))
+    player_cards = get_cards_string(player, lang_id)
 
     if player.has_blackjack():
-        text = (translate("your_cards_are") + "\n\n✅ Congratulations, you got a BlackJack!").format(user_mention, player.cardvalue, player.get_cards_string())
+        text = (translator("your_cards_are") + "\n\n" + translator("got_blackjack")).format(user_mention, player.cardvalue, player_cards)
         update.effective_message.reply_text(text=text, parse_mode="HTML", reply_markup=None)
         next_player(update, context)
     elif player.cardvalue == 21:
-        text = (translate("your_cards_are") + "\n\n✅ Congratulations, you got exactly 21!").format(user_mention, player.cardvalue, player.get_cards_string())
+        text = (translator("your_cards_are") + "\n\n" + translator("got_21")).format(user_mention, player.cardvalue, player_cards)
         update.effective_message.reply_text(text=text, parse_mode="HTML", reply_markup=None)
         next_player(update, context)
     else:
-        text = translate("your_cards_are")
-        update.effective_message.reply_text(text=text.format(user_mention, player.cardvalue, player.get_cards_string()),
-                                            parse_mode="HTML", reply_markup=get_game_keyboard())
+        text = translator("your_cards_are").format(user_mention, player.cardvalue, player_cards)
+        update.effective_message.reply_text(text=text, parse_mode="HTML", reply_markup=get_game_keyboard())
 
 
 @needs_active_game
 def next_player(update, context):
     chat = update.effective_chat
     user = update.effective_user
+    lang_id = Database().get_lang_id(chat.id)
+    translator = Translator(lang_id=lang_id)
 
     game = GameStore().get_game(chat.id)
 
     try:
         if user.id != game.get_current_player().user_id:
-            update.callback_query.answer(translate("mp_not_your_turn_callback").format(user.first_name))
+            update.callback_query.answer(translator("mp_not_your_turn_callback").format(user.first_name))
             return
         if update.callback_query and not game.get_current_player().has_21():
             # TODO why did I put that here?
@@ -75,8 +84,8 @@ def next_player(update, context):
         game.next_player()
     except NoPlayersLeftException:
         # TODO merge messages
-        update.effective_message.reply_text("<b>Dealer: {}</b>\n\n{}".format(game.dealer.cardvalue, game.dealer.get_cards_string()), parse_mode="HTML")
-        evaluation_string = generate_evaluation_string(game)
+        update.effective_message.reply_text("<b>Dealer: {}</b>\n\n{}".format(game.dealer.cardvalue, get_cards_string(game.dealer, "en")), parse_mode="HTML")
+        evaluation_string = generate_evaluation_string(game, translator)
         get_join_keyboard()
 
         newgame_button = InlineKeyboardButton(text="New game", callback_data="newgame")
@@ -92,6 +101,8 @@ def create_game(update, context):
     """Create a new game instance for the chat of the user"""
     user = update.effective_user
     chat = update.effective_chat
+    lang_id = Database().get_lang_id(chat.id)
+    translator = Translator(lang_id=lang_id)
 
     # Create either a singleplayer or multiplayer game
     if chat.type == "private":
@@ -108,8 +119,8 @@ def create_game(update, context):
 
     # TODO currently the game starts instantly - this should change with multiplayer rooms
     if game.type == BlackJackGame.Type.SINGLEPLAYER:
-        update.effective_message.reply_text(translate("game_starts_now").format("", game.dealer.get_cards_string()))
+        update.effective_message.reply_text(translator("game_starts_now").format("", get_cards_string(game.dealer, "en")))
         players_turn(update, context)
     else:
-        text = translate("mp_request_join").format(game.get_player_list())
+        text = translator("mp_request_join").format(game.get_player_list())
         update.effective_message.reply_text(text=text, reply_markup=get_join_keyboard())

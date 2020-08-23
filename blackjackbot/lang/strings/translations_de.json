@@ -2,7 +2,7 @@
   "lang_code": "de",
   "language_name": "Deutsch",
   "language_flag": "\uD83C\uDDE9\uD83C\uDDEA",
-  "you_busted": "\u274C You busted!",
+  "you_busted": "\u274C Du hast überkauft!",
   "your_cards_are": "{} - <b>Wert: {}</b>\n\n{}",
   "dealers_cards_are": "<b>Dealer: {}</b>\n\n{}",
   "inline_keyboard_hit": "Hit",
@@ -25,5 +25,18 @@
   "game_starts_now": "Das Spiel startet jetzt. \uD83C\uDFB2\n\n{}Karten des Dealers:\n\n{}",
   "game_ended": "Das Spiel wurde beendet! \uD83D\uDE09 Mit /start kannst du ein neues starten!",
   "mp_only_creator_can_end": "Nur der Ersteller kann das Spiel beenden!",
-  "mp_players_are": "Spieler sind:\n"
+  "mp_players_are": "Spieler sind:\n",
+  "no_permission": "Du hast dafür keine Berechtigungen!",
+  "select_lang": "Bitte wähle deine Sprache.",
+  "lang_changed": "Ich habe deine Sprache zu {} geändert!",
+  "got_blackjack": "\u2705 Glückwunsch, du hast einen BlackJack!",
+  "got_21": "\u2705 Glückwunsch, du hast exakt 21!",
+  "dealer_got_blackjack": "\u2716\uFE0F Der Dealer hat einen BlackJack. Du verlierst.",
+  "dealer_got_21": "\u2716\uFE0F Der Dealer hat 21. Du verlierst.",
+  "tied_with_dealer": "\uD83D\uDC4C Gleichstand mit dem Dealer.",
+  "dealer_busted": "\uD83C\uDFC6 Glückwunsch! Der Dealer hat überkauft, daher gewinnst du diese Runde.",
+  "closer_to_21": "\uD83C\uDFC6 Congrats! Du bist näher an 21, daher gewinnst du diese Runde.",
+  "eval_heading_wins": "\uD83D\uDD30 Gewinner:",
+  "eval_heading_ties": "\uD83D\uDC4C Gleichstand:",
+  "eval_heading_losses": "\u2716\uFE0F Verlierer:"
 }

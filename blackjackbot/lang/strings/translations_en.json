@@ -23,7 +23,20 @@
   "mp_only_creator_start_callback": "Sorry {}, only the creator can start the game!",
   "mp_not_your_turn_callback": "It's not your turn, {}!",
   "game_starts_now": "The game starts now. \uD83C\uDFB2\n\n{}Dealer's cards:\n\n{}",
-  "game_ended": "The game has been ended. 😉 You can /start another one if you like to.",
+  "game_ended": "The game has been ended. \uD83D\uDE09 You can /start another one if you like to.",
   "mp_only_creator_can_end": "Only the creator can end the game!",
-  "mp_players_are": "Players are:\n"
+  "mp_players_are": "Players are:\n",
+  "no_permission": "You don't have the required permissions to do that!",
+  "select_lang": "Please select your language.",
+  "lang_changed": "I changed your language to {}!",
+  "got_blackjack": "\u2705 Congratulations, you got a BlackJack!",
+  "got_21": "\u2705 Congratulations, you got exactly 21!",
+  "dealer_got_blackjack": "\u2716\uFE0F The dealer got a BlackJack. You lost.",
+  "dealer_got_21": "\u2716\uFE0F The dealer got closer to 21. You lost.",
+  "tied_with_dealer": "\uD83D\uDC4C You tied with the dealer.",
+  "dealer_busted": "\uD83C\uDFC6 Congrats! The dealer busted, hence you win this round.",
+  "closer_to_21": "\uD83C\uDFC6 Congrats! You are closer to 21 and win this round.",
+  "eval_heading_wins": "\uD83D\uDD30 Wins:",
+  "eval_heading_ties": "\uD83D\uDC4C Ties:",
+  "eval_heading_losses": "\u2716\uFE0F Losses:"
 }

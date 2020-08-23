@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from blackjackbot.lang import translate, reload_strings
+from blackjackbot.lang import translate, reload_strings, Translator
 from database import Database
 
 
@@ -9,11 +9,15 @@ def admin_method(func):
     """Decorator for marking methods as admin-only methods, so that strangers can't use them"""
 
     def admin_check(update, context):
-        user = update.message.from_user
+        user = update.effective_user
+        chat = update.effective_chat
+        lang_id = Database().get_lang_id(chat.id)
+        translator = Translator(lang_id=lang_id)
+
         if user.id in Database().get_admins():
             return func(update, context)
         else:
-            update.message.reply_text(translate("no_permission"))
+            update.message.reply_text(translator("no_permission"))
             logging.warning("User {} ({}, @{}) tried to use admin function '{}'!".format(user.id, user.first_name, user.username, func.__name__))
 
     return admin_check

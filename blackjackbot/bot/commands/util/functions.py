@@ -3,6 +3,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from blackjack.game import BlackJackGame
+from blackjackbot.lang import Translator
 
 
 def remove_inline_keyboard(update, context):
@@ -22,29 +23,29 @@ def html_mention(user_id, first_name):
     return '<a href="tg://user?id={}">{}</a>'.format(user_id, first_name)
 
 
-def _generate_evaluation_string_mp(game):
+def _generate_evaluation_string_mp(game, translator):
     list_won, list_tie, list_losses = game.evaluation()
     message = ""
     join_str = "{} - {}"
 
     # TODO maybe only display categories with users in it
     if len(list_won) > 0:
-        message += "🔰 Wins:\n"
+        message += translator("eval_heading_wins") + "\n"
         message += "\n".join([join_str.format(p.first_name, p.cardvalue) for p in list_won])
 
     #🔃
     if len(list_tie) > 0:
-        message += "\n\n👌 Ties:\n"
+        message += "\n\n{}\n".format(translator("eval_heading_ties"))
         message += "\n".join([join_str.format(p.first_name, p.cardvalue) for p in list_tie])
 
     if len(list_losses) > 0:
-        message += "\n\n✖️ Losses:\n"
+        message += "\n\n{}\n".format(translator("eval_heading_losses"))
         message += "\n".join([join_str.format(p.first_name, p.cardvalue) for p in list_losses])
 
     return message
 
 
-def _generate_evaluation_string_sp(game):
+def _generate_evaluation_string_sp(game, translator):
     list_won, list_tie, list_losses = game.evaluation()
     message = ""
     player_str = ""
@@ -54,28 +55,28 @@ def _generate_evaluation_string_sp(game):
     if len(list_won) == 1:
         if game.dealer.busted:
             # Dealer busted, you won
-            message += "🏆 Congrats! The dealer busted, hence you win this round."
+            message += translator("dealer_busted")
         else:
             # Closer to 21
-            message += "🏆 Congrats! You are closer to 21 and win this round."
+            message += translator("closer_to_21")
 
         message += "\n"
         message += join_str.format(player.first_name, player.cardvalue)
         message += join_str.format(game.dealer.first_name, game.dealer.cardvalue)
     elif len(list_tie) == 1:
         # Same value as dealer
-        message += "👌 You tied with the dealer."
+        message += translator("tied_with_dealer")
         message += "\n"
         message += join_str.format(player.first_name, player.cardvalue)
         message += join_str.format(game.dealer.first_name, game.dealer.cardvalue)
     elif len(list_losses) == 1:
         if player.busted:
             # busted
-            message += "✖️ You busted."
+            message += translator("you_busted")
         elif game.dealer.has_blackjack():
-            message += "✖️ The dealer got a BlackJack. You lost."
+            message += translator("dealer_got_blackjack")
         else:
-            message += "✖️ The dealer got closer to 21. You lost."
+            message += translator("dealer_got_21")
 
         message += "\n"
         message += join_str.format(game.dealer.first_name, game.dealer.cardvalue)
@@ -84,11 +85,11 @@ def _generate_evaluation_string_sp(game):
     return message
 
 
-def generate_evaluation_string(game):
+def generate_evaluation_string(game, translator):
     if game.type == BlackJackGame.Type.SINGLEPLAYER:
-        return _generate_evaluation_string_sp(game)
+        return _generate_evaluation_string_sp(game, translator)
     else:
-        return _generate_evaluation_string_mp(game)
+        return _generate_evaluation_string_mp(game, translator)
 
 
 def get_game_keyboard(lang_id=None):
@@ -96,8 +97,9 @@ def get_game_keyboard(lang_id=None):
     :param lang_id:
     :return:
     """
-    one_more_button = InlineKeyboardButton(text="Hit", callback_data="hit")
-    no_more_button = InlineKeyboardButton(text="Stand", callback_data="stand")
+    translator = Translator(lang_id)
+    one_more_button = InlineKeyboardButton(text=translator("inline_keyboard_hit"), callback_data="hit")
+    no_more_button = InlineKeyboardButton(text=translator("inline_keyboard_stand"), callback_data="stand")
     stop_button = InlineKeyboardButton(text="Stop", callback_data="stop")
     return InlineKeyboardMarkup(inline_keyboard=[[one_more_button, no_more_button]])
 

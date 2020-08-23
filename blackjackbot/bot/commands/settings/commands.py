@@ -21,7 +21,7 @@ def language_cmd(update, context):
     lang_keyboard = InlineKeyboardMarkup(build_menu(buttons, n_cols=3))
     db = Database()
 
-    lang_id = db.get_lang_id(update.effective_user.id)
+    lang_id = db.get_lang_id(update.effective_chat.id)
 
     if update.callback_query:
         # TODO maybe text user in private instead of group!
