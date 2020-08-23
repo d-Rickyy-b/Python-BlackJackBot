@@ -106,12 +106,14 @@ def get_game_keyboard(lang_id=None):
     return InlineKeyboardMarkup(inline_keyboard=[[one_more_button, no_more_button]])
 
 
-def get_join_keyboard():
-    join_button = InlineKeyboardButton(text="Join", callback_data="join")
-    start_button = InlineKeyboardButton(text="Start", callback_data="start")
+def get_join_keyboard(lang_id):
+    translator = Translator(lang_id)
+    join_button = InlineKeyboardButton(text=translator("inline_keyboard_join"), callback_data="join")
+    start_button = InlineKeyboardButton(text=translator("inline_keyboard_start"), callback_data="start")
     return InlineKeyboardMarkup(inline_keyboard=[[join_button, start_button]])
 
 
-def get_start_keyboard():
+def get_start_keyboard(lang_id):
+    translator = Translator(lang_id)
     start_button = InlineKeyboardButton(text="Start", callback_data="start")
     return InlineKeyboardMarkup(inline_keyboard=[[start_button]])

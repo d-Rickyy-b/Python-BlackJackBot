@@ -98,17 +98,17 @@ def join_callback(update, context):
     try:
         game.add_player(user.id, user.first_name)
         update.effective_message.edit_text(text=translator("mp_request_join").format(game.get_player_list()),
-                                           reply_markup=get_join_keyboard())
+                                           reply_markup=get_join_keyboard(lang_id))
         update.callback_query.answer(translator("mp_join_callback").format(user.first_name))
 
         # If players are full, replace join keyboard with start keyboard
         if len(game.players) >= game.MAX_PLAYERS:
-            update.effective_message.edit_reply_markup(reply_markup=get_start_keyboard())
+            update.effective_message.edit_reply_markup(reply_markup=get_start_keyboard(lang_id))
     except errors.GameAlreadyRunningException:
         remove_inline_keyboard(update, context)
         update.callback_query.answer(translator("mp_game_already_begun_callback"))
     except errors.MaxPlayersReachedException:
-        update.effective_message.edit_reply_markup(reply_markup=get_start_keyboard())
+        update.effective_message.edit_reply_markup(reply_markup=get_start_keyboard(lang_id))
         update.callback_query.answer(translator("mp_max_players_callback"))
     except errors.PlayerAlreadyExistingException:
         update.callback_query.answer(translator("mp_already_joined_callback"))

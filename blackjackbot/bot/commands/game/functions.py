@@ -85,8 +85,8 @@ def next_player(update, context):
     except NoPlayersLeftException:
         # TODO merge messages
         update.effective_message.reply_text("<b>Dealer: {}</b>\n\n{}".format(game.dealer.cardvalue, get_cards_string(game.dealer, "en")), parse_mode="HTML")
-        get_join_keyboard()
         evaluation_string = generate_evaluation_string(game, lang_id)
+        get_join_keyboard(lang_id)
 
         newgame_button = InlineKeyboardButton(text="New game", callback_data="newgame")
         keyboard = InlineKeyboardMarkup(inline_keyboard=[[newgame_button]])
@@ -123,4 +123,4 @@ def create_game(update, context):
         players_turn(update, context)
     else:
         text = translator("mp_request_join").format(game.get_player_list())
-        update.effective_message.reply_text(text=text, reply_markup=get_join_keyboard())
+        update.effective_message.reply_text(text=text, reply_markup=get_join_keyboard(lang_id))
