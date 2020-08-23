@@ -35,7 +35,7 @@
   "dealer_got_21": "\u2716\uFE0F Der Dealer hat 21. Du verlierst.",
   "tied_with_dealer": "\uD83D\uDC4C Gleichstand mit dem Dealer.",
   "dealer_busted": "\uD83C\uDFC6 Glückwunsch! Der Dealer hat überkauft, daher gewinnst du diese Runde.",
-  "closer_to_21": "\uD83C\uDFC6 Congrats! Du bist näher an 21, daher gewinnst du diese Runde.",
+  "closer_to_21": "\uD83C\uDFC6 Glückwunsch! Du bist näher an 21, daher gewinnst du diese Runde.",
   "eval_heading_wins": "\uD83D\uDD30 Gewinner:",
   "eval_heading_ties": "\uD83D\uDC4C Gleichstand:",
   "eval_heading_losses": "\u2716\uFE0F Verlierer:"
