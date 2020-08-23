@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from time import time
 
-from database.db_wrapper import DBwrapper
+from database import Database
 
 __author__ = 'Rico'
 logger = logging.getLogger(__name__)
@@ -11,14 +11,14 @@ logger = logging.getLogger(__name__)
 
 def set_game_won(user_id):
     if user_id > 0:
-        db = DBwrapper.get_instance()
+        db = Database()
         games_won = int(db.get_user(user_id)[6]) + 1
         logger.debug("Add game won for userID: " + str(user_id))
         db.insert("gamesWon", str(games_won), user_id)
 
 
 def add_game_played(user_id):
-    db = DBwrapper.get_instance()
+    db = Database()
     games_played = db.get_played_games(user_id)
     games_played = games_played + 1
     logger.debug("Add game played for userID: " + str(user_id))
@@ -37,7 +37,7 @@ def get_stats(percentage):
 
 
 def get_user_stats(user_id):
-    db = DBwrapper.get_instance()
+    db = Database()
     user = db.get_user(user_id)
 
     played_games = int(user[5])
