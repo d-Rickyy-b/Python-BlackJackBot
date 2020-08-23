@@ -11,6 +11,22 @@ file_path = os.path.join(dir_path, "strings")
 languages = {}
 
 
+class Translator(object):
+
+    def __init__(self, lang_id):
+        self.lang_id = lang_id
+
+    def translate(self, string):
+        return translate(string, self.lang_id)
+
+    def __call__(self, string):
+        """
+        Wrapper for the translate method. Calling the object directly
+        instead of the translate method will leave you with more tidy code
+        """
+        return self.translate(string)
+
+
 def reload_strings():
     """Reads the translation files into a dict"""
     with os.scandir(file_path) as entries:
