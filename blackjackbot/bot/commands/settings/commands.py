@@ -42,4 +42,4 @@ def language_callback(update, context):
     lang_changed_text = translate("lang_changed", lang_id).format(lang.get("display_name"))
 
     update.effective_message.edit_text(text=lang_changed_text, reply_markup=None)
-    db.set_lang_id(lang_id=lang_id, user_id=update.callback_query.from_user.id)
+    db.set_lang_id(lang_id=lang_id, chat_id=update.effective_chat.id)
