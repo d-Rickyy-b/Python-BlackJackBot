@@ -48,6 +48,13 @@ class Card(object):
         else:
             raise ValueError("card_id '{}' can't be mapped to card type!".format(self.card_id))
 
+    @property
+    def str_id(self):
+        str_ids = ["card_2", "card_3", "card_4", "card_5", "card_6",
+                   "card_7", "card_8", "card_9", "card_10",
+                   "card_jack", "card_queen", "card_king", "card_ace"]
+        return str_ids[self.card_id % 13]
+
     def __str__(self):
         return "{} {}".format(self.symbol, self.face)
 
