@@ -4,7 +4,7 @@ import logging
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
-from blackjackbot.lang import translate, get_available_languages
+from blackjackbot.lang import translate, get_available_languages, get_language_info
 from blackjackbot.util import build_menu
 from database import Database
 logger = logging.getLogger(__name__)
@@ -38,5 +38,8 @@ def language_callback(update, context):
     lang_id = re.search(r"^lang_([a-z]{2}(?:-[a-z]{2})?)", query_data).group(1)
     
     logger.info("Language changed to '{}' for user {}".format(lang_id, update.effective_user.id))
-    update.effective_message.edit_text(text=translate("lang_changed", lang_id), reply_markup=None)
+    lang = get_language_info(lang_id)
+    lang_changed_text = translate("lang_changed", lang_id).format(lang.get("display_name"))
+
+    update.effective_message.edit_text(text=lang_changed_text, reply_markup=None)
     db.insert("languageID", lang_id, update.callback_query.from_user.id)
