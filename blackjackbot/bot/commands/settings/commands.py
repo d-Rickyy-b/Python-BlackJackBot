@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-import re
 import logging
+import re
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from blackjackbot.lang import translate, get_available_languages, get_language_info
 from blackjackbot.util import build_menu
 from database import Database
+
 logger = logging.getLogger(__name__)
 
 

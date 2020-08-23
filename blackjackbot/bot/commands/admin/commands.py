@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from blackjackbot.lang import translate, reload_strings, Translator
+from blackjackbot.lang import reload_strings, Translator
 from database import Database
 
 
