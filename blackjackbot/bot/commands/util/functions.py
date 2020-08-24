@@ -115,5 +115,5 @@ def get_join_keyboard(lang_id):
 
 def get_start_keyboard(lang_id):
     translator = Translator(lang_id)
-    start_button = InlineKeyboardButton(text="Start", callback_data="start")
+    start_button = InlineKeyboardButton(text=translator("inline_keyboard_start"), callback_data="start")
     return InlineKeyboardMarkup(inline_keyboard=[[start_button]])

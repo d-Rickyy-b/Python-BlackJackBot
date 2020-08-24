@@ -88,7 +88,7 @@ def next_player(update, context):
         evaluation_string = generate_evaluation_string(game, lang_id)
         get_join_keyboard(lang_id)
 
-        newgame_button = InlineKeyboardButton(text="New game", callback_data="newgame")
+        newgame_button = InlineKeyboardButton(text=translator("inline_keyboard_newgame"), callback_data="newgame")
         keyboard = InlineKeyboardMarkup(inline_keyboard=[[newgame_button]])
         update.effective_message.reply_text(evaluation_string, reply_markup=keyboard)
         game.stop(-1)
