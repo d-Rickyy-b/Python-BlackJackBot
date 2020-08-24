@@ -29,7 +29,6 @@ def _generate_evaluation_string_mp(game, lang_id):
     join_str = "{} - {}"
     translator = Translator(lang_id)
 
-    # TODO maybe only display categories with users in it
     if len(list_won) > 0:
         message += translator("eval_heading_wins") + "\n"
         message += "\n".join([join_str.format(p.first_name, p.cardvalue) for p in list_won])
@@ -49,7 +48,6 @@ def _generate_evaluation_string_mp(game, lang_id):
 def _generate_evaluation_string_sp(game, lang_id):
     list_won, list_tie, list_losses = game.evaluation()
     message = ""
-    player_str = ""
     join_str = "\n{} - {}"
     player = game.players[0]
     translator = Translator(lang_id)

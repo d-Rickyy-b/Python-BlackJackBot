@@ -30,7 +30,6 @@ def start_cmd(update, context):
 
 def start_callback(update, context):
     """Starts a game that has been created already"""
-    # TODO only useful for groups & starting games that already exist
     user = update.effective_user
     chat = update.effective_chat
     lang_id = Database().get_lang_id(chat.id)
