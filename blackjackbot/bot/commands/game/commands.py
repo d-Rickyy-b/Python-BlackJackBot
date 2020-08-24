@@ -158,3 +158,7 @@ def stand_callback(update, context):
 def newgame_callback(update, context):
     remove_inline_keyboard(update, context)
     start_cmd(update, context)
+
+
+def rules_cmd(update, context):
+    update.effective_message.reply_text("Rules:\n\n- Black Jack pays 3 to 2\n- Dealer must stand on 17 and must draw to 16\n- Insurance pays 2 to 1")
