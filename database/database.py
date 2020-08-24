@@ -3,6 +3,7 @@ import logging
 import os
 import sqlite3
 from time import time
+from util import Cache
 
 
 class Database(object):
@@ -106,6 +107,7 @@ class Database(object):
         self.cursor.execute("SELECT rowid, * FROM users;")
         return self.cursor.fetchall()
 
+    @Cache(timeout=60)
     def get_admins(self):
         self.cursor.execute("SELECT userID from admins;")
         admins = self.cursor.fetchall()
@@ -114,6 +116,7 @@ class Database(object):
             admin_list.append(admin[0])
         return admin_list
 
+    @Cache(timeout=120)
     def get_lang_id(self, chat_id):
         self.cursor.execute("SELECT lang_id FROM chats WHERE chat_id=?;", [str(chat_id)])
         result = self.cursor.fetchone()
@@ -123,6 +126,7 @@ class Database(object):
             return "en"
 
     def set_lang_id(self, chat_id, lang_id):
+        Cache().invalidate_lang_cache(chat_id)
         try:
             self.cursor.execute("INSERT INTO chats (chat_id, lang_id) VALUES(?, ?);", [chat_id, lang_id])
         except sqlite3.IntegrityError:
