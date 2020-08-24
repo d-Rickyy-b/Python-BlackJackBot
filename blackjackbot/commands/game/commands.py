@@ -2,13 +2,14 @@
 
 import blackjack.errors as errors
 from blackjack.game import BlackJackGame
-from blackjackbot.bot.commands.util import html_mention, get_game_keyboard, get_join_keyboard, get_start_keyboard, remove_inline_keyboard
+from blackjackbot.commands.util import html_mention, get_game_keyboard, get_join_keyboard, get_start_keyboard, remove_inline_keyboard
+from blackjackbot.commands.util.decorators import needs_active_game
 from blackjackbot.errors import NoActiveGameException
 from blackjackbot.gamestore import GameStore
 from blackjackbot.lang import Translator
 from blackjackbot.util import get_cards_string
 from database import Database
-from .functions import create_game, needs_active_game, players_turn, next_player
+from .functions import create_game, players_turn, next_player
 
 
 def start_cmd(update, context):

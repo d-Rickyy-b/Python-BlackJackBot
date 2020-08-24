@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-import functools
 import logging
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from blackjack.errors import NoPlayersLeftException
 from blackjack.game import BlackJackGame
-from blackjackbot.bot.commands.util import remove_inline_keyboard, html_mention, get_game_keyboard, get_join_keyboard, generate_evaluation_string
-from blackjackbot.errors import NoActiveGameException
+from blackjackbot.commands.util.decorators import needs_active_game
+from blackjackbot.commands.util import remove_inline_keyboard, html_mention, get_game_keyboard, get_join_keyboard, generate_evaluation_string
 from blackjackbot.gamestore import GameStore
 from blackjackbot.lang import Translator
 from blackjackbot.util import get_cards_string
@@ -18,28 +17,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logging.getLogger("telegram").setLevel(logging.ERROR)
 
 
-def needs_active_game(func):
-    @functools.wraps(func)
-    def wrapper(update, context, *args, **kwargs):
-        chat = update.effective_chat
-        lang_id = Database().get_lang_id(chat.id)
-        translator = Translator(lang_id=lang_id)
-
-        try:
-            game = GameStore().get_game(chat.id)
-        except NoActiveGameException:
-            remove_inline_keyboard(update, context)
-            update.effective_message.reply_text(translator("mp_no_created_game_callback"))
-            return
-
-        return func(update, context)
-
-    return wrapper
-
-
 def players_turn(update, context):
     """Execute a player's turn"""
-    user = update.effective_user
     chat = update.effective_chat
     game = GameStore().get_game(chat.id)
     player = game.get_current_player()
