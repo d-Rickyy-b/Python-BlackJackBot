@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Utility functions for performing chat related tasks"""
+import html
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from blackjack.game import BlackJackGame
@@ -19,7 +21,7 @@ def remove_inline_keyboard(update, context):
 
 def html_mention(user_id, first_name):
     """Generate HTML code that will mention a user in a group"""
-    # TODO escape user's name
+    first_name = html.escape(first_name)
     return '<a href="tg://user?id={}">{}</a>'.format(user_id, first_name)
 
 
