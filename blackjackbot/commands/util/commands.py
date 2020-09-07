@@ -22,7 +22,6 @@ def comment_cmd(update, context):
     lang_id = Database().get_lang_id(chat.id)
     update.message.reply_text(translate("send_comment", lang_id), reply_markup=ForceReply())
     context.user_data["state"] = UserState.COMMENTING
-    pass
 
 
 def comment_text(update, context):
