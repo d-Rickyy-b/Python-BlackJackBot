@@ -41,5 +41,9 @@
   "closer_to_21": "\uD83C\uDFC6 Congrats! You are closer to 21 and win this round.",
   "eval_heading_wins": "\uD83D\uDD30 Wins:",
   "eval_heading_ties": "\uD83D\uDC4C Ties:",
-  "eval_heading_losses": "\u2716\uFE0F Losses:"
+  "eval_heading_losses": "\u2716\uFE0F Losses:",
+  "send_comment": "Please send your comment (text only) as a reply to this message now. We'll forward it to the maintainer.",
+  "received_comment": "Thank you, your comment was forwarded to the maintainer.",
+  "admin_reply": "⚠ You need to reply to the user's comment!",
+  "reply_from_maintainer": "The maintainer of this bot sent you a reply:\n\n{}"
 }

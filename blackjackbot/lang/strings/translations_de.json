@@ -41,5 +41,9 @@
   "closer_to_21": "\uD83C\uDFC6 Glückwunsch! Du bist näher an 21, daher gewinnst du diese Runde.",
   "eval_heading_wins": "\uD83D\uDD30 Gewinner:",
   "eval_heading_ties": "\uD83D\uDC4C Gleichstand:",
-  "eval_heading_losses": "\u2716\uFE0F Verlierer:"
+  "eval_heading_losses": "\u2716\uFE0F Verlierer:",
+  "send_comment": "Bitte sende deinen Kommentar (nur Text) als Antwort auf diese Nachricht. Ich leite sie dann an den Betreiber des Bots weiter.",
+  "received_comment": "Vielen Dank, dein Kommentar wurde an den Betreiber weitergeleitet.",
+  "admin_reply": "⚠ Du musst auf den Kommentar des Nutzers antworten!",
+  "reply_from_maintainer": "Der Betreiber des Bots hat dir eine Antwort geschickt:\n\n{}"
 }
