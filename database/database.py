@@ -145,8 +145,16 @@ class Database(object):
         except sqlite3.IntegrityError:
             return
 
-    def insert(self, column_name, value, user_id):
-        self.cursor.execute("UPDATE users SET " + column_name + "= ? WHERE userID = ?;", [value, str(user_id)])
+    def set_games_won(self, games_won, user_id):
+        self.cursor.execute("UPDATE users SET gamesWon = ? WHERE userID = ?;", [games_won, str(user_id)])
+        self.connection.commit()
+
+    def set_games_played(self, games_played, user_id):
+        self.cursor.execute("UPDATE users SET gamesPlayed = ? WHERE userID = ?;", [games_played, str(user_id)])
+        self.connection.commit()
+
+    def set_last_played(self, last_played, user_id):
+        self.cursor.execute("UPDATE users SET lastPlayed = ? WHERE userID = ?;", [last_played, str(user_id)])
         self.connection.commit()
 
     def is_user_saved(self, user_id):

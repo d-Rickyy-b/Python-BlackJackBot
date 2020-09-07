@@ -13,17 +13,17 @@ def set_game_won(user_id):
     if user_id > 0:
         db = Database()
         games_won = int(db.get_user(user_id)[6]) + 1
-        logger.debug("Add game won for userID: " + str(user_id))
-        db.insert("gamesWon", str(games_won), user_id)
+        logger.debug("Add game won for user: {}".format(user_id))
+        db.set_games_won(games_won, user_id)
 
 
 def add_game_played(user_id):
     db = Database()
     games_played = db.get_played_games(user_id)
     games_played = games_played + 1
-    logger.debug("Add game played for userID: " + str(user_id))
-    db.insert("gamesPlayed", str(games_played), user_id)
-    db.insert("lastPlayed", str(int(time())), user_id)
+    logger.debug("Add game played for user: {}".format(user_id))
+    db.set_games_played(games_played, user_id)
+    db.set_last_played(str(int(time())), user_id)
 
 
 def get_stats(percentage):
