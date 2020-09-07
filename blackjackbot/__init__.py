@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from telegram.ext import CommandHandler, CallbackQueryHandler
+from blackjackbot.errors import error_handler
 
 from blackjackbot.commands import game, admin, settings, util
 
@@ -25,4 +26,4 @@ handlers = [start_command_handler, stop_command_handler, join_callback_handler, 
             language_command_handler, stats_command_handler, newgame_callback_handler, reload_lang_command_handler, language_callback_handler,
             users_command_handler]
 
-__all__ = ['handlers']
+__all__ = ['handlers', 'error_handler']
