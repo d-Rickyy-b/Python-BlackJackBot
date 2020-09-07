@@ -58,16 +58,12 @@ def next_player(update, context):
         if user.id != game.get_current_player().user_id:
             update.callback_query.answer(translator("mp_not_your_turn_callback").format(user.first_name))
             return
-        if update.callback_query and not game.get_current_player().has_21():
-            # TODO why did I put that here?
-            remove_inline_keyboard(update, context)
 
         game.next_player()
     except NoPlayersLeftException:
         # TODO merge messages
         update.effective_message.reply_text("<b>Dealer: {}</b>\n\n{}".format(game.dealer.cardvalue, get_cards_string(game.dealer, lang_id)), parse_mode="HTML")
         evaluation_string = generate_evaluation_string(game, lang_id)
-        get_join_keyboard(lang_id)
 
         newgame_button = InlineKeyboardButton(text=translator("inline_keyboard_newgame"), callback_data="newgame")
         keyboard = InlineKeyboardMarkup(inline_keyboard=[[newgame_button]])

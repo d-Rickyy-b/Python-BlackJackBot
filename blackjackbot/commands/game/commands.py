@@ -161,6 +161,8 @@ def stand_callback(update, context):
     """
     CallbackQueryHandler callback for the 'stand' inline button. Prepares round for the next player.
     """
+    remove_inline_keyboard(update, context)
+
     next_player(update, context)
 
 
