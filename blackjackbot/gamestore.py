@@ -61,9 +61,12 @@ class GameStore(object):
         if chat_id == -1:
             return
 
-        game = self._chat_dict.pop(chat_id)
-        self._game_dict.pop(game.id)
-        self.logger.debug("Removing game for {} ({})".format(chat_id, game.id))
+        try:
+            game = self._chat_dict.pop(chat_id)
+            self._game_dict.pop(game.id)
+            self.logger.debug("Removing game for {} ({})".format(chat_id, game.id))
+        except KeyError:
+            self.logger.error("Can't remove game for {}, because there is no such game!".format(chat_id))
 
     def _game_stopped_callback(self, game):
         """
