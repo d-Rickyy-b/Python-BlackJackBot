@@ -30,6 +30,8 @@ def players_turn(update, context):
     logger.info("Player's turn: {}".format(player))
     player_cards = get_cards_string(player, lang_id)
 
+    # Check if player already has 21 or a BlackJack before their move. If so, automatically jump to the next player.
+    # We need reply_text here, because we must send a new message (this is the first message for the player)!
     if player.has_blackjack():
         text = (translator("your_cards_are") + "\n\n" + translator("got_blackjack")).format(user_mention, player.cardvalue, player_cards)
         update.effective_message.reply_text(text=text, parse_mode="HTML", reply_markup=None)

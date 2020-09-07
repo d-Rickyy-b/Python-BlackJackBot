@@ -87,7 +87,9 @@ def stop_cmd(update, context):
 
 @needs_active_game
 def join_callback(update, context):
-    """Join the game via inline button"""
+    """
+    CallbackQueryHandler callback for the 'join' inline button. Adds the executing player to the game of the specific chat
+    """
     user = update.effective_user
     chat = update.effective_chat
     lang_id = Database().get_lang_id(chat.id)
@@ -116,6 +118,9 @@ def join_callback(update, context):
 
 @needs_active_game
 def hit_callback(update, context):
+    """
+    CallbackQueryHandler callback for the 'hit' inline button. Draws a card for you.
+    """
     user = update.effective_user
     chat = update.effective_chat
     lang_id = Database().get_lang_id(chat.id)
@@ -153,6 +158,9 @@ def hit_callback(update, context):
 
 @needs_active_game
 def stand_callback(update, context):
+    """
+    CallbackQueryHandler callback for the 'stand' inline button. Prepares round for the next player.
+    """
     next_player(update, context)
 
 
