@@ -26,14 +26,15 @@ def add_game_played(user_id):
     db.set_last_played(str(int(time())), user_id)
 
 
-def get_stats(percentage):
-    text = ""
-    perc = int(percentage // 10 + 1)
-    for _ in range(perc):
-        text += "🏆"
-    for _ in range(10 - perc):
-        text += "🔴"
-    return text
+def generate_bar_chart(win_percentage):
+    """
+    Generate a string of emojis representing a bar (10 chars) that indicates wins vs. losses
+    :param win_percentage: The percentage of wins
+    :return: Example (55.0%-64.9%) '🏆🏆🏆🏆🏆🏆🔴🔴🔴🔴'
+    """
+    win_portion = round(win_percentage / 10)
+    loss_portion = 10 - win_portion
+    return "🏆" * win_portion + "🔴" * loss_portion
 
 
 def get_user_stats(user_id):
