@@ -38,14 +38,20 @@ def generate_bar_chart(win_percentage):
 
 
 def get_user_stats(user_id):
-    db = Database()
-    user = db.get_user(user_id)
+    """
+    Generates and returns a string displaying the statistics of a user
+    :param user_id: The user_id of a specific user
+    :return:
+    """
+    user = Database().get_user(user_id)
 
-    played_games = int(user[5])
-    if played_games == 0:
-        played_games = 1
-    statistics_string = "Here are your statistics  📊:\n\nPlayed Games: " + str(played_games) + "\nWon Games : " + str(user[6]) + \
-                        "\nLast Played: " + datetime.fromtimestamp(int(user[8])).strftime('%d.%m.%y %H:%M') + " CET" + \
-                        "\n\n" + get_stats(round(float(user[6]) / float(played_games), 4) * 100) + "\n\nWinning rate: " + \
-                        '{percent:.2%}'.format(percent=float(user[6]) / float(played_games))
+    played_games = int(user[5]) or 1
+    won_games = user[6]
+    last_played = int(user[8])
+    last_played_formatted = datetime.utcfromtimestamp(last_played).strftime('%d.%m.%y %H:%M')
+    win_percentage = round(float(won_games) / float(played_games), 4) * 100
+    bar = generate_bar_chart(win_percentage)
+
+    template = "Here are your statistics 📊:\n\nPlayed Games: {}\nWon Games: {}\nLast Played: {} UTC\n\n{}\n\nWinning rate: {:.2%}"
+    statistics_string = template.format(played_games, won_games, last_played_formatted, bar, win_percentage)
     return statistics_string
