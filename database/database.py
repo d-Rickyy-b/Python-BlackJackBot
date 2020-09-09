@@ -77,11 +77,9 @@ class Database(object):
         self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
 
         result = self.cursor.fetchone()
-        if result:
-            if len(result) > 0:
-                return result
-
-        return ()
+        if not result or len(result) == 0:
+            return ()
+        return result
 
     def get_recent_players(self):
         one_day_in_secs = 60 * 60 * 24
