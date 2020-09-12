@@ -12,7 +12,7 @@ install:
 # command to run tests
 script:
   - python -m compileall ./
-  - coverage run --omit='*/virtualenv/*,*/site-packages/*' -m unittest discover -s . -v -p "*_test.py"
+  - coverage run --omit='*/virtualenv/*,*/site-packages/*,*_tests.py' -m unittest discover -s . -v -p "*_test.py"
 
 # create coverage for one python version
 after_success:
