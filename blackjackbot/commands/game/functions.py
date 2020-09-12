@@ -55,7 +55,7 @@ def players_turn(update, context):
         next_player(update, context)
     else:
         text = translator("your_cards_are").format(user_mention, player.cardvalue, player_cards)
-        update.effective_message.reply_text(text=text, parse_mode="HTML", reply_markup=get_game_keyboard())
+        update.effective_message.reply_text(text=text, parse_mode="HTML", reply_markup=get_game_keyboard(game.id, lang_id))
 
 
 @needs_active_game
@@ -113,4 +113,4 @@ def create_game(update, context):
         players_turn(update, context)
     else:
         text = translator("mp_request_join").format(game.get_player_list())
-        update.effective_message.reply_text(text=text, reply_markup=get_join_keyboard(lang_id))
+        update.effective_message.reply_text(text=text, reply_markup=get_join_keyboard(game.id, lang_id))
