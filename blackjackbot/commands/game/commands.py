@@ -106,7 +106,7 @@ def join_callback(update, context):
     try:
         game.add_player(user.id, user.first_name)
         update.effective_message.edit_text(text=translator("mp_request_join").format(game.get_player_list()),
-                                           reply_markup=get_join_keyboard(lang_id))
+                                           reply_markup=get_join_keyboard(game.id, lang_id))
         update.callback_query.answer(translator("mp_join_callback").format(user.first_name))
 
         # If players are full, replace join keyboard with start keyboard
@@ -148,7 +148,7 @@ def hit_callback(update, context):
         game.draw_card()
         player_cards = get_cards_string(player, lang_id)
         text = translator("your_cards_are").format(user_mention, player.cardvalue, player_cards)
-        update.effective_message.edit_text(text=text, parse_mode="HTML", reply_markup=get_game_keyboard())
+        update.effective_message.edit_text(text=text, parse_mode="HTML", reply_markup=get_game_keyboard(game.id, lang_id))
     except errors.PlayerBustedException:
         player_cards = get_cards_string(player, lang_id)
         text = (translator("your_cards_are") + "\n\n" + translator("you_busted")).format(user_mention, player.cardvalue, player_cards)
