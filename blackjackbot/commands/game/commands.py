@@ -9,7 +9,7 @@ from blackjackbot.gamestore import GameStore
 from blackjackbot.lang import Translator
 from blackjackbot.util import get_cards_string
 from database import Database
-from .functions import create_game, players_turn, next_player
+from .functions import create_game, players_turn, next_player, is_button_affiliated
 
 
 def start_cmd(update, context):
@@ -38,6 +38,9 @@ def start_callback(update, context):
 
     try:
         game = GameStore().get_game(update.effective_chat.id)
+
+        if not is_button_affiliated(update, context, game, lang_id):
+            return
     except NoActiveGameException:
         update.callback_query.answer(translator("mp_no_created_game_callback"))
         remove_inline_keyboard(update, context)
@@ -97,6 +100,9 @@ def join_callback(update, context):
 
     game = GameStore().get_game(chat.id)
 
+    if not is_button_affiliated(update, context, game, lang_id):
+        return
+
     try:
         game.add_player(user.id, user.first_name)
         update.effective_message.edit_text(text=translator("mp_request_join").format(game.get_player_list()),
@@ -127,6 +133,10 @@ def hit_callback(update, context):
     translator = Translator(lang_id=lang_id)
 
     game = GameStore().get_game(chat.id)
+
+    if not is_button_affiliated(update, context, game, lang_id):
+        return
+
     player = game.get_current_player()
     user_mention = html_mention(user_id=player.user_id, first_name=player.first_name)
 
@@ -161,6 +171,13 @@ def stand_callback(update, context):
     """
     CallbackQueryHandler callback for the 'stand' inline button. Prepares round for the next player.
     """
+    chat = update.effective_chat
+    lang_id = Database().get_lang_id(chat.id)
+    game = GameStore().get_game(update.effective_chat.id)
+
+    if not is_button_affiliated(update, context, game, lang_id):
+        return
+
     remove_inline_keyboard(update, context)
 
     next_player(update, context)

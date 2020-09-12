@@ -94,22 +94,29 @@ def generate_evaluation_string(game, lang_id):
         return _generate_evaluation_string_mp(game, lang_id)
 
 
-def get_game_keyboard(lang_id=None):
+def get_game_keyboard(game_id, lang_id):
     """Generates a game keyboard translated into the given language
-    :param lang_id:
+    :param game_id: A unique identifier for each game
+    :param lang_id: The language identifier for a specific chat
     :return:
     """
     translator = Translator(lang_id)
-    one_more_button = InlineKeyboardButton(text=translator("inline_keyboard_hit"), callback_data="hit")
-    no_more_button = InlineKeyboardButton(text=translator("inline_keyboard_stand"), callback_data="stand")
-    stop_button = InlineKeyboardButton(text="Stop", callback_data="stop")
+    one_more_button = InlineKeyboardButton(text=translator("inline_keyboard_hit"), callback_data="hit_{}".format(game_id))
+    no_more_button = InlineKeyboardButton(text=translator("inline_keyboard_stand"), callback_data="stand_{}".format(game_id))
+    stop_button = InlineKeyboardButton(text="Stop", callback_data="stop_{}".format(game_id))
     return InlineKeyboardMarkup(inline_keyboard=[[one_more_button, no_more_button]])
 
 
-def get_join_keyboard(lang_id):
+def get_join_keyboard(game_id, lang_id):
+    """
+    Generates a join keyboard translated into the given language
+    :param game_id: A unique identifier for each game
+    :param lang_id: The language identifier for a specific chat
+    :return:
+    """
     translator = Translator(lang_id)
-    join_button = InlineKeyboardButton(text=translator("inline_keyboard_join"), callback_data="join")
-    start_button = InlineKeyboardButton(text=translator("inline_keyboard_start"), callback_data="start")
+    join_button = InlineKeyboardButton(text=translator("inline_keyboard_join"), callback_data="join_{}".format(game_id))
+    start_button = InlineKeyboardButton(text=translator("inline_keyboard_start"), callback_data="start_{}".format(game_id))
     return InlineKeyboardMarkup(inline_keyboard=[[join_button, start_button]])
 
 

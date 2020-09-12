@@ -18,10 +18,10 @@ users_command_handler = CommandHandler("users", admin.users_cmd)
 answer_command_handler = CommandHandler("answer", admin.answer_comment_cmd, Filters.reply)
 
 # Callback handlers
-hit_callback_handler = CallbackQueryHandler(game.hit_callback, pattern=r"^hit$")
-stand_callback_handler = CallbackQueryHandler(game.stand_callback, pattern=r"^stand$")
-join_callback_handler = CallbackQueryHandler(game.join_callback, pattern=r"^join$")
-start_callback_handler = CallbackQueryHandler(game.start_callback, pattern=r"^start$")
+hit_callback_handler = CallbackQueryHandler(game.hit_callback, pattern=r"^hit_[0-9]{7}$")
+stand_callback_handler = CallbackQueryHandler(game.stand_callback, pattern=r"^stand_[0-9]{7}$")
+join_callback_handler = CallbackQueryHandler(game.join_callback, pattern=r"^join_[0-9]{7}$")
+start_callback_handler = CallbackQueryHandler(game.start_callback, pattern=r"^start_[0-9]{7}$")
 newgame_callback_handler = CallbackQueryHandler(game.newgame_callback, pattern=r"^newgame$")
 language_callback_handler = CallbackQueryHandler(settings.language_callback, pattern=r"^lang_([a-z]{2}(?:-[a-z]{2})?)$")
 

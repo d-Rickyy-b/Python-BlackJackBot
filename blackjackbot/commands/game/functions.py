@@ -6,7 +6,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from blackjack.errors import NoPlayersLeftException
 from blackjack.game import BlackJackGame
 from blackjackbot.commands.util.decorators import needs_active_game
-from blackjackbot.commands.util import remove_inline_keyboard, html_mention, get_game_keyboard, get_join_keyboard, generate_evaluation_string
+from blackjackbot.commands.util import html_mention, get_game_keyboard, get_join_keyboard, generate_evaluation_string, remove_inline_keyboard
 from blackjackbot.gamestore import GameStore
 from blackjackbot.lang import Translator
 from blackjackbot.util import get_cards_string
@@ -15,6 +15,19 @@ from database import Database
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 logging.getLogger("telegram").setLevel(logging.ERROR)
+
+
+def is_button_affiliated(update, context, game, lang_id):
+    try:
+        game_id = int(update.callback_query.data.split("_")[1])
+        if game.id != game_id:
+            update.callback_query.answer("Sorry, the button you pressed is not for your current game!")
+            remove_inline_keyboard(update, context)
+            return False
+        return True
+    except Exception as e:
+        logger.error("Something unexpected happened while checking button affiliation: {} - {}".format(update.callback_query.data, e))
+        return False
 
 
 def players_turn(update, context):
