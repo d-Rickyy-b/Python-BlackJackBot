@@ -4,6 +4,7 @@ from datetime import datetime
 from time import time
 
 from database import Database
+from blackjackbot.lang import translate
 
 __author__ = 'Rico'
 logger = logging.getLogger(__name__)
@@ -44,14 +45,14 @@ def get_user_stats(user_id):
     :return:
     """
     user = Database().get_user(user_id)
+    lang_id = Database().get_lang_id(user_id)
 
     played_games = int(user[5]) or 1
     won_games = user[6]
     last_played = int(user[8])
     last_played_formatted = datetime.utcfromtimestamp(last_played).strftime('%d.%m.%y %H:%M')
-    win_percentage = round(float(won_games) / float(played_games), 4) * 100
-    bar = generate_bar_chart(win_percentage)
-
-    template = "Here are your statistics 📊:\n\nPlayed Games: {}\nWon Games: {}\nLast Played: {} UTC\n\n{}\n\nWinning rate: {:.2%}"
+    win_percentage = round(float(won_games) / float(played_games), 4)
+    bar = generate_bar_chart(win_percentage * 100)
+    template = translate("statistic_template", lang_id)
     statistics_string = template.format(played_games, won_games, last_played_formatted, bar, win_percentage)
     return statistics_string

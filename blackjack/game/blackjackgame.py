@@ -14,6 +14,10 @@ class BlackJackGame(object):
         self.logger = logging.getLogger(__name__)
         self.__on_start_handlers = []
         self.__on_stop_handlers = []
+        self.list_won = []
+        self.list_tie = []
+        self.list_lost = []
+        self.bets_active = True
         self._current_player = 0
         self.players = []
         self.running = False
@@ -209,11 +213,11 @@ class BlackJackGame(object):
 
         list_lost.extend(list_busted)
 
-        list_won = sorted(list_won, key=lambda player: player.cardvalue, reverse=True)
-        list_tie = sorted(list_tie, key=lambda player: player.cardvalue, reverse=True)
-        list_lost = sorted(list_lost, key=lambda player: player.cardvalue, reverse=True)
+        self.list_won = sorted(list_won, key=lambda player: player.cardvalue, reverse=True)
+        self.list_tie = sorted(list_tie, key=lambda player: player.cardvalue, reverse=True)
+        self.list_lost = sorted(list_lost, key=lambda player: player.cardvalue, reverse=True)
 
-        return list_won, list_tie, list_lost
+        return self.list_won, self.list_tie, self.list_lost
 
     def get_player_list(self):
         return "\n".join(["👤{}".format(p.first_name) for p in self.players])

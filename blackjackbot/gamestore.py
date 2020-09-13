@@ -3,6 +3,7 @@ import logging
 from random import randint
 
 from .errors.noactivegameexception import NoActiveGameException
+import database.statistics
 
 
 class GameStore(object):
@@ -74,9 +75,10 @@ class GameStore(object):
         :param game:
         :return:
         """
-        # TODO Game statistics
-        # for player in game.players:
-        #     player set game won
+        for player in game.players:
+            database.statistics.add_game_played(player.user_id)
+            if player in game.list_won:
+                database.statistics.set_game_won(player.user_id)
         self.remove_game(self._game_dict[game.id])
 
         self.logger.debug("Current games: {}".format(len(self._chat_dict)))

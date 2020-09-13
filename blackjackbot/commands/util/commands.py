@@ -10,7 +10,7 @@ from database.statistics import get_user_stats
 
 
 def stats_cmd(update, context):
-    update.message.reply_text(get_user_stats(update.effective_user.id))
+    update.message.reply_text(get_user_stats(update.effective_user.id), parse_mode="HTML")
 
 
 def comment_cmd(update, context):
