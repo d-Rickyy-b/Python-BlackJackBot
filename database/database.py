@@ -49,22 +49,21 @@ class Database(object):
         cursor = connection.cursor()
 
         cursor.execute("CREATE TABLE IF NOT EXISTS 'admins' "
-                       "('userID' INTEGER NOT NULL,"
+                       "('user_id' INTEGER NOT NULL,"
                        "'first_name' TEXT,"
                        "'username' TEXT,"
-                       "PRIMARY KEY('userID'));")
+                       "PRIMARY KEY('user_id'));")
 
         cursor.execute("CREATE TABLE IF NOT EXISTS 'users'"
-                       "('userID' INTEGER NOT NULL,"
-                       "'languageID' TEXT,"
+                       "('user_id' INTEGER NOT NULL,"
                        "'first_name' TEXT,"
                        "'last_name' TEXT,"
                        "'username' TEXT,"
-                       "'gamesPlayed' INTEGER,"
-                       "'gamesWon' INTEGER,"
-                       "'gamesTie' INTEGER,"
-                       "'lastPlayed' INTEGER,"
-                       "PRIMARY KEY('userID'));")
+                       "'games_played' INTEGER,"
+                       "'games_won' INTEGER,"
+                       "'games_tie' INTEGER,"
+                       "'last_played' INTEGER,"
+                       "PRIMARY KEY('user_id'));")
 
         cursor.execute("CREATE TABLE IF NOT EXISTS 'chats'"
                        "('chat_id' INTEGER NOT NULL,"
@@ -74,7 +73,7 @@ class Database(object):
         connection.close()
 
     def get_user(self, user_id):
-        self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
+        self.cursor.execute("SELECT * FROM users WHERE user_id=?;", [str(user_id)])
 
         result = self.cursor.fetchone()
         if not result or len(result) == 0:
@@ -84,12 +83,12 @@ class Database(object):
     def get_recent_players(self):
         one_day_in_secs = 60 * 60 * 24
         current_time = int(time())
-        self.cursor.execute("SELECT userID FROM users WHERE lastPlayed>=?;", [current_time - one_day_in_secs])
+        self.cursor.execute("SELECT user_id FROM users WHERE last_played>=?;", [current_time - one_day_in_secs])
 
         return self.cursor.fetchall()
 
     def get_played_games(self, user_id):
-        self.cursor.execute("SELECT gamesPlayed FROM users WHERE userID=?;", [str(user_id)])
+        self.cursor.execute("SELECT games_played FROM users WHERE user_id=?;", [str(user_id)])
 
         result = self.cursor.fetchone()
 
@@ -107,7 +106,7 @@ class Database(object):
 
     @Cache(timeout=60)
     def get_admins(self):
-        self.cursor.execute("SELECT userID from admins;")
+        self.cursor.execute("SELECT user_id from admins;")
         admins = self.cursor.fetchall()
         admin_list = []
         for admin in admins:
@@ -144,19 +143,19 @@ class Database(object):
             return
 
     def set_games_won(self, games_won, user_id):
-        self.cursor.execute("UPDATE users SET gamesWon = ? WHERE userID = ?;", [games_won, str(user_id)])
+        self.cursor.execute("UPDATE users SET games_won = ? WHERE user_id = ?;", [games_won, str(user_id)])
         self.connection.commit()
 
     def set_games_played(self, games_played, user_id):
-        self.cursor.execute("UPDATE users SET gamesPlayed = ? WHERE userID = ?;", [games_played, str(user_id)])
+        self.cursor.execute("UPDATE users SET games_played = ? WHERE user_id = ?;", [games_played, str(user_id)])
         self.connection.commit()
 
     def set_last_played(self, last_played, user_id):
-        self.cursor.execute("UPDATE users SET lastPlayed = ? WHERE userID = ?;", [last_played, str(user_id)])
+        self.cursor.execute("UPDATE users SET last_played = ? WHERE user_id = ?;", [last_played, str(user_id)])
         self.connection.commit()
 
     def is_user_saved(self, user_id):
-        self.cursor.execute("SELECT rowid, * FROM users WHERE userID=?;", [str(user_id)])
+        self.cursor.execute("SELECT rowid, * FROM users WHERE user_id=?;", [str(user_id)])
 
         result = self.cursor.fetchall()
         if len(result) > 0:
@@ -165,7 +164,7 @@ class Database(object):
             return False
 
     def user_data_changed(self, user_id, first_name, last_name, username):
-        self.cursor.execute("SELECT * FROM users WHERE userID=?;", [str(user_id)])
+        self.cursor.execute("SELECT * FROM users WHERE user_id=?;", [str(user_id)])
 
         result = self.cursor.fetchone()
 
@@ -178,11 +177,11 @@ class Database(object):
             return True
 
     def update_user_data(self, user_id, first_name, last_name, username):
-        self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE userID=?;", [first_name, last_name, username, str(user_id)])
+        self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE user_id=?;", [first_name, last_name, username, str(user_id)])
         self.connection.commit()
 
     def reset_stats(self, user_id):
-        self.cursor.execute("UPDATE users SET gamesPlayed='0', gamesWon='0', gamesTie='0', lastPlayed='0' WHERE userID=?;", [str(user_id)])
+        self.cursor.execute("UPDATE users SET games_played='0', games_won='0', games_tie='0', last_played='0' WHERE user_id=?;", [str(user_id)])
         self.connection.commit()
 
     def close_conn(self):
