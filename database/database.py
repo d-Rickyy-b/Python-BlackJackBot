@@ -137,7 +137,7 @@ class Database(object):
 
     def _add_user(self, user_id, lang_id, first_name, last_name, username):
         try:
-            self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, 0, 0, 0, 0);", [str(user_id), lang_id, first_name, last_name, username])
+            self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?);", [str(user_id), lang_id, first_name, last_name, username])
             self.connection.commit()
         except sqlite3.IntegrityError:
             return
