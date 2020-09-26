@@ -3,10 +3,9 @@ import logging
 from datetime import datetime
 from time import time
 
-from database import Database
 from blackjackbot.lang import translate
+from database import Database
 
-__author__ = 'Rico'
 logger = logging.getLogger(__name__)
 
 
