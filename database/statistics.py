@@ -13,7 +13,11 @@ logger = logging.getLogger(__name__)
 def set_game_won(user_id):
     if user_id > 0:
         db = Database()
-        games_won = int(db.get_user(user_id)[6]) + 1
+        user = db.get_user(user_id)
+        if user is None:
+            logger.warning("User '{}' is None - can't set won games!".format(user))
+            return
+        games_won = int(user[6]) + 1
         logger.debug("Add game won for user: {}".format(user_id))
         db.set_games_won(games_won, user_id)
 
@@ -45,6 +49,11 @@ def get_user_stats(user_id):
     :return:
     """
     user = Database().get_user(user_id)
+
+    if user is None:
+        logger.warning("User '{}' is not stored in the database!".format(user_id))
+        return "No statistics found!"
+
     lang_id = Database().get_lang_id(user_id)
 
     try:
