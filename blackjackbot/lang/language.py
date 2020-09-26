@@ -76,8 +76,8 @@ def get_language(lang_code):
 
     lang = languages.get(lang_code, None)
     if lang is None:
-        if "_" in lang_code:
-            return get_language(lang_code.split("_")[0])
+        if "-" in lang_code:
+            return get_language(lang_code.split("-")[0])
 
         return languages["en"]
     return lang
