@@ -119,9 +119,10 @@ class Database(object):
         self.cursor.execute("SELECT lang_id FROM chats WHERE chat_id=?;", [str(chat_id)])
         result = self.cursor.fetchone()
         if result:
-            return result[0]
-        else:
-            return "en"
+            if result[0]:
+                # Make sure that the database stored an actual value and not "None"
+                return result[0]
+        return "en"
 
     def set_lang_id(self, chat_id, lang_id):
         if lang_id is None:
