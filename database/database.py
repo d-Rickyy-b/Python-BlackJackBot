@@ -59,15 +59,15 @@ class Database(object):
                        "'first_name' TEXT,"
                        "'last_name' TEXT,"
                        "'username' TEXT,"
-                       "'games_played' INTEGER,"
-                       "'games_won' INTEGER,"
-                       "'games_tie' INTEGER,"
-                       "'last_played' INTEGER,"
+                       "'games_played' INTEGER DEFAULT 0,"
+                       "'games_won' INTEGER DEFAULT 0,"
+                       "'games_tie' INTEGER DEFAULT 0,"
+                       "'last_played' INTEGER DEFAULT 0,"
                        "PRIMARY KEY('user_id'));")
 
         cursor.execute("CREATE TABLE IF NOT EXISTS 'chats'"
                        "('chat_id' INTEGER NOT NULL,"
-                       "'lang_id' TEXT,"
+                       "'lang_id' TEXT NOT NULL DEFAULT 'en',"
                        "PRIMARY KEY('chat_id'));")
         connection.commit()
         connection.close()
@@ -124,6 +124,8 @@ class Database(object):
             return "en"
 
     def set_lang_id(self, chat_id, lang_id):
+        if lang_id is None:
+            lang_id = "en"
         Cache().invalidate_lang_cache(chat_id)
         try:
             self.cursor.execute("INSERT INTO chats (chat_id, lang_id) VALUES(?, ?);", [chat_id, lang_id])
