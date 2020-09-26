@@ -78,7 +78,7 @@ class Database(object):
 
         result = self.cursor.fetchone()
         if not result or len(result) == 0:
-            return ()
+            return None
         return result
 
     def get_recent_players(self):
