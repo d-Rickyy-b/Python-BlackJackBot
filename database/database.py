@@ -73,7 +73,8 @@ class Database(object):
         connection.close()
 
     def get_user(self, user_id):
-        self.cursor.execute("SELECT * FROM users WHERE user_id=?;", [str(user_id)])
+        self.cursor.execute("SELECT user_id, first_name, last_name, username, games_played, games_won, games_tie, last_played"
+                            " FROM users WHERE user_id=?;", [str(user_id)])
 
         result = self.cursor.fetchone()
         if not result or len(result) == 0:
