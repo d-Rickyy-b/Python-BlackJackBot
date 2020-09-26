@@ -47,9 +47,16 @@ def get_user_stats(user_id):
     user = Database().get_user(user_id)
     lang_id = Database().get_lang_id(user_id)
 
-    played_games = int(user[5]) or 1
-    won_games = user[6]
-    last_played = int(user[8])
+    try:
+        played_games, won_games, _, last_played = user[4:8]
+    except ValueError as e:
+        logger.warning("Cannot unpack user - {}".format(e))
+        raise
+
+    if played_games == 0:
+        # prevent division by zero errors
+        played_games = 1
+
     last_played_formatted = datetime.utcfromtimestamp(last_played).strftime('%d.%m.%y %H:%M')
     win_percentage = round(float(won_games) / float(played_games), 4)
     bar = generate_bar_chart(win_percentage * 100)
