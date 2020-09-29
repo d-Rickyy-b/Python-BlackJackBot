@@ -46,5 +46,6 @@
   "received_comment": "Bedankt, je opmerking is doorgestuurd naar de beheerder.",
   "admin_reply": "⚠ Je moet reageren op de opermking van de gebruiker!",
   "reply_from_maintainer": "De beheerder van deze bot heeft je een reactie gestuurd:\n\n{}",
-  "statistic_template": "Hier zijn je statistieken 📊:\n\n<b>Gespeelde spellen:</b> {}\n<b>Gewonnen spellen:</b> {}\n<b>Laatst gespeeld:</b> {} UTC\n\n{}\n\n<b>Winpercentage:</b> {:.2%}"
+  "statistic_template": "Hier zijn je statistieken 📊:\n\n<b>Gespeelde spellen:</b> {}\n<b>Gewonnen spellen:</b> {}\n<b>Laatst gespeeld:</b> {} UTC\n\n{}\n\n<b>Winpercentage:</b> {:.2%}",
+  "dealer_name": "Dealer"
 }

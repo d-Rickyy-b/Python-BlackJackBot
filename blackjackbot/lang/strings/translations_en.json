@@ -46,5 +46,6 @@
   "received_comment": "Thank you, your comment was forwarded to the maintainer.",
   "admin_reply": "⚠ You need to reply to the user's comment!",
   "reply_from_maintainer": "The maintainer of this bot sent you a reply:\n\n{}",
-  "statistic_template": "Here are your statistics 📊:\n\n<b>Played Games:</b> {}\n<b>Won Games:</b> {}\n<b>Last Played:</b> {} UTC\n\n{}\n\n<b>Winning rate:</b> {:.2%}"
+  "statistic_template": "Here are your statistics 📊:\n\n<b>Played Games:</b> {}\n<b>Won Games:</b> {}\n<b>Last Played:</b> {} UTC\n\n{}\n\n<b>Winning rate:</b> {:.2%}",
+  "dealer_name": "Dealer"
 }

@@ -46,5 +46,6 @@
   "received_comment": "Dzięki, Twoja wiadomość została przekazana.",
   "admin_reply": "⚠ Musisz bezpośrednio odpowiedzieć na komentarz użytkownika!",
   "reply_from_maintainer": "Właściciel tego bota odpowiedział na Twój komentarz:\n\n{}",
-  "statistic_template": "Twoje statystyki wyglądają następująco 📊:\n\n<b>Rozegrane gry:</b> {}\n<b>Zwyciężone gry:</b> {}\n<b>Ostatnio grano:</b> {} UTC\n\n{}\n\n<b>Współczynnik zwycięstw:</b> {:.2%}"
+  "statistic_template": "Twoje statystyki wyglądają następująco 📊:\n\n<b>Rozegrane gry:</b> {}\n<b>Zwyciężone gry:</b> {}\n<b>Ostatnio grano:</b> {} UTC\n\n{}\n\n<b>Współczynnik zwycięstw:</b> {:.2%}",
+  "dealer_name": "Kupier"
 }

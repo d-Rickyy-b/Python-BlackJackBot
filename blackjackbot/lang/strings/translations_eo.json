@@ -46,5 +46,6 @@
   "received_comment": "Dankon, via komento estas plusendita al la prizorganto.",
   "admin_reply": "⚠ Vi devas respondi al la komento de la uzanto!",
   "reply_from_maintainer": "La prizorganto de ĉi tiu roboto sendis al vi respondon:\n\n{}",
-  "statistic_template": "Jen viaj statistikoj 📊:\n\n<b>Luditaj ludoj:</b> {}\n<b>Venkitaj ludoj:</b> {}\n<b>Lasta ludo:</b> {} UTC\n\n{}\n\n<b>Venko-elcento:</b> {:.2%}"
+  "statistic_template": "Jen viaj statistikoj 📊:\n\n<b>Luditaj ludoj:</b> {}\n<b>Venkitaj ludoj:</b> {}\n<b>Lasta ludo:</b> {} UTC\n\n{}\n\n<b>Venko-elcento:</b> {:.2%}",
+  "dealer_name": "Krupiero"
 }

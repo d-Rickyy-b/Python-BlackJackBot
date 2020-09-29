@@ -46,5 +46,6 @@
   "received_comment": "Gracias, tu comentario se ha enviado al creador.",
   "admin_reply": "⚠ ¡Necesitas responder al comentario del usuario!",
   "reply_from_maintainer": "El creador del bot te ha respondido:\n\n{}",
-  "statistic_template": "Estas son tus estadísticas 📊:\n\n<b>Partidas jugadas:</b> {}\n<b>Partidas ganadas:</b> {}\n<b>Última partida:</b> {} UTC\n\n{}\n\n<b>Porcentaje de victorias:</b> {:.2%}"
+  "statistic_template": "Estas son tus estadísticas 📊:\n\n<b>Partidas jugadas:</b> {}\n<b>Partidas ganadas:</b> {}\n<b>Última partida:</b> {} UTC\n\n{}\n\n<b>Porcentaje de victorias:</b> {:.2%}",
+  "dealer_name": "Crupier"
 }
