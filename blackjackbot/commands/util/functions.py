@@ -25,24 +25,43 @@ def html_mention(user_id, first_name):
     return '<a href="tg://user?id={}">{}</a>'.format(user_id, first_name)
 
 
+def _get_player_list_string(player_list, dealer_name):
+    """
+    Generate a string containing a newline separated list of players in the passed list
+    :param player_list: A list of players
+    :param dealer_name: The localized name of the dealer
+    :return:
+    """
+    players = []
+    name_value_template = "{} - {}"
+
+    for player in player_list:
+        if player.is_dealer:
+            players.append(name_value_template.format(dealer_name, player.cardvalue))
+        else:
+            players.append(name_value_template.format(player.first_name, player.cardvalue))
+
+    return "\n".join(players)
+
+
 def _generate_evaluation_string_mp(game, lang_id):
     list_won, list_tie, list_losses = game.evaluation()
     message = ""
-    join_str = "{} - {}"
     translator = Translator(lang_id)
+    dealer_name = translator("dealer_name")
 
     if len(list_won) > 0:
         message += translator("eval_heading_wins") + "\n"
-        message += "\n".join([join_str.format(p.first_name, p.cardvalue) for p in list_won])
+        message += _get_player_list_string(list_won, dealer_name)
 
     #🔃
     if len(list_tie) > 0:
         message += "\n\n{}\n".format(translator("eval_heading_ties"))
-        message += "\n".join([join_str.format(p.first_name, p.cardvalue) for p in list_tie])
+        message += _get_player_list_string(list_tie, dealer_name)
 
     if len(list_losses) > 0:
         message += "\n\n{}\n".format(translator("eval_heading_losses"))
-        message += "\n".join([join_str.format(p.first_name, p.cardvalue) for p in list_losses])
+        message += _get_player_list_string(list_losses, dealer_name)
 
     return message
 
@@ -64,13 +83,13 @@ def _generate_evaluation_string_sp(game, lang_id):
 
         message += "\n"
         message += join_str.format(player.first_name, player.cardvalue)
-        message += join_str.format(game.dealer.first_name, game.dealer.cardvalue)
+        message += join_str.format(translator("dealer_name"), game.dealer.cardvalue)
     elif len(list_tie) == 1:
         # Same value as dealer
         message += translator("tied_with_dealer")
         message += "\n"
         message += join_str.format(player.first_name, player.cardvalue)
-        message += join_str.format(game.dealer.first_name, game.dealer.cardvalue)
+        message += join_str.format(translator("dealer_name"), game.dealer.cardvalue)
     elif len(list_losses) == 1:
         if player.busted:
             # busted
@@ -81,7 +100,7 @@ def _generate_evaluation_string_sp(game, lang_id):
             message += translator("dealer_got_21")
 
         message += "\n"
-        message += join_str.format(game.dealer.first_name, game.dealer.cardvalue)
+        message += join_str.format(translator("dealer_name"), game.dealer.cardvalue)
         message += join_str.format(player.first_name, player.cardvalue)
 
     return message
