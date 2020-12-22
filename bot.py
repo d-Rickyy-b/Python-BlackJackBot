@@ -10,6 +10,7 @@ from blackjackbot import handlers, error_handler
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 logging.getLogger("telegram").setLevel(logging.ERROR)
+logging.getLogger("apscheduler").setLevel(logging.ERROR)
 
 updater = Updater(token=config.BOT_TOKEN, use_context=True)
 
