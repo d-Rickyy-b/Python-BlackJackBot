@@ -33,7 +33,7 @@ class ShoeTest(unittest.TestCase):
         self.shoe._cards = []
 
         with self.assertRaises(IndexError):
-            card = self.shoe.draw()
+            _ = self.shoe.draw()
 
 
 if __name__ == '__main__':

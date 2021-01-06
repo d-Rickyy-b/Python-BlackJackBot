@@ -54,7 +54,7 @@ def _generate_evaluation_string_mp(game, lang_id):
         message += translator("eval_heading_wins") + "\n"
         message += _get_player_list_string(list_won, dealer_name)
 
-    #🔃
+    # 🔃
     if len(list_tie) > 0:
         message += "\n\n{}\n".format(translator("eval_heading_ties"))
         message += _get_player_list_string(list_tie, dealer_name)
