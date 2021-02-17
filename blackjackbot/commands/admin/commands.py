@@ -48,7 +48,7 @@ def answer_comment_cmd(update, context):
 
     chat_id = user[0]
 
-    if not re.match(r"^\d+$", chat_id):
+    if not re.match(r"^-?\d+$", chat_id):
         update.message.reply_text("⚠ Malformed chat_id!")
         logger.error("Malformed chat_id: {}".format(chat_id))
         return
