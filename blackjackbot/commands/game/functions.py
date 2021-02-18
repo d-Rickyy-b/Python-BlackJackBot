@@ -72,6 +72,7 @@ def next_player(update, context):
             update.callback_query.answer(translator("mp_not_your_turn_callback").format(user.first_name))
             return
 
+        remove_inline_keyboard(update, context)
         game.next_player()
     except NoPlayersLeftException:
         # TODO merge messages

@@ -178,8 +178,6 @@ def stand_callback(update, context):
     if not is_button_affiliated(update, context, game, lang_id):
         return
 
-    remove_inline_keyboard(update, context)
-
     next_player(update, context)
 
 

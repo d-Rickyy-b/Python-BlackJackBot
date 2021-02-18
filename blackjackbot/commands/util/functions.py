@@ -16,7 +16,12 @@ def remove_inline_keyboard(update, context):
     :return:
     """
     if update.effective_message.from_user.id == context.bot.id:
-        update.effective_message.edit_reply_markup(reply_markup=None)
+        try:
+            update.effective_message.edit_reply_markup(reply_markup=None)
+        except Exception:
+            # When the message already has no reply markup, simply ignore the exception
+            # We can't check for message.reply_markup, because it might have been removed earlier
+            pass
 
 
 def html_mention(user_id, first_name):
