@@ -37,7 +37,8 @@ def comment_text(update, context):
     chat = update.effective_chat
     lang_id = Database().get_lang_id(chat.id)
 
-    data = [chat.id, user.id, user.first_name, user.last_name, "@" + user.username, user.language_code]
+    # username can be None, so we need to use str()
+    data = [chat.id, user.id, user.first_name, user.last_name, "@" + str(user.username), user.language_code]
 
     userdata = " | ".join([str(item) for item in data])
     userdata = userdata.replace("\r", "").replace("\n", "")
