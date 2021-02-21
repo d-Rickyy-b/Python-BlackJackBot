@@ -13,8 +13,6 @@ from blackjackbot.util import get_cards_string
 from database import Database
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
-logging.getLogger("telegram").setLevel(logging.ERROR)
 
 
 def is_button_affiliated(update, context, game, lang_id):
