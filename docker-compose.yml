@@ -1,0 +1,10 @@
+version: "3"
+services:
+  bot:
+    image: 0rickyy0/blackjackbot
+    volumes:
+      - /path/to/logs:/blackjackbot/logs
+      - /path/to/users.db:/blackjackbot/database/users.db
+      - /path/to/config.py:/blackjackbot/config.py
+    ports:
+      - 127.0.0.1:8080:80
