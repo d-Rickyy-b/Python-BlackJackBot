@@ -20,7 +20,7 @@ for handler in handlers:
 updater.dispatcher.add_error_handler(error_handler)
 
 if config.USE_WEBHOOK:
-    updater.start_webhook(listen="127.0.0.1", port=config.WEBHOOK_PORT, url_path=config.BOT_TOKEN, cert=config.CERTPATH, webhook_url=config.WEBHOOK_URL)
+    updater.start_webhook(listen=config.WEBHOOK_IP, port=config.WEBHOOK_PORT, url_path=config.BOT_TOKEN, cert=config.CERTPATH, webhook_url=config.WEBHOOK_URL)
     updater.bot.set_webhook(config.WEBHOOK_URL)
     logger.info("Started webhook server!")
 else:
