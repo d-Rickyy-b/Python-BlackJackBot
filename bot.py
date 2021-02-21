@@ -21,7 +21,7 @@ loglevels = {"debug": logging.DEBUG, "error": logging.DEBUG, "fatal": logging.FA
 loglevel = loglevels.get(config.LOGLEVEL, logging.INFO)
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=loglevel)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=loglevel, handlers=[logfile_handler, logging.StreamHandler()])
 logging.getLogger("telegram").setLevel(logging.ERROR)
 logging.getLogger("apscheduler").setLevel(logging.ERROR)
 
