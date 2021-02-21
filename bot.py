@@ -17,8 +17,11 @@ if not logdir_path.exists():
 
 logfile_handler = logging.handlers.WatchedFileHandler(logfile_path, "a", "utf-8")
 
+loglevels = {"debug": logging.DEBUG, "error": logging.DEBUG, "fatal": logging.FATAL, "info": logging.INFO}
+loglevel = loglevels.get(config.LOGLEVEL, logging.INFO)
+
 logger = logging.getLogger(__name__)
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=loglevel)
 logging.getLogger("telegram").setLevel(logging.ERROR)
 logging.getLogger("apscheduler").setLevel(logging.ERROR)
 
