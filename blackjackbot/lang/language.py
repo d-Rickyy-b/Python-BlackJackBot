@@ -2,12 +2,17 @@
 
 import json
 import os
+import pathlib
 import re
 import logging
 
 logger = logging.getLogger(__name__)
-dir_path = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(dir_path, "strings")
+
+lang_path = pathlib.Path(__file__).parent.absolute()
+maintainer_strings_path = lang_path / "strings"
+custom_strings_path = lang_path / "custom_strings"
+
+language_paths = [maintainer_strings_path, custom_strings_path]
 languages = {}
 
 
@@ -27,9 +32,9 @@ class Translator(object):
         return self.translate(string)
 
 
-def reload_strings():
+def load_strings_from_dir(directory):
     """Reads the translation files into a dict. Overwrites the dict if already present"""
-    with os.scandir(file_path) as entries:
+    with os.scandir(directory) as entries:
         for entry in entries:
             match = re.search(r"^translations_([a-z]{2}(-[a-z]{2})?)\.json$", entry.name)
 
@@ -43,8 +48,24 @@ def reload_strings():
                     logger.error("Can't open translation file '{}'".format(entry.path))
                     continue
 
-                lang_code = match.group(1)
+                file_lang_code = match.group(1)
+
+                # Make sure the language file got a lang_code specified
+                lang_code = data.get("lang_code", None)
+                if not lang_code:
+                    logger.error("No lang_code specified in translation file '{0}'".format(entry.path))
+                    return
+
+                if languages.get(lang_code, None):
+                    logger.warning("Overwriting translations for lang_code: {0}".format(lang_code))
+
+                logger.info("Loaded translation file {0} - language code: {1}".format(entry.name, lang_code))
                 languages[lang_code] = data
+
+
+def reload_strings():
+    for path in language_paths:
+        load_strings_from_dir(path)
 
 
 def get_available_languages():
