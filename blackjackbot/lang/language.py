@@ -65,7 +65,13 @@ def load_strings_from_dir(directory):
 
 def reload_strings():
     for path in language_paths:
+        if not path.exists():
+            logger.warning("The path for translations does not exist: {0}".format(path.name))
+            continue
         load_strings_from_dir(path)
+
+    if len(languages) == 0:
+        logger.error("Coudln't load translations!")
 
 
 def get_available_languages():
