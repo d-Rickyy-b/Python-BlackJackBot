@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 @admin_method
 def reload_languages_cmd(update, context):
     reload_strings()
+    update.message.reply_text("Reloaded languages & strings!")
 
 
 @admin_method
