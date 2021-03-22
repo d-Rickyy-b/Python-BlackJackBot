@@ -5,10 +5,38 @@ import re
 
 from blackjackbot.commands.admin import notify_admins
 from blackjackbot.commands.util.decorators import admin_method
+from blackjackbot.errors import NoActiveGameException
+from blackjackbot.gamestore import GameStore
 from blackjackbot.lang import reload_strings, Translator
 from database import Database
 
 logger = logging.getLogger(__name__)
+
+
+@admin_method
+def kill_game_cmd(update, context):
+    """Kills the game for a certain chat/group"""
+    if len(context.args) == 0:
+        update.message.reply_text("Please provide a chat_id!")
+
+    chat_id = context.args[0]
+    # Input validation for chat_id
+    if not re.match(r"^-?[0-9]+$", chat_id):
+        update.message.reply_text("Sorry, the chat_id is invalid!")
+        return
+
+    chat_id = int(chat_id)
+
+    try:
+        _ = GameStore().get_game(chat_id=chat_id)
+    except NoActiveGameException:
+        update.message.reply_text("Sorry, there is no running game in a chat with that ID!")
+        return
+
+    logger.info("Admin '{0}' removed game in chat '{1}'".format(update.effective_user.id, chat_id))
+    GameStore().remove_game(chat_id=chat_id)
+    update.message.reply_text("Alright, I killed the running game in '{0}'!".format(chat_id))
+    context.bot.send_message(chat_id=chat_id, text="The creator of this bot stopped your current game of BlackJack.")
 
 
 @admin_method

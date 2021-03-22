@@ -16,6 +16,7 @@ comment_text_command_handler = MessageHandler(Filters.text & ~(Filters.forwarded
 reload_lang_command_handler = CommandHandler("reload_lang", admin.reload_languages_cmd)
 users_command_handler = CommandHandler("users", admin.users_cmd)
 answer_command_handler = CommandHandler("answer", admin.answer_comment_cmd, Filters.reply)
+kill_command_handler = CommandHandler("kill", admin.kill_game_cmd, Filters.text)
 
 # Callback handlers
 hit_callback_handler = CallbackQueryHandler(game.hit_callback, pattern=r"^hit_[0-9]{7}$")
