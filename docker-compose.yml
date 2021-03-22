@@ -4,8 +4,11 @@ services:
     restart: always
     image: 0rickyy0/blackjackbot
     volumes:
+      # Speficy the paths to the log directory, user.db and config.py
+      # Only modify the path on the left side of the colon
       - /path/to/logs:/blackjackbot/logs
       - /path/to/users.db:/blackjackbot/database/users.db
       - /path/to/config.py:/blackjackbot/config.py
     ports:
+      # Ports for the webhook server - not needed if you use long polling
       - 127.0.0.1:8080:80
