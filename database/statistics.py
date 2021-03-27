@@ -16,7 +16,7 @@ def set_game_won(user_id):
         if user is None:
             logger.warning("User '{}' is None - can't set won games!".format(user))
             return
-        games_won = int(user[6]) + 1
+        games_won = int(user[5]) + 1
         logger.debug("Add game won for user: {}".format(user_id))
         db.set_games_won(games_won, user_id)
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import unittest
-from unittest.mock import Mock
 
 import database.statistics
+from database import Database
 
 
 class StatisticsTest(unittest.TestCase):
@@ -44,6 +44,24 @@ class StatisticsTest(unittest.TestCase):
 
         bar9 = database.statistics.generate_bar_chart(100)
         self.assertEqual(bar_10_wins, bar9)
+
+    def test_set_game_won(self):
+        user_id = 123
+        db = Database()
+        db.add_user(user_id, "en", "test", "test2", "test3")
+
+        user = db.get_user(user_id)
+        self.assertEqual(user[5], 0)
+
+        database.statistics.set_game_won(user_id)
+
+        user = db.get_user(user_id)
+        self.assertEqual(user[5], 1)
+
+        database.statistics.set_game_won(user_id)
+
+        user = db.get_user(user_id)
+        self.assertEqual(user[5], 2)
 
     if __name__ == '__main__':
         unittest.main()

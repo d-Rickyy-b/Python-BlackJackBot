@@ -13,8 +13,6 @@ from blackjackbot.util import get_cards_string
 from database import Database
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
-logging.getLogger("telegram").setLevel(logging.ERROR)
 
 
 def is_button_affiliated(update, context, game, lang_id):
@@ -72,6 +70,7 @@ def next_player(update, context):
             update.callback_query.answer(translator("mp_not_your_turn_callback").format(user.first_name))
             return
 
+        remove_inline_keyboard(update, context)
         game.next_player()
     except NoPlayersLeftException:
         # TODO merge messages

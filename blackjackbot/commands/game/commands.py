@@ -81,8 +81,16 @@ def stop_cmd(update, context):
 
     game = GameStore().get_game(chat.id)
 
+    user_id = user.id
     try:
-        game.stop(user.id)
+        if chat.type == "group" or chat.type == "supergroup":
+            # If yes, get the chat admins
+            admins = context.bot.get_chat_administrators(chat_id=chat.id)
+            # if user.id in chat admin IDs, let them end the game with admin powers
+            if user.id in [x.user.id for x in admins]:
+                user_id = -1
+
+        game.stop(user_id)
         update.effective_message.reply_text(translator("game_ended"))
     except errors.InsufficientPermissionsException:
         update.effective_message.reply_text(translator("mp_only_creator_can_end"))
@@ -177,8 +185,6 @@ def stand_callback(update, context):
 
     if not is_button_affiliated(update, context, game, lang_id):
         return
-
-    remove_inline_keyboard(update, context)
 
     next_player(update, context)
 
