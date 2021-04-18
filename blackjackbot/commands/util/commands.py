@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from telegram import ForceReply
+from telegram import ForceReply, ParseMode
 
 from blackjackbot.commands.admin.functions import notify_admins
 from blackjackbot.lang import translate
@@ -10,7 +10,7 @@ from database.statistics import get_user_stats
 
 
 def stats_cmd(update, context):
-    update.message.reply_text(get_user_stats(update.effective_user.id), parse_mode="HTML")
+    update.message.reply_text(get_user_stats(update.effective_user.id), parse_mode=ParseMode.HTML)
 
 
 def comment_cmd(update, context):
