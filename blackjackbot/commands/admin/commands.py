@@ -152,3 +152,14 @@ def users_cmd(update, context):
     text = "Last 24 hours: {}".format(len(players))
 
     update.message.reply_text(text=text)
+
+
+@admin_method
+def bans_cmd(update, context):
+    """Returns the amount of players in the last 24 hours"""
+    db = Database()
+    banned_users = db.get_banned_users()
+
+    text = f"Banned user count: {len(banned_users)}"
+
+    update.message.reply_text(text=text)
