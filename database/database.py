@@ -3,6 +3,7 @@ import logging
 import os
 import sqlite3
 from time import time
+
 from util import Cache
 
 
@@ -63,6 +64,7 @@ class Database(object):
                        "'games_won' INTEGER DEFAULT 0,"
                        "'games_tie' INTEGER DEFAULT 0,"
                        "'last_played' INTEGER DEFAULT 0,"
+                       "'banned' INTEGER DEFAULT 0,"
                        "PRIMARY KEY('user_id'));")
 
         cursor.execute("CREATE TABLE IF NOT EXISTS 'chats'"
@@ -73,13 +75,28 @@ class Database(object):
         connection.close()
 
     def get_user(self, user_id):
-        self.cursor.execute("SELECT user_id, first_name, last_name, username, games_played, games_won, games_tie, last_played"
+        self.cursor.execute("SELECT user_id, first_name, last_name, username, games_played, games_won, games_tie, last_played, banned"
                             " FROM users WHERE user_id=?;", [str(user_id)])
 
         result = self.cursor.fetchone()
         if not result or len(result) == 0:
             return None
         return result
+
+    def is_user_banned(self, user_id):
+        """Checks if a user was banned by the admin of the bot from using it"""
+        user = self.get_user(user_id)
+        return user is not None and user[8] == 1
+
+    def ban_user(self, user_id):
+        """Bans a user from using a the bot"""
+        self.cursor.execute("UPDATE users SET banned=1 WHERE user_id=?;", [str(user_id)])
+        self.connection.commit()
+
+    def unban_user(self, user_id):
+        """Unbans a user from using a the bot"""
+        self.cursor.execute("UPDATE users SET banned=0 WHERE user_id=?;", [str(user_id)])
+        self.connection.commit()
 
     def get_recent_players(self):
         one_day_in_secs = 60 * 60 * 24
