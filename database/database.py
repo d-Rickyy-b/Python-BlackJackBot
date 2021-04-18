@@ -19,22 +19,24 @@ class Database(object):
         return Database._instance
 
     def __init__(self):
-        if not self._initialized:
-            database_path = os.path.join(self.dir_path, "users.db")
-            self.logger = logging.getLogger(__name__)
+        if self._initialized:
+            return
 
-            if not os.path.exists(database_path):
-                self.logger.debug("File '{}' does not exist! Trying to create one.".format(database_path))
-            try:
-                self.create_database(database_path)
-            except Exception:
-                self.logger.error("An error has occurred while creating the database!")
+        database_path = os.path.join(self.dir_path, "users.db")
+        self.logger = logging.getLogger(__name__)
 
-            self.connection = sqlite3.connect(database_path)
-            self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
-            self.cursor = self.connection.cursor()
+        if not os.path.exists(database_path):
+            self.logger.debug("File '{}' does not exist! Trying to create one.".format(database_path))
+        try:
+            self.create_database(database_path)
+        except Exception:
+            self.logger.error("An error has occurred while creating the database!")
 
-            self._initialized = True
+        self.connection = sqlite3.connect(database_path)
+        self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
+        self.cursor = self.connection.cursor()
+
+        self._initialized = True
 
     @staticmethod
     def create_database(database_path):
