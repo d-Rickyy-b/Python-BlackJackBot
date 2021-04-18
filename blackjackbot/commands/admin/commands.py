@@ -18,14 +18,16 @@ logger = logging.getLogger(__name__)
 @admin_method
 def ban_user_cmd(update, context):
     """Bans a user from using the bot"""
+    usage_message = r"Please provide a valid userid\. Usage: `/ban <userid>`"
     # Try to get user_id from command
     if len(context.args) != 1:
-        update.message.reply_text("Please provide a valid user_id - `/ban <user_id>`", parse_mode=ParseMode.MARKDOWN_V2)
+        update.effective_message.reply_text(usage_message, parse_mode=ParseMode.MARKDOWN_V2)
         return
 
     match = re.search(r"^\d+$", context.args[0])
     if not match:
-        logger.error(f"The user_id did not match: {context.args}")
+        logger.error(f"The user_id did not match. Args: {context.args}")
+        update.effective_message.reply_text(usage_message, parse_mode=ParseMode.MARKDOWN_V2)
         return
     user_id = match.group(0)
 
@@ -33,20 +35,23 @@ def ban_user_cmd(update, context):
     db.ban_user(user_id=user_id)
 
     logger.info(f"Admin '{update.effective_user.id}' banned user '{user_id}'!")
-    notify_admins(f"Admin '{update.effective_user.id}' banned user '{user_id}'!")
+    notify_admins(f"Admin '{update.effective_user.id}' banned user '{user_id}'!", context)
 
 
 @admin_method
 def unban_user_cmd(update, context):
     """Unbans a user from using the bot"""
+    usage_message = r"Please provide a valid userid\. Usage: `/unban <userid>`"
+
     # Try to get user_id from command
     if len(context.args) != 1:
-        update.message.reply_text("Please provide a valid user_id - `/unban <user_id>`", parse_mode=ParseMode.MARKDOWN_V2)
+        update.message.reply_text(usage_message, parse_mode=ParseMode.MARKDOWN_V2)
         return
 
     match = re.search(r"^\d+$", context.args[0])
     if not match:
-        logger.error(f"The user_id did not match: {context.args}")
+        logger.error(f"The user_id did not match. Args: {context.args}")
+        update.effective_message.reply_text(usage_message, parse_mode=ParseMode.MARKDOWN_V2)
         return
     user_id = match.group(0)
 
@@ -54,7 +59,7 @@ def unban_user_cmd(update, context):
     db.unban_user(user_id=user_id)
 
     logger.info(f"Admin '{update.effective_user.id}' unbanned user '{user_id}'!")
-    notify_admins(f"Admin '{update.effective_user.id}' unbanned user '{user_id}'!")
+    notify_admins(f"Admin '{update.effective_user.id}' unbanned user '{user_id}'!", context)
 
 
 @admin_method
