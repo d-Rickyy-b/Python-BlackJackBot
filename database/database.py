@@ -3,6 +3,7 @@ import logging
 import os
 import sqlite3
 from time import time
+
 from util import Cache
 
 
@@ -11,6 +12,7 @@ class Database(object):
 
     _instance = None
     _initialized = False
+    _banned_users = set()
 
     def __new__(cls):
         if not Database._instance:
@@ -18,22 +20,27 @@ class Database(object):
         return Database._instance
 
     def __init__(self):
-        if not self._initialized:
-            database_path = os.path.join(self.dir_path, "users.db")
-            self.logger = logging.getLogger(__name__)
+        if self._initialized:
+            return
 
-            if not os.path.exists(database_path):
-                self.logger.debug("File '{}' does not exist! Trying to create one.".format(database_path))
-            try:
-                self.create_database(database_path)
-            except Exception:
-                self.logger.error("An error has occurred while creating the database!")
+        database_path = os.path.join(self.dir_path, "users.db")
+        self.logger = logging.getLogger(__name__)
 
-            self.connection = sqlite3.connect(database_path)
-            self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
-            self.cursor = self.connection.cursor()
+        if not os.path.exists(database_path):
+            self.logger.debug("File '{}' does not exist! Trying to create one.".format(database_path))
+        try:
+            self.create_database(database_path)
+        except Exception:
+            self.logger.error("An error has occurred while creating the database!")
 
-            self._initialized = True
+        self.connection = sqlite3.connect(database_path)
+        self.connection.row_factory = sqlite3.Row
+        self.connection.text_factory = lambda x: str(x, 'utf-8', "ignore")
+        self.cursor = self.connection.cursor()
+
+        self.load_banned_users()
+
+        self._initialized = True
 
     @staticmethod
     def create_database(database_path):
@@ -63,6 +70,7 @@ class Database(object):
                        "'games_won' INTEGER DEFAULT 0,"
                        "'games_tie' INTEGER DEFAULT 0,"
                        "'last_played' INTEGER DEFAULT 0,"
+                       "'banned' INTEGER DEFAULT 0,"
                        "PRIMARY KEY('user_id'));")
 
         cursor.execute("CREATE TABLE IF NOT EXISTS 'chats'"
@@ -72,14 +80,48 @@ class Database(object):
         connection.commit()
         connection.close()
 
+    def load_banned_users(self):
+        """Loads all banned users from the database into a list"""
+        self.cursor.execute("SELECT user_id FROM users WHERE banned=1;")
+        result = self.cursor.fetchall()
+
+        if not result:
+            return
+
+        for row in result:
+            print(int(row["user_id"]))
+            self._banned_users.add(int(row["user_id"]))
+
+    def get_banned_users(self):
+        """Returns a list of all banned user_ids"""
+        return self._banned_users
+
     def get_user(self, user_id):
-        self.cursor.execute("SELECT user_id, first_name, last_name, username, games_played, games_won, games_tie, last_played"
+        self.cursor.execute("SELECT user_id, first_name, last_name, username, games_played, games_won, games_tie, last_played, banned"
                             " FROM users WHERE user_id=?;", [str(user_id)])
 
         result = self.cursor.fetchone()
         if not result or len(result) == 0:
             return None
         return result
+
+    def is_user_banned(self, user_id):
+        """Checks if a user was banned by the admin of the bot from using it"""
+        # user = self.get_user(user_id)
+        # return user is not None and user[8] == 1
+        return int(user_id) in self._banned_users
+
+    def ban_user(self, user_id):
+        """Bans a user from using a the bot"""
+        self.cursor.execute("UPDATE users SET banned=1 WHERE user_id=?;", [str(user_id)])
+        self.connection.commit()
+        self._banned_users.add(int(user_id))
+
+    def unban_user(self, user_id):
+        """Unbans a user from using a the bot"""
+        self.cursor.execute("UPDATE users SET banned=0 WHERE user_id=?;", [str(user_id)])
+        self.connection.commit()
+        self._banned_users.remove(int(user_id))
 
     def get_recent_players(self):
         one_day_in_secs = 60 * 60 * 24
@@ -141,7 +183,7 @@ class Database(object):
 
     def _add_user(self, user_id, lang_id, first_name, last_name, username):
         try:
-            self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, 0, 0, 0, 0);", [str(user_id), first_name, last_name, username])
+            self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, 0, 0, 0, 0, 0);", [str(user_id), first_name, last_name, username])
             self.cursor.execute("INSERT INTO chats VALUES (?, ?);", [str(user_id), lang_id])
             self.connection.commit()
         except sqlite3.IntegrityError:

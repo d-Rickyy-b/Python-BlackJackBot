@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 
 from blackjack.errors import NoPlayersLeftException
 from blackjack.game import BlackJackGame
@@ -45,15 +45,15 @@ def players_turn(update, context):
     # We need reply_text here, because we must send a new message (this is the first message for the player)!
     if player.has_blackjack():
         text = (translator("your_cards_are") + "\n\n" + translator("got_blackjack")).format(user_mention, player.cardvalue, player_cards)
-        update.effective_message.reply_text(text=text, parse_mode="HTML", reply_markup=None)
+        update.effective_message.reply_text(text=text, parse_mode=ParseMode.HTML, reply_markup=None)
         next_player(update, context)
     elif player.cardvalue == 21:
         text = (translator("your_cards_are") + "\n\n" + translator("got_21")).format(user_mention, player.cardvalue, player_cards)
-        update.effective_message.reply_text(text=text, parse_mode="HTML", reply_markup=None)
+        update.effective_message.reply_text(text=text, parse_mode=ParseMode.HTML, reply_markup=None)
         next_player(update, context)
     else:
         text = translator("your_cards_are").format(user_mention, player.cardvalue, player_cards)
-        update.effective_message.reply_text(text=text, parse_mode="HTML", reply_markup=get_game_keyboard(game.id, lang_id))
+        update.effective_message.reply_text(text=text, parse_mode=ParseMode.HTML, reply_markup=get_game_keyboard(game.id, lang_id))
 
 
 @needs_active_game
@@ -76,7 +76,7 @@ def next_player(update, context):
         # TODO merge messages
         update.effective_message.reply_text(translator("dealers_cards_are").format(game.dealer.cardvalue,
                                                                                    get_cards_string(game.dealer, lang_id)),
-                                            parse_mode="HTML")
+                                            parse_mode=ParseMode.HTML)
         evaluation_string = generate_evaluation_string(game, lang_id)
 
         newgame_button = InlineKeyboardButton(text=translator("inline_keyboard_newgame"), callback_data="newgame")

@@ -3,6 +3,8 @@
 import logging
 import re
 
+from telegram import ParseMode
+
 from blackjackbot.commands.admin import notify_admins
 from blackjackbot.commands.util.decorators import admin_method
 from blackjackbot.errors import NoActiveGameException
@@ -11,6 +13,53 @@ from blackjackbot.lang import reload_strings, Translator
 from database import Database
 
 logger = logging.getLogger(__name__)
+
+
+@admin_method
+def ban_user_cmd(update, context):
+    """Bans a user from using the bot"""
+    usage_message = r"Please provide a valid userid\. Usage: `/ban <userid>`"
+    # Try to get user_id from command
+    if len(context.args) != 1:
+        update.effective_message.reply_text(usage_message, parse_mode=ParseMode.MARKDOWN_V2)
+        return
+
+    match = re.search(r"^\d+$", context.args[0])
+    if not match:
+        logger.error(f"The user_id did not match. Args: {context.args}")
+        update.effective_message.reply_text(usage_message, parse_mode=ParseMode.MARKDOWN_V2)
+        return
+    user_id = match.group(0)
+
+    db = Database()
+    db.ban_user(user_id=user_id)
+
+    logger.info(f"Admin '{update.effective_user.id}' banned user '{user_id}'!")
+    notify_admins(f"Admin '{update.effective_user.id}' banned user '{user_id}'!", context)
+
+
+@admin_method
+def unban_user_cmd(update, context):
+    """Unbans a user from using the bot"""
+    usage_message = r"Please provide a valid userid\. Usage: `/unban <userid>`"
+
+    # Try to get user_id from command
+    if len(context.args) != 1:
+        update.message.reply_text(usage_message, parse_mode=ParseMode.MARKDOWN_V2)
+        return
+
+    match = re.search(r"^\d+$", context.args[0])
+    if not match:
+        logger.error(f"The user_id did not match. Args: {context.args}")
+        update.effective_message.reply_text(usage_message, parse_mode=ParseMode.MARKDOWN_V2)
+        return
+    user_id = match.group(0)
+
+    db = Database()
+    db.unban_user(user_id=user_id)
+
+    logger.info(f"Admin '{update.effective_user.id}' unbanned user '{user_id}'!")
+    notify_admins(f"Admin '{update.effective_user.id}' unbanned user '{user_id}'!", context)
 
 
 @admin_method
@@ -101,5 +150,16 @@ def users_cmd(update, context):
     players = db.get_recent_players()
 
     text = "Last 24 hours: {}".format(len(players))
+
+    update.message.reply_text(text=text)
+
+
+@admin_method
+def bans_cmd(update, context):
+    """Returns the amount of players in the last 24 hours"""
+    db = Database()
+    banned_users = db.get_banned_users()
+
+    text = f"Banned user count: {len(banned_users)}"
 
     update.message.reply_text(text=text)

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from telegram.parsemode import ParseMode
+
 import blackjack.errors as errors
 from blackjack.game import BlackJackGame
 from blackjackbot.commands.util import html_mention, get_game_keyboard, get_join_keyboard, get_start_keyboard, remove_inline_keyboard
@@ -156,21 +158,21 @@ def hit_callback(update, context):
         game.draw_card()
         player_cards = get_cards_string(player, lang_id)
         text = translator("your_cards_are").format(user_mention, player.cardvalue, player_cards)
-        update.effective_message.edit_text(text=text, parse_mode="HTML", reply_markup=get_game_keyboard(game.id, lang_id))
+        update.effective_message.edit_text(text=text, parse_mode=ParseMode.HTML, reply_markup=get_game_keyboard(game.id, lang_id))
     except errors.PlayerBustedException:
         player_cards = get_cards_string(player, lang_id)
         text = (translator("your_cards_are") + "\n\n" + translator("you_busted")).format(user_mention, player.cardvalue, player_cards)
-        update.effective_message.edit_text(text=text, parse_mode="HTML", reply_markup=None)
+        update.effective_message.edit_text(text=text, parse_mode=ParseMode.HTML, reply_markup=None)
         next_player(update, context)
     except errors.PlayerGot21Exception:
         player_cards = get_cards_string(player, lang_id)
         if player.has_blackjack():
             text = (translator("your_cards_are") + "\n\n" + translator("got_blackjack")).format(user_mention, player.cardvalue, player_cards)
-            update.effective_message.edit_text(text=text, parse_mode="HTML", reply_markup=None)
+            update.effective_message.edit_text(text=text, parse_mode=ParseMode.HTML, reply_markup=None)
             next_player(update, context)
         elif player.cardvalue == 21:
             text = (translator("your_cards_are") + "\n\n" + translator("got_21")).format(user_mention, player.cardvalue, player_cards)
-            update.effective_message.edit_text(text=text, parse_mode="HTML", reply_markup=None)
+            update.effective_message.edit_text(text=text, parse_mode=ParseMode.HTML, reply_markup=None)
             next_player(update, context)
 
 
