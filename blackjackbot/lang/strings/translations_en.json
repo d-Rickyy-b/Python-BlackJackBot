@@ -47,5 +47,10 @@
   "admin_reply": "⚠ You need to reply to the user's comment!",
   "reply_from_maintainer": "The maintainer of this bot sent you a reply:\n\n{}",
   "statistic_template": "Here are your statistics 📊:\n\n<b>Played Games:</b> {}\n<b>Won Games:</b> {}\n<b>Last Played:</b> {} UTC\n\n{}\n\n<b>Winning rate:</b> {:.2%}",
-  "dealer_name": "Dealer"
+  "dealer_name": "Dealer",
+  "reset_stats_confirm": "Do you really want to reset your statistics?",
+  "reset_stats_confirm_button": "Reset",
+  "reset_stats_cancel_button": "Cancel",
+  "reset_stats_executed": "Alright, I reset your statistics!",
+  "reset_stats_cancelled": "Okay, I did not reset your statistics!"
 }
