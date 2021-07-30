@@ -52,5 +52,6 @@
   "reset_stats_confirm_button": "Reset",
   "reset_stats_cancel_button": "Cancel",
   "reset_stats_executed": "Alright, I reset your statistics!",
-  "reset_stats_cancelled": "Okay, I did not reset your statistics!"
+  "reset_stats_cancelled": "Okay, I did not reset your statistics!",
+  "no_stats": "You haven't played yet, there are no statistics for you."
 }
