@@ -16,6 +16,10 @@ def stats_cmd(update, context):
 def reset_stats_cmd(update, context):
     """Asks the user if they want to reset their statistics"""
     user_id = update.effective_user.id
+    chat_id = update.effective_chat.id
+
+    _modify_old_reset_message(context)
+
     db = Database()
     lang_id = db.get_lang_id(user_id)
 
@@ -25,7 +29,23 @@ def reset_stats_cmd(update, context):
         ]]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text(translate("reset_stats_confirm", lang_id), reply_markup=reply_markup)
+    sent_message = update.message.reply_text(translate("reset_stats_confirm", lang_id), reply_markup=reply_markup)
+    reset_message = {"message_id": sent_message.message_id, "chat_id": chat_id}
+    context.user_data["reset_messages"] = reset_message
+
+
+def _modify_old_reset_message(context):
+    """Removes the last saved reset confirmation messages from the chat history"""
+    reset_message = context.user_data.get("reset_message", None)
+    if reset_message is None:
+        return
+
+    try:
+        context.bot.edit_message_reply_markup(chat_id=reset_message.get("chat_id"), message_id=reset_message.get("message_id"))
+    except:
+        pass
+
+    context.user_data["reset_messages"] = None
 
 
 def reset_stats_callback(update, context):
