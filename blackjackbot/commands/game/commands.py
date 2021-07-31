@@ -168,12 +168,11 @@ def hit_callback(update, context):
         player_cards = get_cards_string(player, lang_id)
         if player.has_blackjack():
             text = (translator("your_cards_are") + "\n\n" + translator("got_blackjack")).format(user_mention, player.cardvalue, player_cards)
-            update.effective_message.edit_text(text=text, parse_mode=ParseMode.HTML, reply_markup=None)
-            next_player(update, context)
-        elif player.cardvalue == 21:
+        else:
             text = (translator("your_cards_are") + "\n\n" + translator("got_21")).format(user_mention, player.cardvalue, player_cards)
-            update.effective_message.edit_text(text=text, parse_mode=ParseMode.HTML, reply_markup=None)
-            next_player(update, context)
+
+        update.effective_message.edit_text(text=text, parse_mode=ParseMode.HTML, reply_markup=None)
+        next_player(update, context)
 
 
 @needs_active_game
