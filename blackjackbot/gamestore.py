@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+from datetime import datetime, timedelta
 from random import randint
 
 from .errors.noactivegameexception import NoActiveGameException
@@ -82,3 +83,20 @@ class GameStore(object):
         self.remove_game(self._game_dict[game.id])
 
         self.logger.debug("Current games: {}".format(len(self._chat_dict)))
+
+    def cleanup_stale_games(self):
+        stale_timeout_min = 10
+        now = datetime.now()
+        remove_chat_ids = []
+
+        for game_id, chat_id in self._game_dict.items():
+            game = self.get_game(chat_id)
+
+            game_older_than_10_mins = game.datetime_started < (now - timedelta(minutes=stale_timeout_min))
+            if game_older_than_10_mins:
+                logging.info("Killing game with id {} because it's stale for > {} mins".format(game.id, stale_timeout_min))
+                # TODO notify chat
+                remove_chat_ids.append(chat_id)
+
+        for chat_id in remove_chat_ids:
+            self.remove_game(chat_id)

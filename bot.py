@@ -4,10 +4,11 @@ import logging
 import logging.handlers
 import pathlib
 
-from telegram.ext import Updater
+from telegram.ext import Updater, JobQueue
 
 import config
 from blackjackbot import handlers, error_handler
+from blackjackbot.gamestore import GameStore
 
 logdir_path = pathlib.Path(__file__).parent.joinpath("logs").absolute()
 logfile_path = logdir_path.joinpath("bot.log")
@@ -31,6 +32,16 @@ for handler in handlers:
     updater.dispatcher.add_handler(handler)
 
 updater.dispatcher.add_error_handler(error_handler)
+
+
+# Set up jobs
+def stale_game_cleaner(context):
+    gs = GameStore()
+    gs.cleanup_stale_games()
+
+
+updater.job_queue.run_repeating(callback=stale_game_cleaner, interval=300, first=300)
+
 
 if config.USE_WEBHOOK:
     updater.start_webhook(listen=config.WEBHOOK_IP, port=config.WEBHOOK_PORT, url_path=config.BOT_TOKEN, cert=config.CERTPATH, webhook_url=config.WEBHOOK_URL)
