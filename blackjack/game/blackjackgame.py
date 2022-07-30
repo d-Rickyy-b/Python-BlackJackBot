@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
-
+from datetime import datetime
 from enum import Enum
+
 import blackjack.errors as errors
 from blackjack.game import Player, Dealer, Deck
 
@@ -17,6 +18,7 @@ class BlackJackGame(object):
         self.list_won = []
         self.list_tie = []
         self.list_lost = []
+        self.datetime_started = datetime.now()
         self.bets_active = True
         self._current_player = 0
         self.players = []

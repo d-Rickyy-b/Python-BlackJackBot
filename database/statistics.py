@@ -63,7 +63,7 @@ def get_user_stats(user_id):
 
     if played_games == 0:
         # prevent division by zero errors
-        played_games = 1
+        return translate("no_stats")
 
     last_played_formatted = datetime.utcfromtimestamp(last_played).strftime('%d.%m.%y %H:%M')
     win_percentage = round(float(won_games) / float(played_games), 4)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from telegram import ForceReply, ParseMode
+from telegram import ForceReply, ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 
 from blackjackbot.commands.admin.functions import notify_admins
 from blackjackbot.lang import translate
@@ -11,6 +11,58 @@ from database.statistics import get_user_stats
 
 def stats_cmd(update, context):
     update.message.reply_text(get_user_stats(update.effective_user.id), parse_mode=ParseMode.HTML)
+
+
+def reset_stats_cmd(update, context):
+    """Asks the user if they want to reset their statistics"""
+    user_id = update.effective_user.id
+    chat_id = update.effective_chat.id
+
+    _modify_old_reset_message(context)
+
+    db = Database()
+    lang_id = db.get_lang_id(user_id)
+
+    keyboard = [[
+        InlineKeyboardButton(translate("reset_stats_confirm_button"), callback_data='reset_stats_confirm'),
+        InlineKeyboardButton(translate("reset_stats_cancel_button"), callback_data='reset_stats_cancel'),
+        ]]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    sent_message = update.message.reply_text(translate("reset_stats_confirm", lang_id), reply_markup=reply_markup)
+    reset_message = {"message_id": sent_message.message_id, "chat_id": chat_id}
+    context.user_data["reset_messages"] = reset_message
+
+
+def _modify_old_reset_message(context):
+    """Removes the last saved reset confirmation messages from the chat history"""
+    reset_message = context.user_data.get("reset_message", None)
+    if reset_message is None:
+        return
+
+    try:
+        context.bot.edit_message_reply_markup(chat_id=reset_message.get("chat_id"), message_id=reset_message.get("message_id"))
+    except:
+        pass
+
+    context.user_data["reset_messages"] = None
+
+
+def reset_stats_callback(update, context):
+    """Handler for confirmation of statistics reset"""
+    query = update.callback_query
+    query.answer()
+
+    user_id = update.effective_user.id
+    db = Database()
+    lang_id = db.get_lang_id(user_id)
+
+    if query.data == "reset_stats_confirm":
+        db.reset_stats(user_id=user_id)
+        query.edit_message_text(translate("reset_stats_executed", lang_id))
+
+    elif query.data == "reset_stats_cancel":
+        query.edit_message_text(translate("reset_stats_cancelled", lang_id))
 
 
 def comment_cmd(update, context):
