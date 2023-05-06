@@ -138,10 +138,6 @@ class Database(object):
 
         return int(result["games_played"])
 
-    def get_all_users(self):
-        self.cursor.execute("SELECT rowid, * FROM users;")
-        return self.cursor.fetchall()
-
     @Cache(timeout=60)
     def get_admins(self):
         self.cursor.execute("SELECT user_id from admins;")
