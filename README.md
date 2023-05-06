@@ -1,5 +1,5 @@
-
 [![Build Status](https://github.com/d-Rickyy-b/Python-BlackJackBot/actions/workflows/python-lint-test.yml/badge.svg)](https://github.com/d-Rickyy-b/Python-BlackJackBot/actions/workflows/python-lint-test.yml)
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/0rickyy0/blackjackbot?label=docker&sort=semver)](https://hub.docker.com/repository/docker/0rickyy0/blackjackbot)
 [![Coverage Status](https://coveralls.io/repos/github/d-Rickyy-b/Python-BlackJackBot/badge.svg?branch=rebuild)](https://coveralls.io/github/d-Rickyy-b/Python-BlackJackBot?branch=rebuild)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/12996d68fc0f436085221ac6b1f525f9)](https://www.codacy.com/manual/d-Rickyy-b/Python-BlackJackBot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=d-Rickyy-b/Python-BlackJackBot&amp;utm_campaign=Badge_Grade)
 
