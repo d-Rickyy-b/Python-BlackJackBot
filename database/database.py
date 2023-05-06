@@ -155,11 +155,12 @@ class Database(object):
     def get_lang_id(self, chat_id):
         self.cursor.execute("SELECT lang_id FROM chats WHERE chat_id=?;", [str(chat_id)])
         result = self.cursor.fetchone()
-        if result:
-            if result[0]:
-                # Make sure that the database stored an actual value and not "None"
-                return result[0]
-        return "en"
+
+        if not result or not result["lang_id"]:
+            # Make sure that the database stored an actual value and not "None"
+            return "en"
+
+        return result["lang_id"]
 
     def set_lang_id(self, chat_id, lang_id):
         if lang_id is None:
@@ -207,16 +208,16 @@ class Database(object):
 
     def user_data_changed(self, user_id, first_name, last_name, username):
         self.cursor.execute("SELECT * FROM users WHERE user_id=?;", [str(user_id)])
-
         result = self.cursor.fetchone()
 
         # check if user is saved
-        if result:
-            if result[2] == first_name and result[3] == last_name and result[4] == username:
-                return False
+        if not result:
             return True
-        else:
-            return True
+
+        if result["first_name"] == first_name and result["last_name"] == last_name and result["username"] == username:
+            return False
+
+        return True
 
     def update_user_data(self, user_id, first_name, last_name, username):
         self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE user_id=?;", [first_name, last_name, username, str(user_id)])
