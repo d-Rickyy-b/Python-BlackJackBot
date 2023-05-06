@@ -89,7 +89,6 @@ class Database(object):
             return
 
         for row in result:
-            print(int(row["user_id"]))
             self._banned_users.add(int(row["user_id"]))
 
     def get_banned_users(self):
@@ -132,20 +131,12 @@ class Database(object):
 
     def get_played_games(self, user_id):
         self.cursor.execute("SELECT games_played FROM users WHERE user_id=?;", [str(user_id)])
-
         result = self.cursor.fetchone()
 
-        if not result:
+        if not result or len(result) <= 0:
             return 0
 
-        if len(result) > 0:
-            return int(result[0])
-        else:
-            return 0
-
-    def get_all_users(self):
-        self.cursor.execute("SELECT rowid, * FROM users;")
-        return self.cursor.fetchall()
+        return int(result["games_played"])
 
     @Cache(timeout=60)
     def get_admins(self):
@@ -153,18 +144,19 @@ class Database(object):
         admins = self.cursor.fetchall()
         admin_list = []
         for admin in admins:
-            admin_list.append(admin[0])
+            admin_list.append(admin["user_id"])
         return admin_list
 
     @Cache(timeout=120)
     def get_lang_id(self, chat_id):
         self.cursor.execute("SELECT lang_id FROM chats WHERE chat_id=?;", [str(chat_id)])
         result = self.cursor.fetchone()
-        if result:
-            if result[0]:
-                # Make sure that the database stored an actual value and not "None"
-                return result[0]
-        return "en"
+
+        if not result or not result["lang_id"]:
+            # Make sure that the database stored an actual value and not "None"
+            return "en"
+
+        return result["lang_id"]
 
     def set_lang_id(self, chat_id, lang_id):
         if lang_id is None:
@@ -212,16 +204,16 @@ class Database(object):
 
     def user_data_changed(self, user_id, first_name, last_name, username):
         self.cursor.execute("SELECT * FROM users WHERE user_id=?;", [str(user_id)])
-
         result = self.cursor.fetchone()
 
         # check if user is saved
-        if result:
-            if result[2] == first_name and result[3] == last_name and result[4] == username:
-                return False
+        if not result:
             return True
-        else:
-            return True
+
+        if result["first_name"] == first_name and result["last_name"] == last_name and result["username"] == username:
+            return False
+
+        return True
 
     def update_user_data(self, user_id, first_name, last_name, username):
         self.cursor.execute("UPDATE users SET first_name=?, last_name=?, username=? WHERE user_id=?;", [first_name, last_name, username, str(user_id)])
