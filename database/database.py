@@ -148,7 +148,7 @@ class Database(object):
         admins = self.cursor.fetchall()
         admin_list = []
         for admin in admins:
-            admin_list.append(admin[0])
+            admin_list.append(admin["user_id"])
         return admin_list
 
     @Cache(timeout=120)
