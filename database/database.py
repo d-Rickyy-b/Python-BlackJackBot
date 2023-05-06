@@ -89,7 +89,6 @@ class Database(object):
             return
 
         for row in result:
-            print(int(row["user_id"]))
             self._banned_users.add(int(row["user_id"]))
 
     def get_banned_users(self):
