@@ -132,16 +132,12 @@ class Database(object):
 
     def get_played_games(self, user_id):
         self.cursor.execute("SELECT games_played FROM users WHERE user_id=?;", [str(user_id)])
-
         result = self.cursor.fetchone()
 
-        if not result:
+        if not result or len(result) <= 0:
             return 0
 
-        if len(result) > 0:
-            return int(result[0])
-        else:
-            return 0
+        return int(result["games_played"])
 
     def get_all_users(self):
         self.cursor.execute("SELECT rowid, * FROM users;")
