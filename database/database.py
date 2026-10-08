@@ -112,6 +112,8 @@ class Database(object):
 
     def ban_user(self, user_id):
         """Bans a user from using a the bot"""
+        # Make sure the user exists in the database, so that the ban persists across restarts
+        self.cursor.execute("INSERT OR IGNORE INTO users (user_id) VALUES (?);", [str(user_id)])
         self.cursor.execute("UPDATE users SET banned=1 WHERE user_id=?;", [str(user_id)])
         self.connection.commit()
         self._banned_users.add(int(user_id))
@@ -120,7 +122,7 @@ class Database(object):
         """Unbans a user from using a the bot"""
         self.cursor.execute("UPDATE users SET banned=0 WHERE user_id=?;", [str(user_id)])
         self.connection.commit()
-        self._banned_users.remove(int(user_id))
+        self._banned_users.discard(int(user_id))
 
     def get_recent_players(self):
         one_day_in_secs = 60 * 60 * 24
@@ -174,12 +176,16 @@ class Database(object):
         self._add_user(user_id, lang_id, first_name, last_name, username)
 
     def _add_user(self, user_id, lang_id, first_name, last_name, username):
+        # Telegram does not always provide a language_code, but the chats table requires one
+        lang_id = lang_id or "en"
         try:
             self.cursor.execute("INSERT INTO users VALUES (?, ?, ?, ?, 0, 0, 0, 0, 0);", [str(user_id), first_name, last_name, username])
-            self.cursor.execute("INSERT INTO chats VALUES (?, ?);", [str(user_id), lang_id])
+            # The chat might already exist, e.g. if the user changed the language via /language before
+            self.cursor.execute("INSERT OR IGNORE INTO chats VALUES (?, ?);", [str(user_id), lang_id])
             self.connection.commit()
         except sqlite3.IntegrityError:
-            return
+            # Don't leave a half written user in the open transaction
+            self.connection.rollback()
 
     def set_games_won(self, games_won, user_id):
         self.cursor.execute("UPDATE users SET games_won = ? WHERE user_id = ?;", [games_won, str(user_id)])
