@@ -115,6 +115,8 @@ def join_callback(update, context):
 
     try:
         game.add_player(user.id, user.first_name)
+        # Players joining a group game never sent /start, so they might not be stored in the database yet
+        Database().add_user(user.id, user.language_code, user.first_name, user.last_name, user.username)
         update.effective_message.edit_text(text=translator("mp_request_join").format(game.get_player_list()),
                                            reply_markup=get_join_keyboard(game.id, lang_id))
         update.callback_query.answer(translator("mp_join_callback").format(user.first_name))
