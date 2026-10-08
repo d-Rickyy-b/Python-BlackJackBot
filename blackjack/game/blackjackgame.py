@@ -19,6 +19,7 @@ class BlackJackGame(object):
         self.list_tie = []
         self.list_lost = []
         self.datetime_started = datetime.now()
+        self.last_activity = self.datetime_started
         self.bets_active = True
         self._current_player = 0
         self.players = []
@@ -65,6 +66,10 @@ class BlackJackGame(object):
             except Exception as e:
                 self.logger.error("Couldn't run handler '{0}' - The following exception occurred: '{1}'".format(handler, e))
 
+    def _update_last_activity(self):
+        """Remembers the current time as the last time something happened in this game"""
+        self.last_activity = datetime.now()
+
     def start(self, user_id):
         """
         Sets up the players' and the dealer's hands
@@ -81,6 +86,7 @@ class BlackJackGame(object):
             raise errors.InsufficientPermissionsException
 
         self.running = True
+        self._update_last_activity()
 
         # Give every player and the dealer 2 cards
         for player in (self.players + [self.dealer]) * 2:
@@ -122,6 +128,7 @@ class BlackJackGame(object):
         player = Player(user_id, first_name)
         self.logger.debug("Adding new player: {}!".format(player))
         self.players.append(player)
+        self._update_last_activity()
 
         if self.type == BlackJackGame.Type.SINGLEPLAYER:
             self.logger.debug("Starting game now, because it's a singleplayer game")
@@ -139,6 +146,7 @@ class BlackJackGame(object):
         card = self.deck.pick_one_card()
 
         player.give_card(card)
+        self._update_last_activity()
 
         if player.cardvalue > 21:
             self.logger.debug("While giving user {} the card {}, they busted.".format(player.first_name, card))
@@ -153,6 +161,8 @@ class BlackJackGame(object):
         """
         if not self.running:
             raise errors.GameNotRunningException("The game must be started before it's the next player's turn")
+
+        self._update_last_activity()
 
         if self._current_player >= len(self.players) - 1:
             self.logger.debug("Next player is dealer!")

@@ -27,6 +27,7 @@
   "mp_not_your_turn_callback": "It's not your turn, {}!",
   "game_starts_now": "The game starts now. \uD83C\uDFB2\n\n{}Dealer's cards:\n\n{}",
   "game_ended": "The game has been ended. \uD83D\uDE09 You can /start another one if you like to.",
+  "game_ended_inactive": "\u23F1 The game has been ended because nobody played for {} minutes. You can /start another one if you like to.",
   "mp_only_creator_can_end": "Only the creator can end the game!",
   "mp_players_are": "Players are:\n",
   "no_permission": "You don't have the required permissions to do that!",

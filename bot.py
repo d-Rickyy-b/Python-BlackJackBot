@@ -8,7 +8,9 @@ from telegram.ext import Updater, JobQueue
 
 import config
 from blackjackbot import handlers, error_handler
-from blackjackbot.gamestore import GameStore
+from blackjackbot.gamestore import GameStore, STALE_TIMEOUT_MIN
+from blackjackbot.lang import translate
+from database import Database
 
 logdir_path = pathlib.Path(__file__).parent.joinpath("logs").absolute()
 logfile_path = logdir_path.joinpath("bot.log")
@@ -37,7 +39,14 @@ updater.dispatcher.add_error_handler(error_handler)
 # Set up jobs
 def stale_game_cleaner(context):
     gs = GameStore()
-    gs.cleanup_stale_games()
+    removed_chat_ids = gs.cleanup_stale_games()
+
+    for chat_id in removed_chat_ids:
+        text = translate("game_ended_inactive", Database().get_lang_id(chat_id)).format(STALE_TIMEOUT_MIN)
+        try:
+            context.bot.send_message(chat_id=chat_id, text=text)
+        except Exception as e:
+            logger.warning("Couldn't notify chat {} about its stale game: {}".format(chat_id, e))
 
 
 updater.job_queue.run_repeating(callback=stale_game_cleaner, interval=300, first=300)

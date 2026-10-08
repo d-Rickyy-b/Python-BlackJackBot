@@ -7,6 +7,9 @@ from .errors.noactivegameexception import NoActiveGameException
 import database.statistics
 
 
+STALE_TIMEOUT_MIN = 10
+
+
 class GameStore(object):
     _instance = None
     _initialized = False
@@ -84,19 +87,22 @@ class GameStore(object):
 
         self.logger.debug("Current games: {}".format(len(self._chat_dict)))
 
-    def cleanup_stale_games(self):
-        stale_timeout_min = 10
+    def cleanup_stale_games(self, stale_timeout_min=STALE_TIMEOUT_MIN):
+        """
+        Removes all games in which nothing happened for the given amount of minutes
+        :param stale_timeout_min: Amount of minutes without activity after which a game is considered stale
+        :return: List of chat_ids whose games were removed
+        """
         now = datetime.now()
         remove_chat_ids = []
 
-        for game_id, chat_id in self._game_dict.items():
-            game = self.get_game(chat_id)
-
-            game_older_than_10_mins = game.datetime_started < (now - timedelta(minutes=stale_timeout_min))
-            if game_older_than_10_mins:
-                logging.info("Killing game with id {} because it's stale for > {} mins".format(game.id, stale_timeout_min))
-                # TODO notify chat
+        # Copy the items, because this runs in the job queue thread while handlers might add or remove games
+        for chat_id, game in list(self._chat_dict.items()):
+            if game.last_activity < (now - timedelta(minutes=stale_timeout_min)):
+                self.logger.info("Killing game with id {} because it's stale for > {} mins".format(game.id, stale_timeout_min))
                 remove_chat_ids.append(chat_id)
 
         for chat_id in remove_chat_ids:
             self.remove_game(chat_id)
+
+        return remove_chat_ids
