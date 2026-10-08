@@ -67,6 +67,7 @@ def kill_game_cmd(update, context):
     """Kills the game for a certain chat/group"""
     if len(context.args) == 0:
         update.message.reply_text("Please provide a chat_id!")
+        return
 
     chat_id = context.args[0]
     # Input validation for chat_id
