@@ -144,7 +144,13 @@ def get_join_keyboard(game_id, lang_id):
     return InlineKeyboardMarkup(inline_keyboard=[[join_button, start_button]])
 
 
-def get_start_keyboard(lang_id):
+def get_start_keyboard(game_id, lang_id):
+    """
+    Generates a keyboard with only a start button, translated into the given language
+    :param game_id: A unique identifier for each game
+    :param lang_id: The language identifier for a specific chat
+    :return:
+    """
     translator = Translator(lang_id)
-    start_button = InlineKeyboardButton(text=translator("inline_keyboard_start"), callback_data="start")
+    start_button = InlineKeyboardButton(text=translator("inline_keyboard_start"), callback_data="start_{}".format(game_id))
     return InlineKeyboardMarkup(inline_keyboard=[[start_button]])

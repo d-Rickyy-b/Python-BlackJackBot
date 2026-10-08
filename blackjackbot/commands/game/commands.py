@@ -121,12 +121,12 @@ def join_callback(update, context):
 
         # If players are full, replace join keyboard with start keyboard
         if len(game.players) >= game.MAX_PLAYERS:
-            update.effective_message.edit_reply_markup(reply_markup=get_start_keyboard(lang_id))
+            update.effective_message.edit_reply_markup(reply_markup=get_start_keyboard(game.id, lang_id))
     except errors.GameAlreadyRunningException:
         remove_inline_keyboard(update, context)
         update.callback_query.answer(translator("mp_game_already_begun_callback"))
     except errors.MaxPlayersReachedException:
-        update.effective_message.edit_reply_markup(reply_markup=get_start_keyboard(lang_id))
+        update.effective_message.edit_reply_markup(reply_markup=get_start_keyboard(game.id, lang_id))
         update.callback_query.answer(translator("mp_max_players_callback"))
     except errors.PlayerAlreadyExistingException:
         update.callback_query.answer(translator("mp_already_joined_callback"))
