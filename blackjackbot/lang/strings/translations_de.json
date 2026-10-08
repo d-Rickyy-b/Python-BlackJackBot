@@ -27,6 +27,7 @@
   "mp_not_your_turn_callback": "Du bist nicht am Zug, {}!",
   "game_starts_now": "Das Spiel startet jetzt. \uD83C\uDFB2\n\n{}Karten des Dealers:\n\n{}",
   "game_ended": "Das Spiel wurde beendet! \uD83D\uDE09 Mit /start kannst du ein neues starten!",
+  "game_ended_inactive": "\u23F1 Das Spiel wurde beendet, weil {} Minuten lang niemand gespielt hat. Mit /start kannst du ein neues starten!",
   "mp_only_creator_can_end": "Nur der Ersteller kann das Spiel beenden!",
   "mp_players_are": "Spieler sind:\n",
   "no_permission": "Du hast dafür keine Berechtigungen!",
