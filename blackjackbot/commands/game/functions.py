@@ -46,11 +46,11 @@ def players_turn(update, context):
     if player.has_blackjack():
         text = (translator("your_cards_are") + "\n\n" + translator("got_blackjack")).format(user_mention, player.cardvalue, player_cards)
         update.effective_message.reply_text(text=text, parse_mode=ParseMode.HTML, reply_markup=None)
-        next_player(update, context)
+        _advance_turn(update, context)
     elif player.cardvalue == 21:
         text = (translator("your_cards_are") + "\n\n" + translator("got_21")).format(user_mention, player.cardvalue, player_cards)
         update.effective_message.reply_text(text=text, parse_mode=ParseMode.HTML, reply_markup=None)
-        next_player(update, context)
+        _advance_turn(update, context)
     else:
         text = translator("your_cards_are").format(user_mention, player.cardvalue, player_cards)
         update.effective_message.reply_text(text=text, parse_mode=ParseMode.HTML, reply_markup=get_game_keyboard(game.id, lang_id))
@@ -65,11 +65,23 @@ def next_player(update, context):
 
     game = GameStore().get_game(chat.id)
 
-    try:
-        if user.id != game.get_current_player().user_id:
-            update.callback_query.answer(translator("mp_not_your_turn_callback").format(user.first_name))
-            return
+    if user.id != game.get_current_player().user_id:
+        update.callback_query.answer(translator("mp_not_your_turn_callback").format(user.first_name))
+        return
 
+    _advance_turn(update, context)
+
+
+def _advance_turn(update, context):
+    """Hand the turn to the next player (or the dealer) without checking who triggered the update.
+    Used when a player's turn ends automatically, e.g. because they were dealt a blackjack."""
+    chat = update.effective_chat
+    lang_id = Database().get_lang_id(chat.id)
+    translator = Translator(lang_id=lang_id)
+
+    game = GameStore().get_game(chat.id)
+
+    try:
         remove_inline_keyboard(update, context)
         game.next_player()
     except NoPlayersLeftException:
