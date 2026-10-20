@@ -170,6 +170,14 @@ class Database(object):
             self.cursor.execute("UPDATE chats SET lang_id = ? WHERE chat_id = ?;", [lang_id, chat_id])
         self.connection.commit()
 
+    def set_default_lang_id(self, chat_id, lang_id):
+        """Stores the language for a chat, unless the chat already got a language (e.g. chosen via /language)"""
+        if not lang_id:
+            return
+        Cache().invalidate_lang_cache(chat_id)
+        self.cursor.execute("INSERT OR IGNORE INTO chats (chat_id, lang_id) VALUES(?, ?);", [chat_id, lang_id.lower()])
+        self.connection.commit()
+
     def add_user(self, user_id, lang_id, first_name, last_name, username):
         if self.is_user_saved(user_id):
             return

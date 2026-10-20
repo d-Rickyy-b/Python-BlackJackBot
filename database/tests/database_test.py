@@ -51,6 +51,30 @@ class DatabaseTest(unittest.TestCase):
         self.db.cursor.execute("SELECT lang_id FROM chats WHERE chat_id=?;", [str(self.user_id)])
         self.assertEqual("de", self.db.cursor.fetchone()["lang_id"])
 
+    def test_set_default_lang_id_new_chat(self):
+        """Chats without a language must use the language_code sent by Telegram"""
+        self.assertEqual("en", self.db.get_lang_id(self.user_id))
+
+        self.db.set_default_lang_id(self.user_id, "DE")
+
+        # The cached default language must not be returned anymore
+        self.assertEqual("de", self.db.get_lang_id(self.user_id))
+
+    def test_set_default_lang_id_existing_chat(self):
+        """A language which was already set for a chat (e.g. via /language) must not be overwritten"""
+        self.db.set_lang_id(chat_id=self.user_id, lang_id="nl")
+
+        self.db.set_default_lang_id(self.user_id, "de")
+
+        self.assertEqual("nl", self.db.get_lang_id(self.user_id))
+
+    def test_set_default_lang_id_without_language_code(self):
+        """Telegram does not always send a language_code, so nothing must be stored then"""
+        self.db.set_default_lang_id(self.user_id, None)
+
+        self.db.cursor.execute("SELECT lang_id FROM chats WHERE chat_id=?;", [str(self.user_id)])
+        self.assertIsNone(self.db.cursor.fetchone())
+
 
 if __name__ == '__main__':
     unittest.main()
