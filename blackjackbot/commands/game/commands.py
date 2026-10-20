@@ -18,10 +18,10 @@ def start_cmd(update, context):
     """Handles messages contianing the /start command. Starts a game for a specific user"""
     user = update.effective_user
     chat = update.effective_chat
-    lang_id = Database().get_lang_id(chat.id)
-    translator = Translator(lang_id=lang_id)
 
     Database().add_user(user.id, user.language_code, user.first_name, user.last_name, user.username)
+    # Use the language of the user's Telegram client for chats without a language yet, e.g. new groups
+    Database().set_default_lang_id(chat.id, user.language_code)
 
     try:
         GameStore().get_game(update.effective_chat.id)
